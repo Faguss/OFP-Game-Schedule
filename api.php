@@ -4,6 +4,7 @@ require_once "common.php";
 
 header('Cache-Control: no-cache, must-revalidate');
 header('Content-type: application/json');
+header('Access-Control-Allow-Origin: *');
 
 
 // Get data from db
