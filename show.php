@@ -21,10 +21,16 @@ $csrf          = Session::get(Config::get('session/token_name'));
 
 
 
-// Display servers
-echo "<DIV CLASS=\"row\">" . GS_format_server_info($servers, $mods, 12, 1, $input["server"], 1) . "</div>";
+// Display servers	
+if (!empty($servers["id"]))
+	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_CONNECT")."</a></p>";
+		
+echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, 1, $input["server"], 0) . "</div>";
 
 
+
+if (!empty($mods["id"]))
+	echo "<center><a style=\"cursor:pointer; font-weight:bold; font-size:medium;\" href=\"https://youtu.be/KSK_H8Dc4oo\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_INSTALL")."</a></center><br>";
 
 echo "<div class=\"row\">";
 $user_list        = [];
@@ -127,7 +133,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 	
 	if (isset($user_list[$mod["createdby"]])) {
 		$js_addedon[] = date("c",strtotime($mod["created"]));
-		echo "<small><span style=\"float:right;\">".lang("GS_STR_ADDED_BY_ON",[$user_list[$mod["createdby"]],"<span class=\"mod_addedon\">".date("jS M Y",strtotime($mod["created"]))."</span>"])."</span></small>";
+		echo "<span style=\"font-size:x-small;\">{$mod["uniqueid"]}</span><small><span style=\"float:right;\">".lang("GS_STR_ADDED_BY_ON",[$user_list[$mod["createdby"]],"<span class=\"mod_addedon\">".date("jS M Y",strtotime($mod["created"]))."</span>"])."</span></small>";
 		
 		if ($mod["admin"] != $mod["createdby"])
 			echo "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$mod["admin"]], date("jS M Y",strtotime($mod["adminsince"]))])."</small>";
@@ -160,7 +166,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 		echo "</select>";
 	}
 	
-	echo "<a style=\"cursor:pointer; font-weight:bold; font-size:medium; margin-left:10em;\" href=\"https://youtu.be/KSK_H8Dc4oo\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_INSTALL")."</a></p>";
+	echo "</p>";
 	
 	// Show mod updates
 	foreach($mod["updates"] as $update_index=>$update) {

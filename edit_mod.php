@@ -787,10 +787,10 @@ if ($form->hidden["display_form"] == "Delete") {
 			FROM 
 				gs_serv_mods LEFT JOIN gs_serv 
 					ON gs_serv_mods.serverid = gs_serv.id 
+					AND gs_serv_mods.modid = ?
+					AND gs_serv_mods.removed = 0
 			WHERE 
-				gs_serv_mods.modid   = ? AND 
-				gs_serv.removed      = 0 AND
-				gs_serv_mods.removed = 0
+				gs_serv.removed = 0
 		";
 				
 		$db->query($sql,[$id]);

@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2021,9,24,5,2,51,36,439,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2021,10,6,3,19,8,36,633,120,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -962,14 +962,15 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			
 		FROM 
 			gs_serv LEFT JOIN gs_serv_times 
-				ON gs_serv.id=gs_serv_times.serverid  AND  gs_serv_times.removed=0
+				ON gs_serv.id = gs_serv_times.serverid  
+				AND gs_serv_times.removed = 0
 				
 			LEFT JOIN gs_serv_admins
-				on gs_serv.id = gs_serv_admins.serverid
+				ON gs_serv.id = gs_serv_admins.serverid
+				AND gs_serv_admins.isowner = 1
 			
 		WHERE 
-			gs_serv.removed        = 0 AND
-			gs_serv_admins.isowner = 1
+			gs_serv.removed = 0
 			$specific_server
 			
 		ORDER BY 
@@ -1361,10 +1362,10 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 						ON gs_mods_links.scriptid = scripts2.id
                         
                     LEFT JOIN gs_mods_admins
-                    	on gs_mods.id = gs_mods_admins.modid
+                    	ON gs_mods.id = gs_mods_admins.modid
+						AND gs_mods_admins.isowner = 1
 				
 			WHERE
-				gs_mods_admins.isowner = 1 AND
 				$where_condition
 				
 			ORDER BY
@@ -1775,7 +1776,7 @@ function GS_get_current_url($add_https=true, $add_path=true) {
 }
 
 // Read array with servers and output html
-function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=false, $server_order=[], $add_how_to_join=false) {
+function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=false, $server_order=[]) {
 	$html         = "";
 	$js_starttime = [];
 	$js_duration  = [];
@@ -1932,7 +1933,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 
 		if (isset($user_list[$server["createdby"]])) {
 			$js_addedon[] = date("c",strtotime($server["created"]));
-			$html .= "<small><span style=\"float:right;\">".lang("GS_STR_ADDED_BY_ON",[$user_list[$server["createdby"]],"<span class=\"server_addedon\">".date("jS M Y",strtotime($server["created"]))."</span>"])."</span></small>";
+			$html .= "<span style=\"font-size:x-small;\">$uniqueid</span><small><span style=\"float:right;\">".lang("GS_STR_ADDED_BY_ON",[$user_list[$server["createdby"]],"<span class=\"server_addedon\">".date("jS M Y",strtotime($server["created"]))."</span>"])."</span></small>";
 			
 			if ($server["admin"] != $server["createdby"])
 				$html .= "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$server["admin"]], date("jS M Y",strtotime($server["adminsince"]))])."</small>";
@@ -1947,9 +1948,6 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 		</div>
 		
 		</div></div></div>";
-		
-		if ($add_how_to_join)
-			$html .= "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_CONNECT")."</a></p>";
 	}
 	
 	$locale_file = "en-gb";
