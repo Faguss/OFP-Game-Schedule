@@ -101,7 +101,10 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->add_emptyspan("convertlink_field", "id=\"convertlink_field_group\"");
 	$form->add_text("size"       , lang("GS_STR_MOD_DOWNLOADSIZE")       , "", "128");
 	$form->add_select("sizetype" , ""                                    , "", GS_SIZE_TYPES, "MB");
-	$form->add_text("alias"      , lang("GS_STR_MOD_ALIAS")              , lang("GS_STR_MOD_ALIAS_DESC",["<a target=\"_blank\" href=\"install_scripts#alias\">","</a>"]), "@ww4mod21 @ww4mod");
+	
+	if ($form->hidden["display_form"] == "Edit")
+		$form->add_text("alias", lang("GS_STR_MOD_ALIAS"), lang("GS_STR_MOD_ALIAS_DESC",["<a target=\"_blank\" href=\"install_scripts#alias\">","</a>"]), "@ww4mod21 @ww4mod");
+	
 	$form->add_select("is_mp"    , lang("GS_STR_MOD_MPCOMP")             , lang("GS_STR_MOD_MPCOMP_HINT")     , [[lang("GS_STR_MOD_MPCOMP_YES"),"1"], [lang("GS_STR_MOD_MPCOMP_NO"),"0"]], "1", "radio");
 	$form->add_text("website"    , lang("GS_STR_SERVER_WEBSITE")         , ""                                 , GS_get_current_url(true, false));
 	$form->add_imagefile("logo"  , lang("GS_STR_SERVER_LOGO")            , lang("GS_STR_SERVER_LOGO_HINT")    , GS_LOGO_FOLDER, 10240*2.5);
