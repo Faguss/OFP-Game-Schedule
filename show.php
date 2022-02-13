@@ -30,7 +30,7 @@ echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, 1, $inpu
 
 
 if (!empty($mods["id"]))
-	echo "<center><a style=\"cursor:pointer; font-weight:bold; font-size:medium;\" href=\"https://youtu.be/KSK_H8Dc4oo\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_INSTALL")."</a></center><br>";
+	echo "<center><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"https://youtu.be/vj04wSh-9CA\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_INSTALL")."</a></center><br>";
 
 echo "<div class=\"row\">";
 $user_list        = [];

@@ -46,7 +46,7 @@ echo GS_scripting_highlighting("http://example.com/locked.rar  /password:123");?
 			<ul>
 				<li>If it's <code>.rar</code>, <code>.zip</code>, <code>.7z</code>, <code>.ace</code>, <code>.exe</code> or <code>.cab</code> then it will extract it and inspect its contents.</li>
 				<li>If an <code>.exe</code> couldn't be unpacked and nothing else was copied up until that point then it will ask the user to run it.</li>
-				<li>If it's a <code>.pbo</code> then it will detect its type move it to the <code>addons</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> directory in the modfolder.</li>
+				<li>If it's a <code>.pbo</code> then it will detect its type and move it to the <code>addons</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> directory in the modfolder.</li>
 				<li>Other types of files are ignored.</li>
 			</ul></p>
 
@@ -74,13 +74,13 @@ echo GS_scripting_highlighting("http://example.com/locked.rar  /password:123");?
 	<div class="panel panel-default betweencommands">
 		<div class="panel-heading"><strong>URL Format</strong></div>	
 		<div class="panel-body">
-			<p>Links should start with the protocol. Spaces should be replaced with <code>%20</code>. They have to directly point to the file.</p>
+			<p>1. Links should start with the protocol. Spaces should be replaced with <code>%20</code>. They have to directly point to the file.</p>
 			<pre><code><?php
 echo GS_scripting_highlighting("http://ofp-faguss.com/addon/winterofp/[coop]%20nogova%20virus%20-%20they%20hunger.noe_winter.7z");?></code></pre>
 			
 			<br>
 			<br>
-			<p>If a website requires you to go through intermediate pages in order to receive a direct link then write address to each one.</p>
+			<p>2. If a website requires you to go through intermediate pages in order to receive a direct link then write address to each one.</p>
 <pre><code><span class="fake_link">&lt;starting url&gt;</span>  &lt;optionally intermediate links&gt;  <span class="download_filename">&lt;file name&gt;</span></code></pre>
 			<p>You don't actually have to type in full intermediary URL but only the unique part that is easily searcheable in the page source code.
 			Last item is the name of the file that's going to be downloaded. If it contains spaces then put it in quotation marks.</p>
@@ -90,8 +90,8 @@ echo GS_scripting_highlighting("https://www.moddb.com/mods/sanctuary1/downloads/
 <p>In the above example installer will:</p>
 <ul>
 <li>Download page https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25</li>
-<li>Find URL containing phrase /downloads/start/ and download web page behind that link</li>
-<li>Find URL containing phrase /downloads/mirror/ and download its contents as ww4mod25rel.rar</li>
+<li>Find URL containing phrase <span class="courier">/downloads/start/</span> and download web page behind that link</li>
+<li>Find URL containing phrase <span class="courier">/downloads/mirror/</span> and download its contents as ww4mod25rel.rar</li>
 </ul>
 <p>On the mod update page, next to the script input box you'll find a tool automatically convert URL to the correct format (for a few selected sites).
 More information on how to find intermediate links on your own you'll find <a href="#testing">below</a>.</p>
@@ -99,15 +99,16 @@ More information on how to find intermediate links on your own you'll find <a hr
 
 <br>
 <br>
-<p>If you have <b>backup links</b> then place them between curly brackets.</p>
+<p>3. If you have <b>backup links</b> then place all of them between a pair of curly brackets. Example:</p>
 <pre><code><?php
 echo GS_scripting_highlighting("{
 	http://files.ofpisnotdead.com/files//ofpd/mods/fdfmod14_ww2.rar
 	http://fdfmod.dreamhosters.com/ofp/fdfmod14_ww2.rar
 	https://www.gamefront.com/games/operation-flashpoint/file/fdf-mod  fdf-mod/download  expires=  fdfmod14_ww2.rar
 }");?></code></pre>
+<p>If the first one fails then installer will try the second one and so on.</p>
 <br>
-<p>To save disk space downloaded file is deleted when the next download starts. To keep it use <a href="#get">GET</a> command.</p>
+<p>4. To save disk space downloaded file is deleted when the next download starts. To keep it use <a href="#get">GET</a> command.</p>
 
 
 		</div>
@@ -539,7 +540,7 @@ UNPACK {
 	https://ofp.today/download/unofaddons2/ww4mod25rel.7z
 }
 
-; Move all the unpacked content (including folders) to the modfolder in the game directory (will be created if it doesn\'t exist)
+; Move all the unpacked content (including folders) to the modfolder in the game directory (will be created if it doesn't exist)
 MOVE    *  /match_dir
 
 ; Download and extract
@@ -548,16 +549,16 @@ UNPACK {
 	https://ofp.today/download/unofaddons2/ww4mod25patch1.7z
 }
 
-; Move all the text files from the extracted files to the modfolder root
+; Move text files (from the directory with extracted files) to the modfolder root
 MOVE    *.txt
 
-; Move all the pbo files to the modfolder\\addons
+; Move addons (from the directory with extracted files) to the modfolder\\addons
 MOVE    *.pbo  addons
 
-; Move all the remaining files (including folders) to the modfolder\\Bonus
+; Move all remaining extracted files and folders to the modfolder\\Bonus
 MOVE    *  Bonus  /match_dir
 
-; Replace modfolder\\bin\\resource.cpp (file that defines user interface) for the one with widescreen compatibility
+; Replace modfolder\\bin\\resource.cpp (file that defines user interface) for widescreen compatibility
 UNPACK {
 	http://ofp-faguss.com/fwatch/download/ofp_aspect_ratio207.7z 
 	http://faguss.paradoxstudio.uk/fwatch/download/ofp_aspect_ratio207.7z
@@ -606,10 +607,10 @@ UNPACK {
 	https://ofp.today/download/mods/FDF_desert_pack.7z
 }
 
-; Move readme file to the modfolder\\readme_addons
+; Move extracted readme file to the modfolder\\readme_addons
 MOVE  "FDF Mod - Al Maldajah - Readme.txt" readme_addons
 
-; Move remaining content to the modfolder
+; Move all remaining extracted files and folders to the modfolder
 MOVE  * /match_dir
 
 
@@ -621,10 +622,10 @@ UNPACK {
 	https://ofp.today/file/islands2/fdf_winter_maldevic.7z
 }
 
-; Move readme file to the modfolder\\readme_addons
+; Move extracted readme file to the modfolder\\readme_addons
 MOVE  "FDF Mod - Winter Maldevic - Readme.txt" readme_addons
 
-; Move remaining content to the modfolder
+; Move all remaining extracted files and folders to the modfolder
 MOVE  * /match_dir
 
 
@@ -636,17 +637,14 @@ UNPACK {
 	https://ofp.today/download/islands/Suursaari_release_v10.7z
 }
 
-; Move addon the modfolder\\addons
+; Move extracted addon the modfolder\\addons
 MOVE    FDF_Suursaari.pbo  addons
 
-; Move folder containing island cutscenes to the modfolder\\IslandCutscenes
+; Move extracted folder with island cutscenes to the modfolder\\IslandCutscenes
 MOVE    Suursaari_anim  IslandCutscenes
 
-; Move remaining files to the modfolder\\readme_addons
+; Move all remaining extracted files to the modfolder\\readme_addons
 MOVE    *  readme_addons
-
-; Extract addon modfolder\addons\FDF_Suursaari.pbo 
-UNPBO  addons\\FDF_Suursaari.pbo
 
 
 ; Download and extract Winter Kolgujev island
@@ -659,13 +657,13 @@ UNPACK {
 	https://www.lonebullet.com/mods/download-winternogojev11-operation-flashpoint-resistance-mod-free-42045.htm /file/ files.lonebullet.com winternogojev11.zip
 }
 
-; Move addons the modfolder\\addons
+; Move all extracted addons the modfolder\\addons
 MOVE    *.pbo  addons
 
-; Move readme file to the modfolder\\readme_addons
+; Move extracted readme file to the modfolder\\readme_addons
 MOVE    "Readme-Winter Nogojev.txt"  readme_addons
 
-; Move folder containing island cutscenes to the modfolder\\IslandCutscenes
+; Move extracted folder with island cutscenes to the modfolder\\IslandCutscenes
 MOVE    KEGnoecainS_anim  IslandCutscenes
 
 
@@ -676,10 +674,10 @@ UNPACK {
 	http://faguss.paradoxstudio.uk/addon/finmod/mt-lb22.7z
 }
 
-; Move addons the modfolder\\addons
+; Move all extracted addons the modfolder\\addons
 MOVE    *.pbo  addons
 
-; Move readme file to the modfolder\\readme_addons and rename it to mt-lb22_release_info.txt
+; Move extracted readme file to the modfolder\\readme_addons and rename it to mt-lb22_release_info.txt
 MOVE    release_info.txt  readme_addons  mt-lb22_release_info.txt
 
 
@@ -691,10 +689,10 @@ UNPACK {
 	https://ofp.today/download/unofaddons/RussianWeaponsPack11.7z
 }
 
-; Move addons the modfolder\\addons
+; Move all extracted addons the modfolder\\addons
 MOVE    *.pbo  addons
 
-; Move readme file to the modfolder\\readme_addons and rename it to RussianWeaponsPack11_readme.txt
+; Move extracted readme file to the modfolder\\readme_addons and rename it to RussianWeaponsPack11_readme.txt
 MOVE    readme.txt  readme_addons  RussianWeaponsPack11_readme.txt
 
 
@@ -706,14 +704,14 @@ MOVE    readme.txt  readme_addons  RussianWeaponsPack11_readme.txt
 }
 
 
-; Replace resource.cpp for widescreen
+; Replace resource.cpp for widescreen compatibility
 UNPACK {
 	http://ofp-faguss.com/fwatch/download/ofp_aspect_ratio207.7z 
 	http://faguss.paradoxstudio.uk/fwatch/download/ofp_aspect_ratio207.7z
 }
 MOVE    Files\\FDF\\Resource.cpp  bin
 
-; Replace island cutscenes so that msg will show up with Fwatch
+; Replace island cutscenes so that a message will show up when Fwatch is enabled
 UNPACK {
 	http://ofp-faguss.com/fwatch/download/anims_fwatch.7z 
 	http://faguss.paradoxstudio.uk/fwatch/download/anims_fwatch.7z
@@ -788,14 +786,14 @@ ELSE
 ; Close section of commands that depend on the game version
 ENDIF
 
-; Replace resource.cpp for widescreen
+; Replace resource.cpp for widescreen compatibility
 UNPACK {
 	http://ofp-faguss.com/fwatch/download/ofp_aspect_ratio207.7z 
 	http://faguss.paradoxstudio.uk/fwatch/download/ofp_aspect_ratio207.7z
 }
 MOVE    Files\\WGL\\Resource.cpp  bin
 
-; Replace island cutscenes so that msg will show up with Fwatch
+; Replace island cutscenes so that a message will show up when Fwatch is enabled
 UNPACK {
 	http://ofp-faguss.com/fwatch/download/anims_fwatch.7z 
 	http://faguss.paradoxstudio.uk/fwatch/download/anims_fwatch.7z
