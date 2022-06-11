@@ -13,6 +13,7 @@ if (!$user->isLoggedIn())
 $uid = $user->data()->id;
 
 require_once "common.php";
+$gs_my_permission_level = GS_get_permission_level($user);
 
 if ($gs_my_permission_level != GS_PERM_ADMIN)
 	Redirect::to('index.php');

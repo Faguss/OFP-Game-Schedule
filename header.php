@@ -38,6 +38,8 @@ $record_column = $record_type=="server" ? "server" : "mod";
 
 // Start form
 require_once "common.php";
+$gs_my_permission_level = GS_get_permission_level($user);
+
 $form             = new Generated_Form(["uniqueid", "action", "display_form", "display_name", "display_subform"]);
 $form->size       = 8;
 $form->label_size = 3;

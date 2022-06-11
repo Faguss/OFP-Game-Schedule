@@ -162,7 +162,6 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				"access"      => $data["access"],
 				"forcename"   => $data["forcename"],
 				"type"        => $data["type"],
-				"alias"       => $data["alias"],
 				"is_mp"       => $data["is_mp"],
 				"website"     => $data["website"],
 				"logo"        => $data["logo"]
@@ -194,6 +193,8 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				$script_fields["uniqueid"]  = substr(strtolower(Hash::unique()), rand(0,56), 8);
 				$script_fields["createdby"] = $uid;
 				$update_fields["createdby"] = $uid;
+			} else {
+				$mod_fields["alias"] = $data["alias"];
 			}
 					
 			$mod_fields["id"] = $id;

@@ -34,26 +34,7 @@ $lang = array_merge($lang, array(
 	"GS_STR_MENU_FACEBOOKFORUM" => "Обсуждайте в Facebook",
 	"GS_STR_MENU_VK" => "ВКонтакте",
 	"GS_STR_MENU_VKFORUM" => "Обсуждайте в ВКонтакте",
-	
-    #Quickstart page	
-	"GS_STR_QUICKSTART_WELCOME" => "Расписание Игр для Operation Flashpoint / Arma: Cold War Assault с расширением Fwatch",
-	"GS_STR_QUICKSTART_DESCRIPTION" => "Собирайтесь с другими игроками на одном сервере с одинаковыми аддонами",
-	"GS_STR_QUICKSTART_DESCRIPTION2" => "Игроки автоматически устанавливают моды и подключаются к серверу",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "Для игроков",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "Для организаторов",
-	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Для начала нужно войти в аккаунт %m1%",
-	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Добавьте новый сервер. Заполните поля для информации о сервере",
-	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Перейдите в раздел \"Расписание\". Задайте время начала игры",
-	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Дополнительно: если на Вашем сервере используются моды, выберите и добавьте их в список",
-	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "Вы также можете добавить свой собственный мод",
-"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "After adding a game time the server will be listed publicly. Players can join now",
-	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Вам понадобится Fwatch 1.16 и OFP Aspect Ratio сборки 2.07. %m1%Скачать%m2% Запустите игру, используя Fwatch. Вы увидите кнопку \"Mods\" в левом нижнем углу. Нажмите на неё, а затем на кнопку \"Расписание\". Выберите сервер из списка",
-	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Нажмите два раза на название сервера, чтобы просмотреть опции. Если Вам не хватает необходимых модов, нажмите два раза на \"Скачать\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Дождитесь завершения установки. Установка не прервётся во время или при закрытии игры",
-	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Как только установка закончится, перейдите к опциям сервера и нажмите два раза на \"Подключиться\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Приятной игры!",
-	"GS_STR_QUICKSTART_HOWTO_CONNECT" => "Как подключиться",
-	"GS_STR_QUICKSTART_HOWTO_INSTALL" => "Как установить",
+	"GS_STR_MENU_TRANSLATION" => "Перевод",
 	
     #Home page	
 	"GS_STR_INDEX_WELCOME" => "Добро пожаловать в Расписание Игр для OFP",
@@ -127,6 +108,7 @@ $lang = array_merge($lang, array(
     #Display server info page	
 	"GS_STR_SERVER_MODS" => "Моды",
 	"GS_STR_SERVER_GAMETIME" => "Расписание игр",
+	"GS_STR_SERVER_HOWTO_CONNECT" => "Как подключиться",
 	
     #Edit server schedule page
 "GS_STR_SERVER_EVENT_PAGE_TITLE" => "Расписание для %m1%",
@@ -251,6 +233,7 @@ $lang = array_merge($lang, array(
 	"GS_STR_MOD_MANAGED_BY_SINCE" => "Управляется пользователем %m1% с %m2%",
 	"GS_STR_MOD_PREVIEW_INSTSCRIPT" => "Предпросмотр %m1%скрипт установки%m2%:",
 	"GS_STR_MOD_SHOW_INSTSCRIPT" => "%m1%Показать%m2% подробности установки",
+	"GS_STR_MOD_HOWTO_INSTALL" => "Как установить",
 
     #Add/Edit mod version section
 "GS_STR_MOD_UPDATE_PAGE_TITLE" => "Installation for the %m1% mod",

@@ -34,26 +34,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MENU_FACEBOOKFORUM" => "Discuss on Facebook",
 	"GS_STR_MENU_VK" => "VK",
 	"GS_STR_MENU_VKFORUM" => "Discuss on VK",
-	
-    #Quickstart page
-"GS_STR_QUICKSTART_WELCOME" => "Game Schedule for the game Operation Flashpoint / Arma: Cold War Assault with the Fwatch extension",
-"GS_STR_QUICKSTART_DESCRIPTION" => "Bring players to the same server, at the same time with the same addons",
-	"GS_STR_QUICKSTART_DESCRIPTION2" => "Players automatically install mods and connect to the server",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "For players",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "For organizers",
-	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "First you log in with your %m1% account",
-"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Add a new server record. Fill the fields with information about the OFP server you're going to play on",
-	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Now go to the \"Schedule\" section. Set the game start time",
-"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Optionally: if the server uses mods then add them from the list",
-	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "You can also submit your own mod",
-"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "After adding a game time the server will be listed publicly. Players can join now",
-	"GS_STR_QUICKSTART_FORPLAYERS_START" => "You need Fwatch 1.16 and OFP Aspect Ratio pack 2.07. %m1%Download%m2% Start the game with Fwatch. You'll see \"Mods\" button in the lower left corner. Click on it and then on the \"Schedule\" button. Select server from the list",
-	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Double-click on the server name to show available options. If you lack required mods then double-click on the \"Download\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Wait for the installer to finish. Playing the game or even quitting it won't affect the installation",
-	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Once it's done go to the server options again and double-click on the \"Connect\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Have fun playing!",
-	"GS_STR_QUICKSTART_HOWTO_CONNECT" => "How to join",
-	"GS_STR_QUICKSTART_HOWTO_INSTALL" => "How to install",
+	"GS_STR_MENU_TRANSLATION" => "Translation",
 	
     #Home page
 	"GS_STR_INDEX_WELCOME" => "Welcome to the OFP Game Schedule",
@@ -127,6 +108,7 @@ $lang = array_merge($lang,array(
     #Display server info page
 	"GS_STR_SERVER_MODS" => "Mods",
 	"GS_STR_SERVER_GAMETIME" => "Game Time",
+	"GS_STR_SERVER_HOWTO_CONNECT" => "How to join",
 	
     #Edit server schedule page
 "GS_STR_SERVER_EVENT_PAGE_TITLE" => "Schedule for the %m1% Server",
@@ -251,6 +233,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MOD_MANAGED_BY_SINCE" => "Managed by %m1% since %m2%",
 	"GS_STR_MOD_PREVIEW_INSTSCRIPT" => "Preview %m1%Installation Script%m2%:",
 	"GS_STR_MOD_SHOW_INSTSCRIPT" => "%m1%Show%m2% installation details",
+	"GS_STR_MOD_HOWTO_INSTALL" => "How to install",
 	
     #Add/Edit mod version section
 "GS_STR_MOD_UPDATE_PAGE_TITLE" => "%m1% Mod Installation",

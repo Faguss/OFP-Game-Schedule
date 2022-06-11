@@ -2,20 +2,20 @@
 
 $lang = array_merge($lang,array(
 	#Misc
-    "GS_STR_DOWNLOAD" => "Pobierz",
+	"GS_STR_DOWNLOAD" => "Pobierz",
 	"GS_STR_TRANSLATION" => " ",
 	"GS_STR_DISABLED" => "Wyłączone",
 	"GS_STR_ENABLED" => "Włączone",
 	"GS_STR_ADDED_BY" => "dodał",
 	"GS_STR_ADDED_BY_ON" => "Dodał %m1% dnia %m2%",
-	"GS_STR_MANAGED_BY_SINCE" => "Zarządzane przez %m1% od %m2%",
+	"GS_STR_MANAGED_BY_SINCE" => "Zarządzany przez %m1% od %m2%",
 	"GS_STR_ERROR_EXPIRED" => "Strona straciła ważność. Spróbuj jeszcze raz od strony głównej",
 	"GS_STR_ERROR_GET_DB_RECORD" => "Nie udało się załadować danych",
 	"GS_STR_ERROR_FORMDATA" => "Niepoprawny formularz",
 	"GS_STR_WEBSITE_TITLE" => "Rozkład Rozgrywek w OFP",
 	"GS_STR_WEBSITE_DESCRIPTION" => "Przygotuj grę sieciową w OFP",
 	"GS_STR_SHOW_CHANGELOG" => "Pokaż zmiany",
-	"GS_STR_MOD_UPDATES" => "Jak działają aktualizacje modów?",
+	"GS_STR_MOD_UPDATES" => "Jak są aktualizowane mody?",
 	
     #Drop-down menu in the navigation bar
 	"GS_STR_MENU_MODUPDATES" => "Aktualizacje Modów",
@@ -34,26 +34,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MENU_FACEBOOKFORUM" => "Dyskusja na Facebooku",
 	"GS_STR_MENU_VK" => "VK",
 	"GS_STR_MENU_VKFORUM" => "Dyskusja na VK",
-
-    #Quickstart page
-	"GS_STR_QUICKSTART_WELCOME" => "Rozkład Rozgrywek do gry Operation Flashpoint / Arma: Cold War Assault z rozszerzeniem Fwatch",
-	"GS_STR_QUICKSTART_DESCRIPTION" => "Zgromadź graczy na jednym serwerze, o tej samej porze, z identycznymi addonami",
-	"GS_STR_QUICKSTART_DESCRIPTION2" => "Gracze automatycznie instalują mody i podłączają się do serwera",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "Dla graczy",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "Dla organizatorów",
-	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Najpierw zaloguj się przy pomocy konta %m1%",
-	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Dodaj nowy wpis serwera. Wypełnij puste pola danymi o serwerze na którym będzieci grali",
-	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Przejdź do sekcji \"Harmonogram\". Ustaw czas rozpoczęcia gry",
-	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Dodatkowo: jeśli serwer używa modów to dodaj je z listy",
-	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "Możesz także dodać własny mod",
-	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "Po dodaniu czasu rozpoczęcia gry serwer pojawi się na publicznej liście. Gracze mogą już dołączyć",
-	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Potrzebujesz Fwatch 1.16 oraz paczki OFP Aspect Ratio pack 2.07. %m1%Pobierz%m2% Uruchom grę z Fwatchem. W lewym dolnym rogu pojawi się przycisk \"Mods\". Kliknij na nim a potem na przycisku \"Plan Rozgrywek\". Wybierz serwer z listy",
-	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Kliknij dwa razy na nazwie serwera żeby wyświetlić opcje. Jeśli nie masz wymaganych modów to kliknij dwa razy na \"Ściągnij\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Zaczekaj aż instalator skończy. Granie albo wyjście z gry nie ma wpływu na proces instalacji",
-	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Po instalacji przejdź ponownie do opcji serwera i kliknij podwójnie na \"Dołącz\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Miłej zabawy!",
-	"GS_STR_QUICKSTART_HOWTO_CONNECT" => "Jak dołączyć",
-	"GS_STR_QUICKSTART_HOWTO_INSTALL" => "Jak zainstalować",
+	"GS_STR_MENU_TRANSLATION" => "Tłumaczenie",
 	
     #Home page
 	"GS_STR_INDEX_WELCOME" => "Witamy w Rozkładzie Rozgrywek do OFP",
@@ -126,7 +107,8 @@ $lang = array_merge($lang,array(
     
     #Display server info page
 	"GS_STR_SERVER_MODS" => "Mody",
-	"GS_STR_SERVER_GAMETIME" => "Harmonogram",	
+	"GS_STR_SERVER_GAMETIME" => "Harmonogram",
+	"GS_STR_SERVER_HOWTO_CONNECT" => "Jak dołączyć",
 
     #Edit server schedule page
 	"GS_STR_SERVER_EVENT_PAGE_TITLE" => "Harmonogram serwera %m1%",
@@ -226,7 +208,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MOD_MPCOMP_NO" => "Nie",
 	"GS_STR_MOD_SUBMIT" => "Zmień szczegóły",
 
-    #Convert download link modal
+	#Convert download link modal
 	"GS_STR_MOD_CONVERTLINK" => "Skonwertuj link do pliku",
 	"GS_STR_MOD_CONVERTLINK_DESC" => "Skonwertuj link (z jednej z witryn podanych poniżej) na format zgodny z instalatorem",
 	"GS_STR_MOD_CONVERTLINK_SHAREABLE" => "link udostępnienia",
@@ -235,24 +217,25 @@ $lang = array_merge($lang,array(
 	"GS_STR_MOD_CONVERTLINK_BIGFILE" => "Wymaga potwierdzenia",
 	"GS_STR_MOD_CONVERTLINK_BIGFILE_DESC" => "(zazwyczaj dla plików powyżej 100 MB, %m1%sprawdź%m2%)",
 	"GS_STR_MOD_CONVERTLINK_INSERT" => "Wstaw",
-    
-    #Edit mod details page feedback
-    "GS_STR_MOD_ADDED" => "Wpis moda został dodany",
-    "GS_STR_MOD_UPDATED" => "Wpis moda został zaktualizowany",
+	
+	#Edit mod details page feedback
+	"GS_STR_MOD_ADDED" => "Wpis moda został dodany",
+	"GS_STR_MOD_UPDATED" => "Wpis moda został zaktualizowany",
 	"GS_STR_MOD_NOPERM_ERROR" => "Nie masz pozwolenia na zmienianie tego wpisu moda",
 	"GS_STR_MOD_MAX_ERROR" => "Nie można przekroczyć dozwolonej liczby wpisów modów",
 	"GS_STR_MOD_REMOVED_ERROR" => "Wpis moda został usunięty",
 	"GS_STR_MOD_NAME_ERROR" => "Nazwa jest niepoprawna w systemie Windows",
 	"GS_STR_MOD_ADDED_ERROR" => "Nie udało się dodać nowego wpisu moda",
 	"GS_STR_MOD_UPDATED_ERROR" => "Nie udało się zaktualizować wpisu moda",
-    
-    #Display mod info page    
+	
+	#Display mod info page
 	"GS_STR_MOD_CURATOR" => "Kustosz",
 	"GS_STR_MOD_MANAGED_BY_SINCE" => "Zarządzany przez %m1% od %m2%",
 	"GS_STR_MOD_PREVIEW_INSTSCRIPT" => "Podgląd %m1%skryptów instalacyjnych%m2%:",
 	"GS_STR_MOD_SHOW_INSTSCRIPT" => "%m1%Pokaż%m2% szczegóły instalacji",
+	"GS_STR_MOD_HOWTO_INSTALL" => "Jak zainstalować",
 
-    #Add/Edit mod version section
+	#Add/Edit mod version section
 	"GS_STR_MOD_UPDATE_PAGE_TITLE" => "Instalacja moda %m1%",
 	"GS_STR_MOD_SECTION_VERSION" => "Wersje",
 	"GS_STR_MOD_SELECT_VER" => "Wybierz wersję",

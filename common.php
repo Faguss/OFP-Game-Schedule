@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2021,10,6,3,19,8,36,633,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2022,6,7,2,16,48,13,720,120,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -123,39 +123,6 @@ define("GS_PERMISSION_MAX_SERV_CONTRIBUTORS", [
 ]);
 define("GS_PERMISSION_MAX_MOD_CONTRIBUTORS", GS_PERMISSION_MAX_SERV_CONTRIBUTORS);
 
-$gs_my_permission_level = GS_PERM_NOUSER;
-
-// Check user's permission level
-if (isset($user) && $user->isLoggedIn()) {
-	$sql = "
-		SELECT 
-			permission_id 
-			
-		FROM 
-			user_permission_matches,
-			permissions 
-			
-		WHERE 
-			user_permission_matches.permission_id = permissions.id AND 
-			user_permission_matches.user_id       = ?
-	";
-
-	if ($db->query($sql,[$user->data()->id])->error()) {
-		if ($user->data()->id == 1)
-			echo $sql . $db->errorString();
-		die(lang("GS_STR_ERROR_GET_DB_RECORD"));
-	}
-
-	// Final permission level is the one farthest in the array
-	foreach($db->results(true) as $row) {
-		$selected = array_search($row["permission_id"], GS_PERMISSION_LEVELS);
-		$current  = array_search($gs_my_permission_level, GS_PERMISSION_LEVELS);
-
-		if ($selected > $current)
-			$gs_my_permission_level = $row["permission_id"];
-	}
-}
-
 // Request types for GS_list_servers and GS_list_mods
 define("GS_REQTYPE_WEBSITE", 0);
 define("GS_REQTYPE_GAME", 1);
@@ -167,6 +134,45 @@ define("GS_LANGUAGES", ["game"=>["English","Russian","Polish"], "file"=>["en-US"
 
 
 // Functions
+// Check user's permission level
+function GS_get_permission_level($user) {
+	$gs_my_permission_level = GS_PERM_NOUSER;
+	
+	if (isset($user) && $user->isLoggedIn()) {
+		$db  = DB::getInstance();
+		$sql = "
+			SELECT 
+				permission_id 
+				
+			FROM 
+				user_permission_matches,
+				permissions 
+				
+			WHERE 
+				user_permission_matches.permission_id = permissions.id AND 
+				user_permission_matches.user_id       = ?
+		";
+
+		if ($db->query($sql,[$user->data()->id])->error()) {
+			if ($user->data()->id == 1)
+				echo $sql . $db->errorString();
+			echo lang("GS_STR_ERROR_GET_DB_RECORD");
+			return $gs_my_permission_level;
+		}
+
+		// Final permission level is the one farthest in the array
+		foreach($db->results(true) as $row) {
+			$selected = array_search($row["permission_id"], GS_PERMISSION_LEVELS);
+			$current  = array_search($gs_my_permission_level, GS_PERMISSION_LEVELS);
+
+			if ($selected > $current)
+				$gs_my_permission_level = $row["permission_id"];
+		}
+	}
+	
+	return $gs_my_permission_level;
+}
+
 // Format list with installation scripts for html select 
 function GS_script_list_to_script_select($script_list, $name, $section) {
 	$scripts_select = [];

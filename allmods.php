@@ -133,7 +133,7 @@ languageSwitcher();
 	foreach ($mod_labels as $key=>$label)
 		echo "<a align=\"center\" href=\"#".$anchors[$key]."\">$label</a>  &nbsp; ";
 	
-	echo "</p><h4><center><a href=\"https://youtu.be/KSK_H8Dc4oo\">".lang("GS_STR_QUICKSTART_HOWTO_INSTALL")."</a></center></h4></div>";
+	echo "</p><h4><center><a href=\"https://youtu.be/KSK_H8Dc4oo\">".lang("GS_STR_MOD_HOWTO_INSTALL")."</a></center></h4></div>";
 	
 	echo $html;
 ?>

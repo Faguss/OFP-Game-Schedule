@@ -23,14 +23,14 @@ $csrf          = Session::get(Config::get('session/token_name'));
 
 // Display servers	
 if (!empty($servers["id"]))
-	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_CONNECT")."</a></p>";
+	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
 		
 echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, 1, $input["server"], 0) . "</div>";
 
 
 
 if (!empty($mods["id"]))
-	echo "<center><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"https://youtu.be/vj04wSh-9CA\" target=\"_blank\">".lang("GS_STR_QUICKSTART_HOWTO_INSTALL")."</a></center><br>";
+	echo "<center><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"https://youtu.be/vj04wSh-9CA\" target=\"_blank\">".lang("GS_STR_MOD_HOWTO_INSTALL")."</a></center><br>";
 
 echo "<div class=\"row\">";
 $user_list        = [];

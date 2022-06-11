@@ -14,6 +14,7 @@ require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 	<div class="container">
 <?php
 require_once "common.php";
+$gs_my_permission_level = GS_get_permission_level($user);
 $csrf = Session::get(Config::get('session/token_name'));
 
 if (isset($user) && $user->isLoggedIn()) ;

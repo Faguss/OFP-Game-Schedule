@@ -6,6 +6,7 @@ $url = GS_get_current_url() . "api";
 
 if ($lang["THIS_CODE"] == "en-US") {
 	$lang = array_merge($lang, array(
+		#API documentation page
 		"GS_API_TITLE" => "OFP Game Schedule API",
 		"GS_API_OVERVIEW" => "To get information in JSON format about the servers and mods on the website send a request to the <a href=\"%m1%\">%m1%</a> with the following arguments (GET or POST):",
 		"GS_API_SERVER" => "server identificator. Alternatively write \"current\" to get all public servers with upcoming game times or \"all\" for all the public servers.",
@@ -20,6 +21,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 
 if ($lang["THIS_CODE"] == "ru-RU") {
 	$lang = array_merge($lang, array(
+		#API documentation page
 		"GS_API_TITLE" => "API Расписания Игр OFP",
 		"GS_API_OVERVIEW" => "Чтобы получить информацию о серверах и модах на сайте в формате JSON, напишите запрос по ссылке <a href=\"%m1%\">%m1%</a> со следующими пунктами (GET или POST):",
 		"GS_API_SERVER" => "server - идентификатор сервера. Вы можете написать \"current\" (текущий), чтобы получить информацию о всех открытых серверах с расписанием будущих игр, или же можете написать \"all\" (все), чтобы получить информацию о всех открытых серверах.",
@@ -34,6 +36,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 
 if ($lang["THIS_CODE"] == "pl-PL") {
 	$lang = array_merge($lang, array(
+		#API documentation page
 		"GS_API_TITLE" => "API do Rozkładu Rozgrywek OFP",
 		"GS_API_OVERVIEW" => "Żeby otrzymać dane o serwerach i modach w formacie JSON wyślij zapytanie do <a href=\"%m1%\">%m1%</a> z następującymi argumentami (GET lub POST):",
 		"GS_API_SERVER" => "identyfikator serwera. Alternatywnie napisz \"current\" żeby dostać dane o wszystkich publicznych serwerach z nadchodzącymi rozgrywkami albo \"all\" żeby dostać dane o wszystkich publicznych serwerach.",
