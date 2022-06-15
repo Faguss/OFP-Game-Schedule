@@ -15,17 +15,17 @@ if (isset($_GET["lang"])) {
 if ($lang["THIS_CODE"] == "en-US") {
 	$lang = array_merge($lang, array(
 	#Quickstart page
-"GS_STR_QUICKSTART_WELCOME" => "Game Schedule for the game Operation Flashpoint / Arma: Cold War Assault with the Fwatch extension",
-"GS_STR_QUICKSTART_DESCRIPTION" => "Bring players to the same server, at the same time with the same addons",
+	"GS_STR_QUICKSTART_WELCOME" => "Game Schedule for the game Operation Flashpoint / Arma: Cold War Assault with the Fwatch extension",
+	"GS_STR_QUICKSTART_DESCRIPTION" => "Bring players to the same server, at the same time with the same addons",
 	"GS_STR_QUICKSTART_DESCRIPTION2" => "Players automatically install mods and connect to the server",
 	"GS_STR_QUICKSTART_FORPLAYERS" => "For players",
 	"GS_STR_QUICKSTART_FORORGANIZERS" => "For organizers",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "First you log in with your %m1% account",
-"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Add a new server record. Fill the fields with information about the OFP server you're going to play on",
+	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Add a new server record. Fill the fields with information about the OFP server you're going to play on",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Now go to the \"Schedule\" section. Set the game start time",
-"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Optionally: if the server uses mods then add them from the list",
+	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Optionally: if the server uses mods then add them from the list",
 	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "You can also submit your own mod",
-"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "After adding a game time the server will be listed publicly. Players can join now",
+	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "After adding a game time the server will be listed publicly. Players can join now",
 	"GS_STR_QUICKSTART_FORPLAYERS_START" => "You need Fwatch 1.16 and OFP Aspect Ratio pack 2.07. %m1%Download%m2% Start the game with Fwatch. You'll see \"Mods\" button in the lower left corner. Click on it and then on the \"Schedule\" button. Select server from the list",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Double-click on the server name to show available options. If you lack required mods then double-click on the \"Download\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Wait for the installer to finish. Playing the game or even quitting it won't affect the installation",
@@ -39,21 +39,21 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	$lang = array_merge($lang, array(
 	#Quickstart page
 	"GS_STR_QUICKSTART_WELCOME" => "Расписание Игр для Operation Flashpoint / Arma: Cold War Assault с расширением Fwatch",
-	"GS_STR_QUICKSTART_DESCRIPTION" => "Собирайтесь с другими игроками на одном сервере с одинаковыми аддонами",
+	"GS_STR_QUICKSTART_DESCRIPTION" => "Собирайтесь с другими игроками на одном сервере с одинаковыми аддонами в одно и то же время.",
 	"GS_STR_QUICKSTART_DESCRIPTION2" => "Игроки автоматически устанавливают моды и подключаются к серверу",
 	"GS_STR_QUICKSTART_FORPLAYERS" => "Для игроков",
 	"GS_STR_QUICKSTART_FORORGANIZERS" => "Для организаторов",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Для начала нужно войти в аккаунт %m1%",
-	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Добавьте новый сервер. Заполните поля для информации о сервере",
+	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Добавьте новый сервер. Заполните поля для информации о сервере, на котором будете играть.",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Перейдите в раздел \"Расписание\". Задайте время начала игры",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Дополнительно: если на Вашем сервере используются моды, выберите и добавьте их в список",
 	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "Вы также можете добавить свой собственный мод",
-"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "After adding a game time the server will be listed publicly. Players can join now",
+	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "Сервер будет отображаться для всех после добавления времени начала игры. Игроки могут подключиться.",
 	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Вам понадобится Fwatch 1.16 и OFP Aspect Ratio сборки 2.07. %m1%Скачать%m2% Запустите игру, используя Fwatch. Вы увидите кнопку \"Mods\" в левом нижнем углу. Нажмите на неё, а затем на кнопку \"Расписание\". Выберите сервер из списка",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Нажмите два раза на название сервера, чтобы просмотреть опции. Если Вам не хватает необходимых модов, нажмите два раза на \"Скачать\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Дождитесь завершения установки. Установка не прервётся во время или при закрытии игры",
 	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Как только установка закончится, перейдите к опциям сервера и нажмите два раза на \"Подключиться\"",
-"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "If the game starts later the same day then you can enable auto-join on time",
+	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "Если игра начинается позже в этот же день, то есть опция автоматического подключения во время начала.",
 	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Приятной игры!"
 	));
 }

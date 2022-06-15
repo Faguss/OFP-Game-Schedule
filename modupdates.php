@@ -9,10 +9,10 @@ if ($lang["THIS_CODE"] == "en-US") {
 		"GS_MU_DESCRIPTION" => "Description of the mod versioning system in the OFP Game Schedule",
 		
 		#Section titles
-		"GS_MU_SECTION1_TITLE" => "Add a new version",
+		"GS_MU_SECTION1_TITLE" => "Adding a new version",
 		"GS_MU_SECTION2_TITLE" => "Example",
-		"GS_MU_SECTION3_TITLE" => "Edit existing version",
-		"GS_MU_SECTION4_TITLE" => "Jumps between versions",
+		"GS_MU_SECTION3_TITLE" => "Editing an existing version",
+		"GS_MU_SECTION4_TITLE" => "Jumping between versions",
 		
 		#Add a new version
 		"GS_MU_SECTION1_PAR1" => "OFP Game Schedule website allows you to register a new mod version and distribute the new installation process to the users.",
@@ -56,10 +56,10 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 		"GS_MU_DESCRIPTION" => "Opis systemu wersjonowania modów w Rozkładzie Rozgrywek do OFP",
 		
 		#Section titles
-		"GS_MU_SECTION1_TITLE" => "Dodanie nowej wersji",
+		"GS_MU_SECTION1_TITLE" => "Dodawanie nowej wersji",
 		"GS_MU_SECTION2_TITLE" => "Przykład",
-		"GS_MU_SECTION3_TITLE" => "Zmiana istniejącej wersji",
-		"GS_MU_SECTION4_TITLE" => "Skoki pomiędzy wersjami",
+		"GS_MU_SECTION3_TITLE" => "Zmienianie istniejącej wersji",
+		"GS_MU_SECTION4_TITLE" => "Skakanie pomiędzy wersjami",
 		
 		#Add a new version
 		"GS_MU_SECTION1_PAR1" => "Strona Rozkładu Rozgrywek do OFP daje możliwość zarejestrowania nowej wersji moda i dystrybucję nowego procesu instalacyjnego do użytkowników.",
@@ -104,10 +104,10 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_MU_DESCRIPTION" => "Description of the mod versioning system in the OFP Game Schedule",
 
 #Section titles
-"GS_MU_SECTION1_TITLE" => "Add a new version",
+"GS_MU_SECTION1_TITLE" => "Adding a new version",
 "GS_MU_SECTION2_TITLE" => "Example",
-"GS_MU_SECTION3_TITLE" => "Edit existing version",
-"GS_MU_SECTION4_TITLE" => "Jumps between versions",
+"GS_MU_SECTION3_TITLE" => "Editing an existing version",
+"GS_MU_SECTION4_TITLE" => "Jumping between versions",
 
 #Add a new version
 "GS_MU_SECTION1_PAR1" => "OFP Game Schedule website allows you to register a new mod version and distribute the new installation process to the users.",

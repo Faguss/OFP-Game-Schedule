@@ -18,7 +18,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MOD_UPDATES" => "Jak są aktualizowane mody?",
 	
     #Drop-down menu in the navigation bar
-	"GS_STR_MENU_MODUPDATES" => "Aktualizacje Modów",
+	"GS_STR_MENU_MODUPDATES" => "Aktualizacje modów",
     "GS_STR_MENU_INSTALLSCRIPTS" => "Skrypty instalacyjne",
 	"GS_STR_MENU_QUICKSTART" => "Przewodnik",
 	"GS_STR_MENU_DEDICATED" => "Serwer dedykowany",
@@ -274,7 +274,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MOD_TO" => "do",
 	"GS_STR_MOD_NEWEST" => "najnowszej",
 	"GS_STR_MOD_LINK_FROM" => "Z wersji",
-	"GS_STR_MOD_LINK_FROM_HINT" => "Warunek skoku. Dozwolone są operatory porównania, słowa \"and\", \"or\" i nawiasy. Słowo \"version\" lub \"ver\" lub \"v\" oznacza wersję moda jaką ma gracz",
+	"GS_STR_MOD_LINK_FROM_HINT" => "Warunek skoku",
 	"GS_STR_MOD_LINK_TO" => "Do wersji",
 	"GS_STR_MOD_LINK_TO_HINT" => "Rezultat skoku",
 	"GS_STR_MOD_LINK_TO_NEWEST" => "Zawsze do najnowszej",

@@ -279,7 +279,7 @@ if ($form->hidden["display_form"] == "Update")
 	// Display controls for the current section	
 	if ($form->hidden["display_subform"] == "Link") {
 		$form->add_select("Link"   , lang("GS_STR_MOD_LINK")     , "", []);
-		$form->add_text("fromver"  , lang("GS_STR_MOD_LINK_FROM"), lang("GS_STR_MOD_LINK_FROM_HINT"), "v < 1.2");
+		$form->add_text("fromver"  , lang("GS_STR_MOD_LINK_FROM"), lang("GS_STR_MOD_LINK_FROM_HINT"), "version < 1.2");
 		$form->add_select("version", lang("GS_STR_MOD_LINK_TO")  , lang("GS_STR_MOD_LINK_TO_HINT")  , []);
 	} else {
 		$form->add_select("version"  , lang("GS_STR_MOD_SELECT_VER"), "", []);

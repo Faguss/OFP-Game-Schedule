@@ -20,8 +20,8 @@ $input = [
 $valid_data = 0;
 
 foreach(array_keys($input) as $key)
-	if (isset($_POST[$key])) {
-		$input[$key] = $_POST[$key];
+	if (isset($_GET[$key])) {
+		$input[$key] = $_GET[$key];
 		$valid_data++;
 	}
 
@@ -72,31 +72,37 @@ if (!$permissions[$languages[$input["language"]]])
 // Find which file is going to be edited
 $file_name    = null;
 $to_find_list = [];
+$add_tab      = false;
 
 switch($input["area"]) {
 	case "website" : 
 		$file_name    = "usersc//lang//" . $languages[$input["language"]] . ".php"; 
 		$to_find_list = ["\"{$input["stringtable_key"]}\" => "]; 
+		$add_tab      = true;
 		break;
 		
 	case "website_quickstart" : 
 		$file_name    = "quickstart.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$add_tab      = true;
 		break;
 		
 	case "website_modupdates" : 
 		$file_name    = "modupdates.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$add_tab      = true;
 		break;
 		
 	case "website_dedicated" : 
 		$file_name    = "installdedicated.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$add_tab      = true;
 		break;
 		
 	case "website_api" : 
 		$file_name    = "api_documentation.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$add_tab      = true;
 		break;
 		
 	case "mainmenu" : 
@@ -151,26 +157,32 @@ while (!feof($file)) {
 							$line              = substr_replace($line, $input["text_new"], $start, $end-$start);
 							$replaced          = true;
 							
-							if ($input["area"] == "website" && $line[0]!="\t")
-								$line = "\t" . $line;
-							
-							// Find and update meta-array in translation_strings.php
-							$start = strpos($contents, "\${$input["area"]}_updated");
-							
-							if ($start !== false) {
-								$start = strpos($contents, "\"{$languages[$input["language"]]}\"", $start);
+							// Indicate that the data has been changed
+							if ($add_tab) {
+								// for website strings by adding tabulator at the beginning
+								if ($line[0] != "\t")
+									$line = "\t" . $line;
+							} else {
+								// for game and installer by changing the php array
+								$contents2 = file_get_contents('translation_strings.php');								
+								$start     = strpos($contents2, "\${$input["area"]}_updated");
 								
 								if ($start !== false) {
-									$start = strpos($contents, "[", $start);
-									$end   = strpos($contents, "]", $start);
+									$start = strpos($contents2, "\"{$languages[$input["language"]]}\"", $start);
 									
-									if ($start!==false  &&  $end!==false) {
-										$array = explode(",", substr($contents, $start+1, $end-$start-1));
-										$index = array_search($input["stringtable_key"], $array);
+									if ($start !== false) {
+										$start = strpos($contents2, "[", $start);
+										$end   = strpos($contents2, "]", $start);
 										
-										if ($index !== false) {
-											unset($array[$index]);
-											$contents = substr_replace($contents, implode(",",$array), $start+1, $end-$start-1);
+										if ($start!==false  &&  $end!==false) {
+											$array = explode(",", substr($contents2, $start+1, $end-$start-1));
+											$index = array_search($input["stringtable_key"], $array);
+											
+											if ($index !== false) {
+												unset($array[$index]);
+												$contents2 = substr_replace($contents2, implode(",",$array), $start+1, $end-$start-1);
+												file_put_contents('translation_strings.php', $contents2);
+											}
 										}
 									}
 								}
