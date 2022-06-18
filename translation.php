@@ -54,7 +54,7 @@ foreach($db->results(true) as $row) {
 	forEach($languages as $language_key=>$language_name) {
 		$permission_name = strtolower($language_name) . "_translator";
 		
-		if (strcasecmp($row["name"],$permission_name) == 0)
+		if (strcasecmp($row["name"],$permission_name) == 0  ||  $row["name"] == "Administrator")
 			$permissions[$language_key] = true;
 	}
 }
@@ -144,7 +144,7 @@ $table_info = [
 			"Activity log"                               => "recent_activity"
 		],
 		"hide_rows"       => true,
-		"instructions"    => "Done"
+		"instructions"    => ""
 	], 
 	
 	"website_quickstart" => [
@@ -152,8 +152,8 @@ $table_info = [
 		"source"          => "quickstart.php",
 		"context_key"     => [], 
 		"context_section" => ["Quickstart page"=>"quickstart"],
-		"hide_rows"       => false,
-		"instructions"    => "Done"
+		"hide_rows"       => true,
+		"instructions"    => ""
 	], 
 	
 	"website_modupdates" => [
@@ -162,7 +162,7 @@ $table_info = [
 		"context_key"     => [], 
 		"context_section" => ["Mod updates page"=>"mod_updates"],
 		"hide_rows"       => true,
-		"instructions"    => "This entire page needs to be translated"
+		"instructions"    => ""
 	], 
 	
 	"website_dedicated"  => [
@@ -170,8 +170,8 @@ $table_info = [
 		"source"          => "installdedicated.php",
 		"context_key"     => [], 
 		"context_section" => ["Dedicated server support page"=>"dedicated_server"],
-		"hide_rows"       => false,
-		"instructions"    => "This entire page needs to be translated"
+		"hide_rows"       => true,
+		"instructions"    => ""
 	],
 	
 	"website_api" => [
@@ -179,8 +179,8 @@ $table_info = [
 		"source"          => "api_documentation.php",
 		"context_key"     => [], 
 		"context_section" => ["API documentation page"=>"api_documentation"],
-		"hide_rows"       => false,
-		"instructions"    => "Done"
+		"hide_rows"       => true,
+		"instructions"    => ""
 	],
 	
 	"mainmenu" => [
@@ -366,6 +366,7 @@ function display_table(selected_table) {
 	
 	var paragraph       = document.getElementById("instructions");
 	paragraph.innerHTML = instructions[wanted_table.id];
+	calculate_untranslated_cells(wanted_table);
 	
 	// Adjust table select drop-down list
 	var select = document.getElementById("table_select");
@@ -373,6 +374,24 @@ function display_table(selected_table) {
 	for (var i=0; i<select.options.length; i++)
 		if (select.options[i].value == selected_table.id)
 			select.selectedIndex = i;
+}
+
+// Count how many red cells the current table has and show it in the info
+function calculate_untranslated_cells(table) {
+	var number = 0;
+ 
+	for (var i = 0, row; row = table.rows[i]; i++)
+		for (var j = 0, col; col = row.cells[j]; j++)
+			if (col.classList.contains('danger'))
+			number++;
+	
+	var paragraph = document.getElementById("instructions");
+	var pos       = paragraph.innerHTML.indexOf("<b>Unfinished:</b>");
+
+	if (pos >= 0)
+		paragraph.innerHTML = paragraph.innerHTML.substr(0, pos);
+
+	paragraph.innerHTML += " <b>Unfinished:</b> " + number;
 }
 
 // Show or hide language column
@@ -399,7 +418,7 @@ function table_column_toggle(checkbox, column_class) {
 			irregular_cells[i].setAttribute("colspan", how_many_visible);
 	}
 	
-};
+}
 
 // Show or hide a single section in a table
 function display_table_section(section_row, action) {
@@ -426,7 +445,7 @@ function display_table_section(section_row, action) {
 		if (row == section_row) 
 			started_toggle = true;
 	}
-};
+}
 
 // Find table row with selected key and return table object and row object
 function find_stringtable_key(key) {
@@ -461,7 +480,7 @@ function find_stringtable_key(key) {
 	}
 	
 	return {active_table:table, active_row:table_row}; 
-};
+}
 
 // Scroll window to the selected item
 function scroll_to_table_row(table_row, on_webpage_load) {
@@ -498,6 +517,20 @@ function create_text_input_inside_table_cell(table_cell) {
 		text_input.style.width    = width  + "px";
 		text_input.style.height   = height + "px";
 		text_input.innerHTML      = text_original_converted;
+		
+		// Remove input on ESC
+		var pressed_esc = false;
+		var pressed_tab = false;
+		
+		text_input.addEventListener("keydown", function (key) {
+			if (key.which === 27) {
+				pressed_esc          = true;
+				table_cell.innerHTML = text_original;
+			}
+			
+			if (key.which == 9)
+				pressed_tab = true;
+		});
 
 		// https://stackoverflow.com/questions/152975/how-do-i-detect-a-click-outside-an-element
 		text_input.addEventListener("focusout", function (event) {
@@ -505,15 +538,20 @@ function create_text_input_inside_table_cell(table_cell) {
 				// we are still inside the dialog so don't close
 				text_input.contains(event.relatedTarget) ||
 				// we have switched to another tab so probably don't want to close 
-				!document.hasFocus()  
+				!document.hasFocus() ||
+				pressed_esc
 			) {
+				pressed_esc = false;
 				return;
 			}		
 			
 			var text_new         = text_input.value;
 			var table_cell       = text_input.parentNode;
+			var table_cell_index = -1;
 			var table_row        = table_cell.parentNode;
 			var table_row_items  = table_row.children;
+			var table_body       = table_row.parentNode;
+			var table            = table_body.parentNode;
 			var stringtable_key  = table_row_items[0].title;
 			var language         = "";
 			
@@ -521,15 +559,16 @@ function create_text_input_inside_table_cell(table_cell) {
 			// get cell text from the first cell in this column
 			for (var i=0; i<table_row_items.length; i++) {
 				if (table_row_items[i] == table_cell) {
-				  var table_body           = table_row.parentNode;
-				  var table                = table_body.parentNode;
-				  var table_head           = table.firstElementChild;
-				  var table_head_row       = table_head.firstElementChild;
-				  var table_head_row_items = table_head_row.children;
+					var table_head           = table.firstElementChild;
+					var table_head_row       = table_head.firstElementChild;
+					var table_head_row_items = table_head_row.children;
 
-				  for (var j=0; j<table_head_row_items.length; j++)
-					  if (j == i)
-						  language = table_head_row_items[j].innerHTML;
+					for (var j=0; j<table_head_row_items.length; j++)
+						if (j == i)
+							language = table_head_row_items[j].innerHTML;
+					
+					table_cell_index = i;
+					break;
 				}
 			}
 			
@@ -542,21 +581,36 @@ function create_text_input_inside_table_cell(table_cell) {
 						if (responseText == "OK") {
 							table_cell.innerHTML = text_new.replaceAll("\n", "<br>");
 							table_cell.classList.remove('danger');
+							table_cell.classList.add('success');
+							calculate_untranslated_cells(table);
 						} else {
 							table_cell.innerHTML = text_original;
-							console.log(table.title + " " + language + " " + stringtable_key + " " + text_new + " = " + responseText);
+							console.log("table:" + table.title + "\nlang:" + language + "\nkey:" + stringtable_key + "\ntext:" + text_new + "\nresponse:" + responseText);
 							alert(responseText);
 						}
 					}
 				);
 			} else
 				table_cell.innerHTML = text_original;
-		});
-		
-		// Remove input on ESC
-		text_input.addEventListener("keydown", function (key) {
-			if (key.which === 27)
-				table_cell.innerHTML = text_original;
+			
+			// if user pressed TAB then move to the cell below
+			if (pressed_tab) {
+				pressed_tab          = false;
+				var table_body_items = table_body.children;
+				var found_current    = false;
+				
+				for (var i=0; i<table_body_items.length; i++) {
+					if (found_current && !table_body_items[i].classList.contains('info')) {
+						var next_cell = table_body_items[i].children[table_cell_index];
+						if (next_cell)
+							create_text_input_inside_table_cell(next_cell);
+						break;
+					}
+					
+					if (table_row == table_body_items[i]) 
+						found_current = true;
+				}
+			}
 		});
 	}
 }
@@ -618,7 +672,6 @@ function create_html_table_header($table_id, $languages) {
 // Get language strings from a selected PHP file to an array
 function get_file_strings($file_name, $languages) {
 	$stringtable         = [];
-	$comment_count       = 0;
 	$completed_languages = 0;
 	$text                = file_get_contents($file_name);
 	$lines               = preg_split('/\r\n|\r|\n/', $text);
@@ -630,7 +683,8 @@ function get_file_strings($file_name, $languages) {
 		
 		$search_for = "if (\$lang[\"THIS_CODE\"] == \"";
 		if (substr($line, 0, strlen($search_for)) == $search_for) {
-			$language_key = substr($line, strlen($search_for), 5);
+			$language_key  = substr($line, strlen($search_for), 5);
+			$comment_count = 0;
 			continue;
 		}			
 		
@@ -649,9 +703,19 @@ function get_file_strings($file_name, $languages) {
 			}
 			
 			$stringtable[$stringtable_key][$language_key] = ($updated ? "\t" : "") . $stringtable_value;
+			
+			// If this section has updated strings then mark it for force display
+			$comment_key = "comment".($comment_count-1);
+
+			if ($updated && $comment_count>0 && isset($stringtable[$comment_key]) && substr($stringtable[$comment_key],-6)!="!show!")
+				$stringtable[$comment_key] .= "!show!";
 		} else
-			if ($hash!==FALSE && $language_key=="en-US")
-				$stringtable["comment".$comment_count++] = substr($line, $hash+1);
+			if ($hash !== FALSE) {
+				if ($language_key == "en-US")
+					$stringtable["comment$comment_count"] = substr($line, $hash+1);
+				
+				$comment_count++;
+			}
 			
 		if ($line == "));")
 			$completed_languages++;
@@ -664,8 +728,9 @@ function get_file_strings($file_name, $languages) {
 }
 
 // Convert strings from an array to table rows
-function stringtable_to_html_table($stringtable, $permissions, $context, $context_section, $hide_rows=false, $marked_for_change=null) {
-	$output = "";
+function stringtable_to_html_table($stringtable, $languages, $permissions, $context, $context_section, $hide_rows=false, $marked_for_change=null) {
+	$output               = "";
+	$show_current_section = false;
 	
 	foreach($stringtable as $stringtable_key=>$stringtable_values) {
 		if ($stringtable_key == "GS_STR_TRANSLATION")
@@ -686,7 +751,7 @@ function stringtable_to_html_table($stringtable, $permissions, $context, $contex
 			if (substr($stringtable_key_display,0,3) == "GS ")
 				$stringtable_key_display = substr($stringtable_key_display,3);
 			
-			$output .= "<tr id=\"$stringtable_key\" ".($hide_rows ? "style=\"display:none;\"" : "")."><td style=\"font-size:xx-small\" title=\"$stringtable_key\"><a href=\"#{$stringtable_key}\">$stringtable_key_display</a> $context_link</td>";
+			$output .= "<tr id=\"$stringtable_key\" ".($hide_rows && !$show_current_section ? "style=\"display:none;\"" : "")."><td style=\"font-size:xx-small\" title=\"$stringtable_key\"><a href=\"#{$stringtable_key}\">$stringtable_key_display</a> $context_link</td>";
 				
 			foreach($stringtable_values as $language_key=>$language_string) {
 				$class = "";
@@ -714,8 +779,14 @@ function stringtable_to_html_table($stringtable, $permissions, $context, $contex
 			$output .= "</tr>";
 		} else {
 			// Section title
-			$link       = "";
-			$section_id = "";
+			$link                 = "";
+			$section_id           = "";
+			$show_current_section = false;
+			
+			if (substr($stringtable_values, -6) == "!show!") {
+				$stringtable_values   = substr($stringtable_values, 0, -6);
+				$show_current_section = true;
+			}
 			
 			for($i=0; $i<strlen($stringtable_values); $i++) {
 				$letter = $stringtable_values[$i];
@@ -734,7 +805,7 @@ function stringtable_to_html_table($stringtable, $permissions, $context, $contex
 			
 			$output .= "
 			<tr onclick=\"display_table_section(this, 'toggle')\" id=\"$section_id\" class=\"info\">
-			<td class=\"context_cell\" colspan=\"4\">
+			<td class=\"context_cell\" colspan=\"".(count($languages)+1)."\">
 				<center><b>{$stringtable_values}</b>$link</center>
 			</td>
 			</tr>";
@@ -747,11 +818,10 @@ function stringtable_to_html_table($stringtable, $permissions, $context, $contex
 
 
 // Get strings from each file in usersc\lang
-$stringtable   = [];
-$comment_count = 0;
+$stringtable = [];
 
 foreach($languages as $language_key=>$language_name) {
-	$text  = file_get_contents("usersc//lang//".$language_key.".php");
+	$text  = file_get_contents("usersc/lang/".$language_key.".php");
 	$start = strpos($text,"#");
 	$end   = strrpos($text,"\"");
 	
@@ -761,8 +831,9 @@ foreach($languages as $language_key=>$language_name) {
 	if ($end === FALSE)
 		$end = strlen($text);
 	
-	$text  = substr($text, $start, $end-$start);
-	$lines = preg_split('/\r\n|\r|\n/', $text);
+	$text          = substr($text, $start, $end-$start);
+	$lines         = preg_split('/\r\n|\r|\n/', $text);
+	$comment_count = 0;
 	
 	foreach($lines as $line) {
 		$updated = !ctype_space($line[0]);
@@ -782,9 +853,19 @@ foreach($languages as $language_key=>$language_name) {
 			}
 			
 			$stringtable[$stringtable_key][$language_key] = ($updated ? "\t" : "") . $stringtable_value;
+			
+			// If this section has updated strings then mark it for force display
+			$comment_key = "comment".($comment_count-1);
+
+			if ($updated && $comment_count>0 && isset($stringtable[$comment_key]) && substr($stringtable[$comment_key], -6)!="!show!")
+				$stringtable[$comment_key] .= "!show!";
 		} else
-			if ($hash!==FALSE && $language_key=="en-US")
-				$stringtable["comment".$comment_count++] = substr($line, $hash+1);
+			if ($hash !== FALSE) {
+				if ($language_key == "en-US")
+					$stringtable["comment$comment_count"] = substr($line, $hash+1);
+				
+				$comment_count++;
+			}
 	}
 }
 
@@ -796,6 +877,7 @@ forEach($table_info as $table_id=>$table_options) {
 		// Default table display
 		$output .= stringtable_to_html_table(
 			$table_id=="website" ? $stringtable : get_file_strings($table_options["source"], $languages), 
+			$languages,
 			$permissions, 
 			$table_options["context_key"], 
 			$table_options["context_section"], 
@@ -818,6 +900,7 @@ forEach($table_info as $table_id=>$table_options) {
 		
 		$output .= stringtable_to_html_table(
 			$stringtable, 
+			$languages,
 			$permissions, 
 			$table_options["context_key"], 
 			$table_options["context_section"], 

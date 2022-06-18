@@ -61,7 +61,7 @@ if ($db->query($sql,[$user->data()->id])->error()) {
 
 forEach($db->results(true) as $row)
 	forEach($languages as $language_name=>$language_key)
-		if (strcasecmp($row["name"], "{$language_name}_translator") == 0)
+		if (strcasecmp($row["name"], "{$language_name}_translator") == 0  ||  $row["name"] == "Administrator")
 			$permissions[$language_key] = true;
 
 if (!$permissions[$languages[$input["language"]]])
@@ -76,8 +76,8 @@ $add_tab      = false;
 
 switch($input["area"]) {
 	case "website" : 
-		$file_name    = "usersc//lang//" . $languages[$input["language"]] . ".php"; 
-		$to_find_list = ["\"{$input["stringtable_key"]}\" => "]; 
+		$file_name    = "usersc/lang/" . $languages[$input["language"]] . ".php"; 
+		$to_find_list = ["\"{$input["stringtable_key"]}\""]; 
 		$add_tab      = true;
 		break;
 		
@@ -142,10 +142,11 @@ while (!feof($file)) {
 		if (stristr($line,$to_find)) {
 			$pos = strpos($line, $to_find);
 			if ($pos !== false) {
+				$arrow = strpos($line, "=>", $pos+strlen($to_find));
 				$to_find_pos++;
 				
 				// Replace text if found the final item
-				if ($to_find_pos == count($to_find_list)) {
+				if ($to_find_pos == count($to_find_list)  &&  $arrow!==false) {
 					$start = strpos($line,"\"", $pos+strlen($to_find));
 					
 					if ($start !== false) {
