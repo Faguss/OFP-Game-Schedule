@@ -272,7 +272,7 @@ $table_info = [
 		],
 		"context_section" => [],
 		"hide_rows"       => false,
-		"instructions"    => "On the bottom I've marked strings that have been changed/added within the last year because I don't remember which ones you've translated and which I did. If the string is correct then click on it and then click elsewhere to remove the red marking."
+		"instructions"    => "On the bottom I've marked strings that have been changed/added within the last year because I don't remember which ones you've translated and which I did. If the string is correct then click on it and then press TAB to remove the red marking."
 	], 
 	
 	"addoninstaller" => [
@@ -288,22 +288,23 @@ $table_info = [
 		],
 		"context_section" => [],
 		"hide_rows"       => false,
-		"instructions"    => "On the bottom I've marked strings that have been changed/added within the last year because I don't remember which ones you've translated and which I did. If the string is correct then click on it and then click elsewhere to remove the red marking."
+		"instructions"    => "On the bottom I've marked strings that have been changed/added within the last year because I don't remember which ones you've translated and which I did. If the string is correct then click on it and then press TAB to remove the red marking."
 	]
 ];
 
-
-
 $output         = "";
 $instructions   = [];
+$table_ids      = [];
 $first_table_id = "";
+$default_table  = "";
 
 // Table selection control
-$output .=  "<label for=\"table_select\">Section: &nbsp; </label><select id=\"table_select\" onchange=\"display_table(this.options[this.selectedIndex].value)\">";
+$output .=  "<label for=\"table_select\">Section: &nbsp; </label><select id=\"table_select\" onchange=\"display_table(this.options[this.selectedIndex].value); window.location.hash=this.options[this.selectedIndex].value; window.scrollTo(0, 0);\">";
 
 forEach($table_info as $table_id=>$table_options) {
 	$output                 .= "<option value=\"$table_id\">{$table_options["name"]}</option>";
 	$instructions[$table_id] = $table_options["instructions"];
+	$table_ids[]             = $table_id;
 	
 	if (empty($first_table_id))
 		$first_table_id = $table_id;
@@ -311,319 +312,68 @@ forEach($table_info as $table_id=>$table_options) {
 	
 $output .= "</select><br><br><p id=\"instructions\"></p><br>";
 
-
 // Buttons for hiding table columns
-$output .=  "<label>Show columns:</label> &nbsp; ";
+$output .= "<label>Show columns:</label> &nbsp; ";
 
 forEach($languages as $language_key=>$language_name)
 	$output .= "<input type=\"checkbox\" name=\"$language_name\" value=\"1\" onclick=\"table_column_toggle(this, '$language_key')\" checked>&nbsp;<label for=\"$language_name\">$language_name</label> &nbsp; &nbsp; ";
-?>
 
-
-
-<script>
-var instructions = <?php echo json_encode($instructions) ?>;
-
-// When the page is loaded then show the first table or the one from the URL fragment
-window.onload = function() {
-	var table_info = {
-		active_table : <?php echo "\"$first_table_id\"" ?>, 
-		active_row   : null
-	};
-	
-	if (window.location.hash)
-		table_info = find_stringtable_key(window.location.hash.slice(1));
-	
-	display_table(table_info.active_table);
-
-	if (table_info.active_row)
-		scroll_to_table_row(table_info.active_row, true);
-};
-
-// If URL fragment has changed then show appropiate table and scroll to the selected row
-$(window).bind('hashchange', function () {
-	table_info = find_stringtable_key(window.location.hash.slice(1));
-	display_table(table_info.active_table);
-
-	if (table_info.active_row)
-		scroll_to_table_row(table_info.active_row, false);
-});
-
-// Show selected table and hide all others
-function display_table(selected_table) {
-	var wanted_table       = selected_table;
-	var wanted_table_index = -1;
-	
-	if (typeof selected_table === 'string')
-		wanted_table = document.getElementById(selected_table);
-	
-	var tables = document.getElementsByTagName("table");
-	
-	for (var i=0; i<tables.length; i++) {
-		tables[i].style.display = tables[i]==wanted_table ? "table" : "none";
-		wanted_table_index      = i;
-	}
-	
-	var paragraph       = document.getElementById("instructions");
-	paragraph.innerHTML = instructions[wanted_table.id];
-	calculate_untranslated_cells(wanted_table);
-	
-	// Adjust table select drop-down list
-	var select = document.getElementById("table_select");
-	
-	for (var i=0; i<select.options.length; i++)
-		if (select.options[i].value == selected_table.id)
-			select.selectedIndex = i;
-}
-
-// Count how many red cells the current table has and show it in the info
-function calculate_untranslated_cells(table) {
-	var number = 0;
- 
-	for (var i = 0, row; row = table.rows[i]; i++)
-		for (var j = 0, col; col = row.cells[j]; j++)
-			if (col.classList.contains('danger'))
-			number++;
-	
-	var paragraph = document.getElementById("instructions");
-	var pos       = paragraph.innerHTML.indexOf("<b>Unfinished:</b>");
-
-	if (pos >= 0)
-		paragraph.innerHTML = paragraph.innerHTML.substr(0, pos);
-
-	paragraph.innerHTML += " <b>Unfinished:</b> " + number;
-}
-
-// Show or hide language column
-function table_column_toggle(checkbox, column_class) {
-	var columns = document.getElementsByClassName(column_class);
-
-	for (var i=0; i<columns.length; i++)
-		columns[i].style.display = checkbox.checked ? "table-cell" : "none";
-	
-	// Resize context cells
-	var tables = document.getElementsByTagName("table");
-	if (tables.length > 0) {
-		var how_many_visible     = 0;
-		var table_head           = tables[0].firstElementChild;
-		var table_head_row       = table_head.firstElementChild;
-		var table_head_row_items = table_head_row.children;
-		
-		for (var j=0; j<table_head_row_items.length; j++)
-			if (table_head_row_items[j].style.display != "none")
-				how_many_visible++;
+// Render tables
+forEach($table_info as $table_id=>$table_options) {
+	$output .= create_html_table_header($table_id, $languages);
 			
-		var irregular_cells = document.getElementsByClassName("context_cell");
-		for (var i=0; i<irregular_cells.length; i++)
-			irregular_cells[i].setAttribute("colspan", how_many_visible);
-	}
-	
-}
-
-// Show or hide a single section in a table
-function display_table_section(section_row, action) {
-	var table_body     = section_row.parentNode;
-	var table_rows     = table_body.children;
-	var started_toggle = false;
-
-	for (var i=0; i<table_rows.length; i++) {
-		var row = table_rows[i];
+	if ($table_id!="mainmenu" && $table_id!="addoninstaller") {
+		$function_pointer = $table_id=="website" ? "get_file_strings_from_usersc" : "get_file_strings";
+		$stringtable      = $function_pointer($table_options["source"], $languages);
 		
-		if (started_toggle)
-			if (row.getAttribute('class') != "info") {
-				if (action == "toggle")
-					row.style.display = row.style.display=="none" ? "table-row" : "none";
-				else
-					if (action == "show")
-						row.style.display = "table-row";
-					else
-						if (action == "hide")
-							row.style.display = "none";
-			} else
-				break;
-
-		if (row == section_row) 
-			started_toggle = true;
-	}
-}
-
-// Find table row with selected key and return table object and row object
-function find_stringtable_key(key) {
-	//https://stackoverflow.com/questions/298503/how-can-you-check-for-a-hash-in-a-url-using-javascript
-	var table_row = document.getElementById(key);
-	
-	if (!table_row) {
-		alert(key.substring(1) + " not found");
-		return {active_table:null, active_row:null};
-	}
-	
-	var table_body = table_row.parentNode;
-	var table      = table_body.parentNode;
-	
-	if (table.style.display == "none")
-		table.style.display = "table";
-	
-	if (table_row.style.display == "none") {
-		var table_body          = table_row.parentNode;
-		var table_rows          = table_body.children;
-		var last_info_row       = null;
+		// Default table display
+		$output .= stringtable_to_html_table(
+			$stringtable["data"], 
+			$languages,
+			$permissions, 
+			$table_options["context_key"], 
+			$table_options["context_section"], 
+			$table_options["hide_rows"]
+		);
 		
-		for (var i=0; i<table_rows.length; i++) {
-			if (table_rows[i].getAttribute('class') == "info")
-				last_info_row = table_rows[i];
-
-			if (table_rows[i] == table_row) 
-				break
+		if (empty($default_table) && $stringtable["todo"] > 0)
+			$default_table = $table_id;
+	} else {
+		// "mainmenu" and "addoninstaller" come from translation_strings.php which is already loaded
+		$stringtable            = [];
+		$source                 = $$table_id;
+		$marked_for_change_name = $table_id."_updated";
+		$marked_for_change      = $$marked_for_change_name;
+		
+		// Build a stringtable
+		forEach ($source["en-US"] as $stringtable_key=>$stringtable_value) {
+			$stringtable[$stringtable_key] = [];
+			
+			forEach ($languages as $language_key=>$language_name)
+				$stringtable[$stringtable_key][$language_key] = str_replace("\\n", "<br>", $source[$language_key][$stringtable_key]);
 		}
 		
-		display_table_section(last_info_row, "show");
+		$output .= stringtable_to_html_table(
+			$stringtable, 
+			$languages,
+			$permissions, 
+			$table_options["context_key"], 
+			$table_options["context_section"], 
+			$table_options["hide_rows"],
+			$marked_for_change
+		);
+		
+		if (empty($default_table) && count($marked_for_change) > 0)
+			$default_table = $table_id;
 	}
 	
-	return {active_table:table, active_row:table_row}; 
+	$output .= "</tbody></table>";
 }
 
-// Scroll window to the selected item
-function scroll_to_table_row(table_row, on_webpage_load) {
-	// scrollto doesn't seem to work when window is scrolled to the bottom so force top of the page
-	if (on_webpage_load)
-		window.scrollTo(0, 0);
-
-	var y = table_row.getBoundingClientRect().top + window.scrollY;
-	
-	var navbar_test = document.getElementById("navbar_test");
-	var div         = navbar_test.parentNode;
-	y              -= div.getBoundingClientRect().height;    
-			
-	window.scrollTo({ top: y, behavior: 'smooth' });
-}
-
-// Create text input when clicked on a table cell. Then send changes to the translation_request.php
-function create_text_input_inside_table_cell(table_cell) {
-	if (document.getElementsByTagName("textarea").length == 0) {
-		var text_original = table_cell.innerHTML;
-		var width         = table_cell.offsetWidth - (table_cell.offsetWidth/20);
-		var height        = table_cell.offsetHeight / 1.25;
-		var text_input    = document.createElement("textarea");
-		
-		if (text_original == "...")
-			return;
-		
-		var text_original_converted = text_original.replaceAll("<br>", "\n");
-		
-		table_cell.innerHTML = "";
-		table_cell.appendChild(text_input);
-		text_input.focus();
-		text_input.selectionStart = text_input.selectionEnd = text_input.value.length;
-		text_input.style.width    = width  + "px";
-		text_input.style.height   = height + "px";
-		text_input.innerHTML      = text_original_converted;
-		
-		// Remove input on ESC
-		var pressed_esc = false;
-		var pressed_tab = false;
-		
-		text_input.addEventListener("keydown", function (key) {
-			if (key.which === 27) {
-				pressed_esc          = true;
-				table_cell.innerHTML = text_original;
-			}
-			
-			if (key.which == 9)
-				pressed_tab = true;
-		});
-
-		// https://stackoverflow.com/questions/152975/how-do-i-detect-a-click-outside-an-element
-		text_input.addEventListener("focusout", function (event) {
-			if (
-				// we are still inside the dialog so don't close
-				text_input.contains(event.relatedTarget) ||
-				// we have switched to another tab so probably don't want to close 
-				!document.hasFocus() ||
-				pressed_esc
-			) {
-				pressed_esc = false;
-				return;
-			}		
-			
-			var text_new         = text_input.value;
-			var table_cell       = text_input.parentNode;
-			var table_cell_index = -1;
-			var table_row        = table_cell.parentNode;
-			var table_row_items  = table_row.children;
-			var table_body       = table_row.parentNode;
-			var table            = table_body.parentNode;
-			var stringtable_key  = table_row_items[0].title;
-			var language         = "";
-			
-			// get title from the first cell in this row
-			// get cell text from the first cell in this column
-			for (var i=0; i<table_row_items.length; i++) {
-				if (table_row_items[i] == table_cell) {
-					var table_head           = table.firstElementChild;
-					var table_head_row       = table_head.firstElementChild;
-					var table_head_row_items = table_head_row.children;
-
-					for (var j=0; j<table_head_row_items.length; j++)
-						if (j == i)
-							language = table_head_row_items[j].innerHTML;
-					
-					table_cell_index = i;
-					break;
-				}
-			}
-			
-			// Send translation request
-			if (language!=""  &&  stringtable_key!==null  &&  (text_new!=text_original_converted  ||  table_cell.classList.contains('danger'))) {
-				table_cell.innerHTML = "...";
-				
-				// I'm using GET instead of POST because my hosting is blocking it for my translator
-				$.get('translation_request.php', {"area":table.title, "language":language, "stringtable_key":stringtable_key, "text_new":text_new}, function(responseText) {
-						if (responseText == "OK") {
-							table_cell.innerHTML = text_new.replaceAll("\n", "<br>");
-							table_cell.classList.remove('danger');
-							table_cell.classList.add('success');
-							calculate_untranslated_cells(table);
-						} else {
-							table_cell.innerHTML = text_original;
-							console.log("table:" + table.title + "\nlang:" + language + "\nkey:" + stringtable_key + "\ntext:" + text_new + "\nresponse:" + responseText);
-							alert(responseText);
-						}
-					}
-				);
-			} else
-				table_cell.innerHTML = text_original;
-			
-			// if user pressed TAB then move to the cell below
-			if (pressed_tab) {
-				pressed_tab          = false;
-				var table_body_items = table_body.children;
-				var found_current    = false;
-				
-				for (var i=0; i<table_body_items.length; i++) {
-					if (found_current && !table_body_items[i].classList.contains('info')) {
-						var next_cell = table_body_items[i].children[table_cell_index];
-						if (next_cell)
-							create_text_input_inside_table_cell(next_cell);
-						break;
-					}
-					
-					if (table_row == table_body_items[i]) 
-						found_current = true;
-				}
-			}
-		});
-	}
-}
-</script>
+echo $output;
 
 
 
-
-
-
-
-
-<?php
 // Trim white space from a string and then a single quotation mark
 function trim_single_quote($string) {
 	$string = trim($string);
@@ -671,7 +421,7 @@ function create_html_table_header($table_id, $languages) {
 
 // Get language strings from a selected PHP file to an array
 function get_file_strings($file_name, $languages) {
-	$stringtable         = [];
+	$stringtable         = ["data"=>[], "todo"=>0];
 	$completed_languages = 0;
 	$text                = file_get_contents($file_name);
 	$lines               = preg_split('/\r\n|\r|\n/', $text);
@@ -695,24 +445,27 @@ function get_file_strings($file_name, $languages) {
 			$stringtable_key   = trim_single_quote($tokens[0]);
 			$stringtable_value = stripslashes(trim_single_quote($tokens[1]));
 			
-			if (!array_key_exists($stringtable_key,$stringtable)) {
-				$stringtable[$stringtable_key] = [];
+			if (!array_key_exists($stringtable_key,$stringtable["data"])) {
+				$stringtable["data"][$stringtable_key] = [];
 				
 				for($i=0; $i<count($languages); $i++)
-					$stringtable[$stringtable_key][array_keys($languages)[$i]] = "";
+					$stringtable["data"][$stringtable_key][array_keys($languages)[$i]] = "";
 			}
 			
-			$stringtable[$stringtable_key][$language_key] = ($updated ? "\t" : "") . $stringtable_value;
+			$stringtable["data"][$stringtable_key][$language_key] = ($updated ? "\t" : "") . $stringtable_value;
 			
 			// If this section has updated strings then mark it for force display
 			$comment_key = "comment".($comment_count-1);
 
-			if ($updated && $comment_count>0 && isset($stringtable[$comment_key]) && substr($stringtable[$comment_key],-6)!="!show!")
-				$stringtable[$comment_key] .= "!show!";
+			if ($updated && $comment_count>0 && isset($stringtable["data"][$comment_key]) && substr($stringtable["data"][$comment_key],-6)!="!show!")
+				$stringtable["data"][$comment_key] .= "!show!";
+			
+			if ($updated)
+				$stringtable["todo"]++;
 		} else
 			if ($hash !== FALSE) {
 				if ($language_key == "en-US")
-					$stringtable["comment$comment_count"] = substr($line, $hash+1);
+					$stringtable["data"]["comment$comment_count"] = substr($line, $hash+1);
 				
 				$comment_count++;
 			}
@@ -722,6 +475,65 @@ function get_file_strings($file_name, $languages) {
 		
 		if ($completed_languages == count($languages))
 			break;
+	}
+	
+	return $stringtable;
+}
+
+// Get strings from each file in usersc\lang
+function get_file_strings_from_usersc($file_name, $languages) {
+	$stringtable = ["data"=>[], "todo"=>0];
+
+	foreach($languages as $language_key=>$language_name) {
+		$text  = file_get_contents("usersc/lang/".$language_key.".php");
+		$start = strpos($text,"#");
+		$end   = strrpos($text,"\"");
+		
+		if ($start === FALSE)
+			$start = 0;
+			
+		if ($end === FALSE)
+			$end = strlen($text);
+		
+		$text          = substr($text, $start, $end-$start);
+		$lines         = preg_split('/\r\n|\r|\n/', $text);
+		$comment_count = 0;
+		
+		foreach($lines as $line) {
+			$updated = !ctype_space($line[0]);
+			$line    = trim(trim($line), ",");
+			$tokens  = explode("=>", $line);
+			$hash    = strpos($line, "#");
+			
+			if (count($tokens) == 2) {
+				$stringtable_key   = trim_single_quote($tokens[0]);
+				$stringtable_value = stripslashes(trim_single_quote($tokens[1]));
+				
+				if (!array_key_exists($stringtable_key,$stringtable["data"])) {
+					$stringtable["data"][$stringtable_key] = [];
+					
+					for($i=0; $i<count($languages); $i++)
+						$stringtable["data"][$stringtable_key][array_keys($languages)[$i]] = "";
+				}
+				
+				$stringtable["data"][$stringtable_key][$language_key] = ($updated ? "\t" : "") . $stringtable_value;
+				
+				// If this section has updated strings then mark it for force display
+				$comment_key = "comment".($comment_count-1);
+
+				if ($updated && $comment_count>0 && isset($stringtable["data"][$comment_key]) && substr($stringtable["data"][$comment_key], -6)!="!show!")
+					$stringtable["data"][$comment_key] .= "!show!";
+				
+				if ($updated)
+					$stringtable["todo"]++;
+			} else
+				if ($hash !== FALSE) {
+					if ($language_key == "en-US")
+						$stringtable["data"]["comment$comment_count"] = substr($line, $hash+1);
+					
+					$comment_count++;
+				}
+		}
 	}
 	
 	return $stringtable;
@@ -814,106 +626,358 @@ function stringtable_to_html_table($stringtable, $languages, $permissions, $cont
 	
 	return $output;
 }
+?>
+<script>
+var instructions = <?php echo json_encode($instructions) ?>;
+var table_ids    = <?php echo json_encode($table_ids) ?>;
 
-
-
-// Get strings from each file in usersc\lang
-$stringtable = [];
-
-foreach($languages as $language_key=>$language_name) {
-	$text  = file_get_contents("usersc/lang/".$language_key.".php");
-	$start = strpos($text,"#");
-	$end   = strrpos($text,"\"");
+// When the page is loaded then show the first table or the one from the URL fragment
+window.onload = function() {
+	var table_info = {
+		active_table : <?php echo "\"$default_table\"" ?>, 
+		active_row   : null
+	};
 	
-	if ($start === FALSE)
-		$start = 0;
+	if (window.location.hash) {
+		var index = table_ids.indexOf(window.location.hash.slice(1));
+
+		if (index >= 0)
+			table_info.active_table = table_ids[index];
+		else
+			table_info = find_stringtable_key(window.location.hash.slice(1));
+	}
+	
+	display_table(table_info.active_table);
+
+	if (table_info.active_row)
+		scroll_to_table_row(table_info.active_row, true);
+};
+
+// If URL fragment has changed then show appropiate table and scroll to the selected row
+$(window).bind('hashchange', function () {
+	var index = table_ids.indexOf(window.location.hash.slice(1));
+	
+	if (index >= 0) {
+		table_info.active_table = table_ids[index];	
+		window.scrollTo({top:0});
+	} else
+		table_info = find_stringtable_key(window.location.hash.slice(1));
+	
+	display_table(table_info.active_table);
+
+	if (table_info.active_row)
+		scroll_to_table_row(table_info.active_row, false);
+});
+
+// Show selected table and hide all others
+function display_table(selected_table) {
+	var wanted_table       = selected_table;
+	var wanted_table_index = -1;
+	
+	if (typeof selected_table === 'string')
+		wanted_table = document.getElementById(selected_table);
+	
+	var tables = document.getElementsByTagName("table");
+	
+	for (var i=0; i<tables.length; i++) {
+		tables[i].style.display = tables[i]==wanted_table ? "table" : "none";
+		wanted_table_index      = i;
+	}
+	
+	var paragraph       = document.getElementById("instructions");
+	paragraph.innerHTML = instructions[wanted_table.id];
+	calculate_untranslated_cells(wanted_table);
+	
+	// Adjust table select drop-down list
+	var select = document.getElementById("table_select");
+	
+	for (var i=0; i<select.options.length; i++)
+		if (select.options[i].value == wanted_table.id)
+			select.selectedIndex = i;
+}
+
+// Count how many red cells the current table has and show it in the info
+function calculate_untranslated_cells(table) {
+	var number = 0;
+ 
+	for (var i = 0, row; row = table.rows[i]; i++)
+		for (var j = 0, col; col = row.cells[j]; j++)
+			if (col.classList.contains('danger'))
+			number++;
+	
+	var paragraph = document.getElementById("instructions");
+	var pos       = paragraph.innerHTML.indexOf("<b>Unfinished:</b>");
+
+	if (pos >= 0)
+		paragraph.innerHTML = paragraph.innerHTML.substr(0, pos);
+
+	paragraph.innerHTML += " <b>Unfinished:</b> " + number;
+}
+
+// Show or hide language column
+function table_column_toggle(checkbox, column_class) {
+	var columns = document.getElementsByClassName(column_class);
+
+	for (var i=0; i<columns.length; i++)
+		columns[i].style.display = checkbox.checked ? "table-cell" : "none";
+	
+	// Resize context cells
+	var tables = document.getElementsByTagName("table");
+	if (tables.length > 0) {
+		var how_many_visible     = 0;
+		var table_head           = tables[0].firstElementChild;
+		var table_head_row       = table_head.firstElementChild;
+		var table_head_row_items = table_head_row.children;
 		
-	if ($end === FALSE)
-		$end = strlen($text);
+		for (var j=0; j<table_head_row_items.length; j++)
+			if (table_head_row_items[j].style.display != "none")
+				how_many_visible++;
+			
+		var irregular_cells = document.getElementsByClassName("context_cell");
+		for (var i=0; i<irregular_cells.length; i++)
+			irregular_cells[i].setAttribute("colspan", how_many_visible);
+	}
 	
-	$text          = substr($text, $start, $end-$start);
-	$lines         = preg_split('/\r\n|\r|\n/', $text);
-	$comment_count = 0;
-	
-	foreach($lines as $line) {
-		$updated = !ctype_space($line[0]);
-		$line    = trim(trim($line), ",");
-		$tokens  = explode("=>", $line);
-		$hash    = strpos($line, "#");
-		
-		if (count($tokens) == 2) {
-			$stringtable_key   = trim_single_quote($tokens[0]);
-			$stringtable_value = stripslashes(trim_single_quote($tokens[1]));
-			
-			if (!array_key_exists($stringtable_key,$stringtable)) {
-				$stringtable[$stringtable_key] = [];
-				
-				for($i=0; $i<count($languages); $i++)
-					$stringtable[$stringtable_key][array_keys($languages)[$i]] = "";
-			}
-			
-			$stringtable[$stringtable_key][$language_key] = ($updated ? "\t" : "") . $stringtable_value;
-			
-			// If this section has updated strings then mark it for force display
-			$comment_key = "comment".($comment_count-1);
+}
 
-			if ($updated && $comment_count>0 && isset($stringtable[$comment_key]) && substr($stringtable[$comment_key], -6)!="!show!")
-				$stringtable[$comment_key] .= "!show!";
-		} else
-			if ($hash !== FALSE) {
-				if ($language_key == "en-US")
-					$stringtable["comment$comment_count"] = substr($line, $hash+1);
-				
-				$comment_count++;
-			}
+// Show or hide a single section in a table
+function display_table_section(section_row, action) {
+	var table_body     = section_row.parentNode;
+	var table_rows     = table_body.children;
+	var started_toggle = false;
+
+	for (var i=0; i<table_rows.length; i++) {
+		var row = table_rows[i];
+		
+		if (started_toggle)
+			if (row.getAttribute('class') != "info") {
+				if (action == "toggle")
+					row.style.display = row.style.display=="none" ? "table-row" : "none";
+				else
+					if (action == "show")
+						row.style.display = "table-row";
+					else
+						if (action == "hide")
+							row.style.display = "none";
+			} else
+				break;
+
+		if (row == section_row) 
+			started_toggle = true;
 	}
 }
 
-// Render tables
-forEach($table_info as $table_id=>$table_options) {
-	$output .= create_html_table_header($table_id, $languages);
-			
-	if ($table_id!="mainmenu" && $table_id!="addoninstaller") {
-		// Default table display
-		$output .= stringtable_to_html_table(
-			$table_id=="website" ? $stringtable : get_file_strings($table_options["source"], $languages), 
-			$languages,
-			$permissions, 
-			$table_options["context_key"], 
-			$table_options["context_section"], 
-			$table_options["hide_rows"]
-		);
-	} else {
-		// "mainmenu" and "addoninstaller" come from translation_strings.php which is already loaded
-		$stringtable            = [];
-		$source                 = $$table_id;
-		$marked_for_change_name = $table_id."_updated";
-		$marked_for_change      = $$marked_for_change_name;
+// Find table row with selected key and return table object and row object
+function find_stringtable_key(key) {
+	//https://stackoverflow.com/questions/298503/how-can-you-check-for-a-hash-in-a-url-using-javascript
+	var table_row = document.getElementById(key);
+	
+	if (!table_row) {
+		alert(key.substring(1) + " not found");
+		return {active_table:null, active_row:null};
+	}
+	
+	var table_body = table_row.parentNode;
+	var table      = table_body.parentNode;
+	
+	if (table.style.display == "none")
+		table.style.display = "table";
+	
+	if (table_row.style.display == "none") {
+		var table_body    = table_row.parentNode;
+		var table_rows    = table_body.children;
+		var last_info_row = null;
 		
-		// Build a stringtable
-		forEach ($source["en-US"] as $stringtable_key=>$stringtable_value) {
-			$stringtable[$stringtable_key] = [];
-			
-			forEach ($languages as $language_key=>$language_name)
-				$stringtable[$stringtable_key][$language_key] = str_replace("\\n", "<br>", $source[$language_key][$stringtable_key]);
+		for (var i=0; i<table_rows.length; i++) {
+			if (table_rows[i].getAttribute('class') == "info")
+				last_info_row = table_rows[i];
+
+			if (table_rows[i] == table_row) 
+				break
 		}
 		
-		$output .= stringtable_to_html_table(
-			$stringtable, 
-			$languages,
-			$permissions, 
-			$table_options["context_key"], 
-			$table_options["context_section"], 
-			$table_options["hide_rows"],
-			$marked_for_change
-		);
+		display_table_section(last_info_row, "show");
 	}
 	
-	$output .= "</tbody></table>";
+	return {active_table:table, active_row:table_row}; 
 }
 
-echo $output;
-?>
+// Scroll window to the selected item
+function scroll_to_table_row(table_row, on_webpage_load) {
+	// scrollto doesn't seem to work when window is scrolled to the bottom so force top of the page
+	if (on_webpage_load)
+		window.scrollTo(0, 0);
+
+	var y = table_row.getBoundingClientRect().top + window.scrollY;
+	
+	var navbar_test = document.getElementById("navbar_test");
+	var div         = navbar_test.parentNode;
+	y              -= div.getBoundingClientRect().height;    
+			
+	window.scrollTo({ top: y, behavior: 'smooth' });
+}
+
+// https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
+function byteLength(str) {
+	var s = str.length;
+	
+	for (var i=str.length-1; i>=0; i--) {
+		var code = str.charCodeAt(i);
+
+		if (code > 0x7f && code <= 0x7ff) 
+			s++;
+		else 
+			if (code > 0x7ff && code <= 0xffff) 
+				s+=2;
+			
+		if (code >= 0xDC00 && code <= 0xDFFF) i--; //trail surrogate
+	}
+	
+	return s;
+}
+
+// Create text input when clicked on a table cell. Then send changes to the translation_request.php
+function create_text_input_inside_table_cell(table_cell) {
+	if (document.getElementsByTagName("textarea").length == 0) {
+		var text_original = table_cell.innerHTML;
+		var width         = table_cell.offsetWidth - (table_cell.offsetWidth/20);
+		var height        = table_cell.offsetHeight / 1.25;
+		var text_input    = document.createElement("textarea");
+		
+		if (text_original == "...")
+			return;
+		
+		var text_original_converted = text_original.replaceAll("<br>", "\n");
+		
+		table_cell.innerHTML = "";
+		table_cell.appendChild(text_input);
+		text_input.focus();
+		text_input.selectionStart = text_input.selectionEnd = text_input.value.length;
+		text_input.style.width    = width  + "px";
+		text_input.style.height   = height + "px";
+		text_input.innerHTML      = text_original_converted;
+		
+		// Remove input on ESC
+		var pressed_esc = false;
+		var pressed_tab = false;
+		
+		text_input.addEventListener("keydown", function (key) {
+			if (key.which === 27) {
+				pressed_esc          = true;
+				table_cell.innerHTML = text_original;
+			}
+			
+			if (key.which == 9)
+				pressed_tab = true;
+		});
+
+		// When focus left the input then send the new text for saving
+		text_input.addEventListener("focusout", function (event) {
+			if (
+				// we are still inside the dialog so don't close
+				text_input.contains(event.relatedTarget) ||
+				// we have switched to another tab so probably don't want to close 
+				!document.hasFocus() ||
+				pressed_esc
+			) {
+				pressed_esc = false;
+				return;
+			}		
+			
+			var text_new         = text_input.value;
+			var table_cell       = text_input.parentNode;
+			var table_cell_index = -1;
+			var table_row        = table_cell.parentNode;
+			var table_row_items  = table_row.children;
+			var table_body       = table_row.parentNode;
+			var table            = table_body.parentNode;
+			var stringtable_key  = table_row_items[0].title;
+			var language         = "";
+			
+			// get title from the first cell in this row
+			// get cell text from the first cell in this column
+			for (var i=0; i<table_row_items.length; i++) {
+				if (table_row_items[i] == table_cell) {
+					var table_head           = table.firstElementChild;
+					var table_head_row       = table_head.firstElementChild;
+					var table_head_row_items = table_head_row.children;
+
+					for (var j=0; j<table_head_row_items.length; j++)
+						if (j == i)
+							language = table_head_row_items[j].innerHTML;
+					
+					table_cell_index = i;
+					break;
+				}
+			}
+			
+			// Send translation request
+			if (language!=""  &&  stringtable_key!==null  &&  (text_new!=text_original_converted  ||  table_cell.classList.contains('danger'))) {
+				table_cell.innerHTML = "...";
+				text_new_safe        = text_new.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+				text_new_safe        = encodeURIComponent(text_new_safe);
+				
+				// Calculate length of the data
+				var max_characters  = 633;
+				var argument_names  = 39 + 10 + 17 + 10;
+				var percent_count   = (text_new_safe.match(/%/g) || []).length;
+				var text_new_len    = byteLength(text_new_safe) + percent_count * 2;
+				var argument_values = byteLength(table.title) + byteLength(language) + byteLength(stringtable_key) + text_new_len;
+				
+				// I'm using GET instead of POST because my hosting is blocking it for my translator. 
+				// Unfortunately there's a length limit on GET
+				var send_method = argument_names+argument_values > max_characters ? "POST" : "GET";
+
+				$.ajax({
+					type: send_method,
+					url: "translation_request.php",
+					data: {"area":table.title, "language":language, "stringtable_key":stringtable_key, "text_new":text_new_safe},
+					error: function(jqXHR, textStatus, errorThrown) {
+						alert(textStatus+" "+jqXHR.status+" "+errorThrown+"\n\n"+text_new);
+						console.log(stringtable_key);
+						console.log(text_new);
+						console.log(textStatus+" "+jqXHR.status+" "+errorThrown);
+						table_cell.innerHTML = text_original;
+					},
+					success: function(responseText) {
+						if (responseText == "OK") {
+							table_cell.innerHTML = text_new.replaceAll("\n", "<br>");
+							table_cell.classList.remove('danger');
+							table_cell.classList.add('success');
+							calculate_untranslated_cells(table);
+						} else {
+							table_cell.innerHTML = text_original;
+							console.log("table:" + table.title + "\nlang:" + language + "\nkey:" + stringtable_key + "\ntext:" + text_new + "\nresponse:" + responseText);
+							alert(responseText);
+						}
+					}
+				});
+			} else
+				table_cell.innerHTML = text_original;
+			
+			// if user pressed TAB then move to the cell below
+			if (pressed_tab) {
+				pressed_tab          = false;
+				var table_body_items = table_body.children;
+				var found_current    = false;
+				
+				for (var i=0; i<table_body_items.length; i++) {
+					if (found_current && !table_body_items[i].classList.contains('info')) {
+						var next_cell = table_body_items[i].children[table_cell_index];
+						if (next_cell)
+							create_text_input_inside_table_cell(next_cell);
+						break;
+					}
+					
+					if (table_row == table_body_items[i]) 
+						found_current = true;
+				}
+			}
+		});
+	}
+}
+</script>
+
 	</div>
 </div>
 

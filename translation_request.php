@@ -19,11 +19,16 @@ $input = [
 
 $valid_data = 0;
 
-foreach(array_keys($input) as $key)
-	if (isset($_GET[$key])) {
-		$input[$key] = $_GET[$key];
+foreach(array_keys($input) as $key) {
+	if (isset($_POST[$key])) {
+		$input[$key] = $_POST[$key];
 		$valid_data++;
-	}
+	} else
+		if (isset($_GET[$key])) {
+			$input[$key] = $_GET[$key];
+			$valid_data++;
+		}
+}
 
 if ($valid_data != count($input) || !isset($languages[$input["language"]]))
 	die("[Invalid input]");
@@ -83,36 +88,36 @@ switch($input["area"]) {
 		
 	case "website_quickstart" : 
 		$file_name    = "quickstart.php";
-		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
 		$add_tab      = true;
 		break;
 		
 	case "website_modupdates" : 
 		$file_name    = "modupdates.php";
-		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
 		$add_tab      = true;
 		break;
 		
 	case "website_dedicated" : 
 		$file_name    = "installdedicated.php";
-		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
 		$add_tab      = true;
 		break;
 		
 	case "website_api" : 
 		$file_name    = "api_documentation.php";
-		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\" => "]; 
+		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
 		$add_tab      = true;
 		break;
 		
 	case "mainmenu" : 
 		$file_name    = "translation_strings.php"; 
-		$to_find_list = ["\${$input["area"]} = [", "\"{$languages[$input["language"]]}\" => [", "{$input["stringtable_key"]} => "]; 
+		$to_find_list = ["\${$input["area"]} = [", "\"{$languages[$input["language"]]}\" => [", "{$input["stringtable_key"]}"]; 
 		break;
 		
 	case "addoninstaller" : 
 		$file_name    = "translation_strings.php"; 
-		$to_find_list = ["\${$input["area"]} = [", "\"{$languages[$input["language"]]}\" => [", "\"{$input["stringtable_key"]}\" => "]; 
+		$to_find_list = ["\${$input["area"]} = [", "\"{$languages[$input["language"]]}\" => [", "\"{$input["stringtable_key"]}\""]; 
 		break;
 }
 
@@ -154,6 +159,8 @@ while (!feof($file)) {
 						$end = strrpos($line, "\"", $start);
 						
 						if ($end !== false) {
+							$input["text_new"] = urldecode($input["text_new"]);
+							$input["text_new"] = html_entity_decode($input["text_new"], ENT_QUOTES);
 							$input["text_new"] = str_replace(["\\", "\$", "\"", "\n", "\r"], ["\\\\", "\\\$", "\\\"", "\\\\n", ""], $input["text_new"]);
 							$line              = substr_replace($line, $input["text_new"], $start, $end-$start);
 							$replaced          = true;
