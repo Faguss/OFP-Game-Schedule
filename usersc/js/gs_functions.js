@@ -472,6 +472,10 @@ function GS_activate_convertlink_modal() {
 			convertlink_modal_group_filename.style.display = 'block';
 		}
 		
+		if (convertlink_modal_link.value.indexOf('dropbox.com/s/') >= 0 && convertlink_modal_link.value.indexOf('?dl=0') >= 0) {
+			convertlink_modal_group_filename.style.display = 'block';
+		}
+		
 		if (convertlink_modal_group_filename.style.display == 'block') {
 			$(convertlink_modal_filename).addClass('schedule_modal_loader');
 			$.post('js_request.php', {"filenamefromurl":convertlink_modal_link.value}, function(responseText) {
@@ -561,6 +565,10 @@ function GS_activate_convertlink_modal() {
 
 		if (convertlink_modal_link.value.search('lonebullet.com') >= 0) {
 			final_url = convertlink_modal_link.value + ' /file/ files.lonebullet.com ';
+		}
+		
+		if (convertlink_modal_link.value.indexOf('dropbox.com/s/') >= 0 && convertlink_modal_link.value.indexOf('?dl=0') >= 0) {
+			final_url = convertlink_modal_link.value.replace('?dl=0', '?dl=1') + ' ';
 		}
 		
 		if (final_url.length > 0 && convertlink_modal_filename.value.length > 0) {

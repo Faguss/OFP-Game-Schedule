@@ -255,7 +255,7 @@ $lang = array_merge($lang,array(
 
     #Add/Edit mod version section feedback
 	"GS_STR_MOD_VERSION_ADDED" => "Wersja dodana",
-"GS_STR_MOD_SCRIPT_ADDED" => "Skrypt dodany",
+	"GS_STR_MOD_SCRIPT_ADDED" => "Skrypt dodany",
 	"GS_STR_MOD_RECENTVER_ERROR" => "Nie udało się znaleźć najnowszej wersji tego moda",
 	"GS_STR_MOD_SCRIPT_ADDED_ERROR" => "Nie udało się dodać nowego skryptu",
 	"GS_STR_MOD_VERSION_ADDED_ERROR" => "Nie udało się dodać nowej wersji",

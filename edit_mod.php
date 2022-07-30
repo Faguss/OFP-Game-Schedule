@@ -18,6 +18,7 @@ $js_modal = "
 			<li><b>OFPEC</b> - <span style=\"font-size:x-small;\">https://www.ofpec.com/addons_depot/index.php?action=details&id=69</span></li>
 			<li><b>SendSpace</b> - <span style=\"font-size:x-small;\">https://www.sendspace.com/file/8r9g4z</span></li>
 			<li><b>LoneBullet</b> - <span style=\"font-size:x-small;\">https://www.lonebullet.com/mods/download-ecp-1085e-tgs-operation-flashpoint-resistance-mod-free-52029.htm</span></li>
+			<li><b>DropBox</b> - <span style=\"font-size:x-small;\">https://www.dropbox.com/s/aswdz81mxhc909b/Bw85%20pack%201.3.rar?dl=0</span></li>
 		</ul>
 		<br>
 		
@@ -722,7 +723,20 @@ if ($form->hidden["display_form"] == "Update")
 		if (isset($data["version_new"])  &&  $data["version_new"]<=$highest)	// if number in the input field is obsolete then remove it
 			unset($data["version_new"]);
 
-		$suggested = strlen($highest)>3 ? 0.01 : 0.1;
+		$suggested = 0;
+
+		if (fmod($highest,1) == 0)
+			$suggested = 0.1;
+		else {
+			$temp      = $highest;
+			$suggested = 1;
+			
+			while(fmod($temp,1) > 0) {
+				$temp      *= 10;
+				$suggested /= 10;
+			}
+		}
+		
 		$form->change_control("version_new" , ["Default"=>floatval(sprintf("%01.3f", $highest+$suggested))]);
 	}
 

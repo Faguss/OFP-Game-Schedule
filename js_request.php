@@ -104,6 +104,11 @@ function get_filename_from_page($url) {
 			$keywords = ["<h1 style='font-size:30px;'>", " <font"];
 			break;
 		}
+		
+		case "www.dropbox.com" : {
+			$keywords = ["\"filename\": \"", "\""];
+			break;
+		}
 	}
 
 	if (count($keywords) == 2) {
