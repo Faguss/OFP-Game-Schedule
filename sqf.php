@@ -122,8 +122,8 @@ if ($db) {
 		
 		foreach ($mods["info"] as $id=>$mod) {
 			$output .= "\n" . $mod["script"];
-
-			if ($_SERVER['HTTP_USER_AGENT'] == "Wget/1.19.4 (mingw32)") {
+			
+			if (isset($_SERVER['HTTP_OFPGSINSTALL'])) {
 				$column_name = $mod["userver"] ? "dls_upd" : "dls_new";
 				$db->query("UPDATE gs_mods SET $column_name=$column_name+1 WHERE id=$id");
 			}
