@@ -94,9 +94,6 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				$form->hidden["display_name"] = $data["name"]!="" ? $data["name"] : $data["ip"];
 				$form->title                  = lang("GS_STR_SERVER_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
 				
-				// Update logo hash
-				$db->update("gs_serv", $id, ["logohash"=>empty($data["logo"]) ? "" : hash_file('crc32', $form->image_dir.$data["logo"])]);
-				
 				if ($form->hidden["action"] == "Add New") {
 					$id                           = $db->lastId();
 					$form->hidden["uniqueid"]     = $data["uniqueid"];
@@ -106,6 +103,9 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				}
 				
 				$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$id, "type"=>($form->hidden["action"]=="Add New" ? GS_LOG_SERVER_ADDED : GS_LOG_SERVER_UPDATED), "added"=>date("Y-m-d H:i:s")]);
+				
+				// Update logo hash
+				$db->update("gs_serv", $id, ["logohash"=>empty($data["logo"]) ? "" : hash_file('crc32', $form->image_dir.$data["logo"])]);
 			}
 		}
 	} else

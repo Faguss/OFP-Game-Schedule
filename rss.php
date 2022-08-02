@@ -26,13 +26,25 @@ $exclude_list = [
 ];
 
 if (!empty($input["mod"]))
-	$exclude_list = [GS_LOG_SERVER_MOD_REMOVED,GS_LOG_SERVER_MOD_ADDED,GS_LOG_SERVER_MOD_CHANGED,GS_LOG_MOD_REVOKE_ACCESS,GS_LOG_MOD_SHARE_ACCESS,GS_LOG_MOD_TRANSFER_ADMIN];
+	$exclude_list = [
+		GS_LOG_SERVER_MOD_REMOVED,
+		GS_LOG_SERVER_MOD_ADDED,
+		GS_LOG_SERVER_MOD_CHANGED,
+		GS_LOG_MOD_REVOKE_ACCESS,
+		GS_LOG_MOD_SHARE_ACCESS,
+		GS_LOG_MOD_TRANSFER_ADMIN
+	];
 
 if (!empty($input["server"]))
-	$exclude_list = [GS_LOG_SERVER_MOD_CHANGED,GS_LOG_SERVER_REVOKE_ACCESS,GS_LOG_SERVER_SHARE_ACCESS,GS_LOG_SERVER_TRANSFER_ADMIN];
+	$exclude_list = [
+		GS_LOG_SERVER_MOD_CHANGED,
+		GS_LOG_SERVER_REVOKE_ACCESS,
+		GS_LOG_SERVER_SHARE_ACCESS,
+		GS_LOG_SERVER_TRANSFER_ADMIN
+	];
 
 
-$table      = GS_get_activity_log(40, $exclude_list, false, $input);
+$table      = GS_get_activity_log(40, $exclude_list, false, GS_get_permission_level($user), $input);
 $timestamps = [];
 
 foreach($table as $row) {
@@ -46,6 +58,9 @@ foreach($table as $row) {
 	$description = "";
 	
 	if (isset($row["server_name"])) {
+		if ($row["typenum"] == GS_LOG_SERVER_ADDED)
+			$description .= "{$row["message"]}<br><br>";
+		
 		$description .= "<a href=\"{$url}show.php?server={$row["server_id"]}\">".lang("GS_STR_SERVER")."</a><br>";
 		
 		if (!empty($input["server"]))
@@ -57,6 +72,9 @@ foreach($table as $row) {
 		
 		if (isset($row["mod_version"]))	
 			$version = "&ver=".(floatval($row["mod_version"])-0.01);
+		
+		if ($row["typenum"] == GS_LOG_MOD_ADDED)
+			$description .= "{$row["mod_desc"]}<br><br>";
 		
 		$description .= "<a href=\"{$url}show.php?mod={$row["mod_id"]}$version\">".lang("GS_STR_MOD_PREVIEW_INST")."</a><br>";
 		

@@ -269,7 +269,7 @@ echo "	<div class=\"row\">
 					<table style=\"width:100%\">
 ";
 
-$table = GS_get_activity_log(5, $exclude_list, false);
+$table = GS_get_activity_log(5, $exclude_list, false, $gs_my_permission_level);
 
 foreach($table as $row) {
 	$description = $row["description"];

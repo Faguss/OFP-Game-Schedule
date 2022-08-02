@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2022,7,31,0,12,28,55,989,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2022,8,1,1,23,40,54,115,120,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1940,7 +1940,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 		if (isset($user_list[$server["createdby"]])) {
 			$js_addedon[] = date("c",strtotime($server["created"]));
 			$html .= "<span style=\"font-size:x-small;\">$uniqueid</span><small><span style=\"float:right;\">".lang("GS_STR_ADDED_BY_ON",[$user_list[$server["createdby"]],"<span class=\"server_addedon\">".date("jS M Y",strtotime($server["created"]))."</span>"])."</span></small>";
-			
+
 			if ($server["admin"] != $server["createdby"])
 				$html .= "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$server["admin"]], date("jS M Y",strtotime($server["adminsince"]))])."</small>";
 		}
@@ -1991,14 +1991,13 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 }
 
 // Get and format data from the log table
-function GS_get_activity_log($limit, $exclude_type, $show_private, $input=["password"=>[], "user"=>[]]) {
+function GS_get_activity_log($limit, $exclude_type, $show_private, $gs_permission_level, $input=["password"=>[], "user"=>[]]) {
 	$db      = DB::getInstance();
 	$max     = $db->cell("gs_log.count(*)");
 	$offset  = 0;
 	$buffer  = 100;
 	$output  = [];
 	$last_id = -1;
-	global $gs_permission_level;
 	$detailed_server_mod_change = !in_array(GS_LOG_SERVER_MOD_CHANGED, $exclude_type);
 	
 	if (!isset($max))
@@ -2076,6 +2075,7 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $input=["pass
 			$data["users"][$log["userid"]] = [];
 		}
 
+		// Build SQL query
 		foreach(array_keys($data) as $array) {
 			$script_list_id = [];
 			
@@ -2088,13 +2088,14 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $input=["pass
 				$sql = "SELECT id";
 				$columns = "";
 				
+				// Table columns to select
 				switch($array) {
 					case "users"           : $columns=["username"]; break;
-					case "gs_serv"         : $columns=["name","uniqueid","access"]; break;
+					case "gs_serv"         : $columns=["name","message","uniqueid","access","removed"]; break;
 					case "gs_serv_times"   : $columns=["serverid","starttime","duration","type","timezone"]; break;
 					case "gs_serv_mods"    : $columns=["serverid","modid"]; break;
 					case "gs_serv_admins"  : $columns=["serverid","userid"]; break;
-					case "gs_mods"         : $columns=["name","access","uniqueid"]; break;
+					case "gs_mods"         : $columns=["name","description","access","uniqueid","removed"]; break;
 					case "gs_mods_scripts" : $columns=["size"]; break;
 					case "gs_mods_updates" : $columns=["modid","scriptid","version","changelog"]; break;
 					case "gs_mods_links"   : $columns=["updateid","scriptid","fromver"]; break;
@@ -2290,6 +2291,10 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $input=["pass
 				
 				$table_row["server_id"]   = $server["uniqueid"];
 				$table_row["server_name"] = $server_name;
+				$table_row["message"]     = $mod["message"];
+				
+				if ($log["type"] == GS_LOG_SERVER_DELETE && $server["removed"]!=1)
+					$valid_row = false;
 			}
 			
 			if (isset($mod_id)) {
@@ -2299,6 +2304,10 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $input=["pass
 				
 				$table_row["mod_id"]   = $mod["uniqueid"];
 				$table_row["mod_name"] = $mod_name;
+				$table_row["mod_desc"] = $mod["description"];
+				
+				if ($log["type"] == GS_LOG_MOD_DELETE && $mod["removed"]!=1)
+					$valid_row = false;
 			}
 			
 			if (isset($user_id))

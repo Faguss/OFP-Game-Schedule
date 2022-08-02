@@ -31,7 +31,7 @@ $exclude_list = [
 	GS_LOG_MOD_LINK_UPDATED,
 	GS_LOG_MOD_LINK_DELETED
 ];
-$table = GS_get_activity_log(500, $exclude_list, false, GS_get_common_input());
+$table = GS_get_activity_log(500, $exclude_list, false, GS_get_permission_level($user), GS_get_common_input());
 
 echo "
 <br>
