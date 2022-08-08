@@ -223,6 +223,587 @@ function GS_table_rows_swap(direction, row_id, field_id) {
 		}
 }
 
+// Get game server status
+function GS_get_server_status(ip_id, ip_group, location_group_id, name_id, password_id, version_id, equalmodreq_id, location_id) {
+	var ip_input = document.getElementById(ip_id);
+	var ip       = ip_input.value;
+	var port     = '2302';
+	var parts    = ip_input.value.split(':');
+	
+	if (parts.length >= 2) {
+		ip   = parts[0];
+		port = parts[1];
+	}
+	
+	
+	// Get server version and equalmodrequired
+	var ip_input_backup = ip_input.innerHTML;
+	ip_input.innerHTML  = "";
+	$(ip_input).addClass('schedule_modal_loader');
+	
+	$.get("https://ofp-api.herokuapp.com/"+ip+":"+port, function(data) {
+		$(ip_input).removeClass('schedule_modal_loader');
+		ip_input.innerHTML = ip_input_backup;
+		
+		$('#'+name_id).val(data.hostname);
+		$('#'+version_id).val(data.actver.substring(0,1)+"."+data.actver.substring(1));
+		$('#'+equalmodreq_id).val(data.equalModRequired);
+		
+		if (data.password == "1") {
+			if ($('#'+password_id).val() == "")
+				$('#'+password_id).val("<type password here>");
+		} else
+			$('#'+password_id).val("");
+	})
+	.fail(function() {
+		$(ip_input).removeClass('schedule_modal_loader');
+		ip_input.innerHTML = ip_input_backup;
+	});
+	
+	
+	// Get location
+	var location_input        = document.getElementById(location_id);
+	var location_input_backup = location_input.innerHTML;
+	location_input.innerHTML  = "";
+	
+	$(location_input).addClass('schedule_modal_loader');
+
+	$.ajax({
+		async: true,
+		crossDomain: true,
+		data: "json",
+		url: "https://ipwho.is/"+ip,
+		success: function(data) {
+			$(location_input).removeClass('schedule_modal_loader');
+			location_input.innerHTML = location_input_backup;
+			
+			if (!jQuery.isEmptyObject(data)) {
+				$('#'+location_id).val(data.continent+", "+data.country);
+			}
+		},
+		fail: function() {
+			$(location_input).removeClass('schedule_modal_loader');
+			location_input.innerHTML = location_input_backup;
+		}
+	});
+}
+
+const SQM_EXPECT = {
+	PROPERTY: 0,
+	EQUALITY: 1,
+	VALUE: 2,
+	SEMICOLON: 3,
+	CLASS_NAME: 4,
+	CLASS_INHERIT: 5,
+	CLASS_COLON: 6,
+	CLASS_BRACKET: 7,
+	ENUM_BRACKET: 8,
+	ENUM_CONTENT: 9,
+	EXEC_BRACKET: 10,
+	EXEC_CONTENT: 11,
+	MACRO_CONTENT: 12
+}
+
+const SQM_COMMENT = {
+	NONE: 0,
+	LINE: 1,
+	BLOCK: 2
+}
+
+const SQM_OUTPUT = {
+	END_OF_SCOPE: 0,
+	PROPERTY: 1,
+	CLASS: 2
+};
+
+const SQM_ACTION = {
+	GET_NEXT_ITEM: 0,
+	FIND_PROPERT: 1,
+	FIND_CLASS: 2,
+	FIND_CLASS_END: 3,
+	FIND_CLASS_END_CONVERT: 4
+}
+
+// Generate SQM ParseState object
+function SQM_Init() {
+	return {
+		// Input
+		i                 : 0,
+		word_start        : -1,
+		comment           : SQM_COMMENT.NONE,
+		expect            : SQM_EXPECT.PROPERTY,
+		class_level       : 0,
+		array_level       : 0,
+		array_started     : false,
+		parenthesis_level : 0,
+		word_started      : false,
+		first_char        : true,
+		is_array          : false,
+		in_quote          : false,
+		macro             : false,
+		is_inherit        : false,
+		purge_comment     : false,
+		separator         : ' ',
+
+		// Output
+		property            : "",
+		property_start      : 0,
+		property_end        : 0,
+		value               : "",
+		value_start         : 0,
+		value_end           : 0,
+		class_name          : "",
+		class_start         : 0,
+		class_end           : 0,
+		class_length        : 0,
+		class_name_full_end : 0,
+		inherit             : "",
+		scope_end           : 0
+	};
+}
+
+// is string whitespace
+function GS_isspace(input) {
+	' \t\n\r\v'.indexOf(input) > -1
+}
+
+// is string alphanumeric
+function GS_isalnum(input) {
+	return input.match(/^[\p{L}\p{N}]*$/u)
+}
+
+// Parse OFP configuration file
+function SQM_Parse(input, state, action_type, to_find) {
+	var initial_level = state.class_level;
+	
+	for (; state.i<input.length; state.i++) {
+		var c = input[state.i];
+		//console.log(state.i+"/"+input.length+" " + c + " expect:"+Object.keys(SQM_EXPECT)[state.expect] + " arraylevel:"+state.array_level);
+
+		// Parse preprocessor comment
+		switch (state.comment) {
+			case SQM_COMMENT.NONE  : {
+				if (c == '/' && !state.in_quote) {
+					var c2 = input[state.i+1];
+					
+					if (c2 == '/')
+						state.comment = SQM_COMMENT.LINE;
+					else 
+						if (c2 == '*')
+							state.comment = SQM_COMMENT.BLOCK;
+				}
+				
+				if (state.comment == SQM_COMMENT.NONE)
+					break;
+				else {
+					if (state.word_started)
+						state.purge_comment = true;
+					
+					continue;
+				}
+			}
+			
+			case SQM_COMMENT.LINE  : {
+				if (c=='\r' || c=='\n')
+					state.comment = SQM_COMMENT.NONE;
+
+				continue;
+			}
+			
+			case SQM_COMMENT.BLOCK : {
+				if (state.i>0 && input[state.i-1]=='*' && c=='/')
+					state.comment = SQM_COMMENT.NONE;
+
+				continue;
+			}
+		}
+
+		// Parse preprocessor directives
+		if (!state.first_char && (c=='\r' || c=='\n')) {
+			state.first_char = true;
+			
+			if (state.macro && input[state.i-1] != '\\')
+				state.macro = false;
+		}
+		
+		if (!GS_isspace(input[state.i])  &&  state.first_char) {
+			state.first_char = false;
+			
+			if (c == '#')
+				state.macro = true;
+		}
+		
+		if (state.macro)
+			continue;
+
+
+		// Parse classes
+		switch (state.expect) {
+			case SQM_EXPECT.SEMICOLON : {
+				if (c == ';') {
+					state.expect = SQM_EXPECT.PROPERTY;
+					continue;
+				} else 
+					if (!GS_isspace(c))
+						state.expect = SQM_EXPECT.PROPERTY;
+			}
+			
+			case SQM_EXPECT.PROPERTY : {
+				if (c == '}') {
+					state.scope_end = state.i;
+					state.expect    = SQM_EXPECT.SEMICOLON;
+					state.class_level--;
+						
+					// If wanted to move to the end of the current scope
+					if ((action_type == SQM_ACTION.FIND_CLASS_END || action_type==SQM_ACTION.FIND_CLASS_END_CONVERT) && state.class_level+1==initial_level) {
+
+						// Include separator in the class length
+						for (var z=state.i; z<=input.length; z++) {
+							if (z == input.length || input[z]==';' || input[z]=='\n') {
+								state.i = z;
+								break;
+							}
+						}
+						
+						state.i++;
+						state.class_end    = state.i;
+						state.class_length = state.i - state.class_start;
+						return SQM_OUTPUT.END_OF_SCOPE;
+					}
+									
+					// End parsing when leaving starting scope
+					if (state.class_level < initial_level  ||  action_type == SQM_ACTION.GET_NEXT_ITEM) {
+						state.i++;
+						return SQM_OUTPUT.END_OF_SCOPE;
+						
+					}
+
+					continue;
+				}
+				
+				if (GS_isalnum(c) || c=='_' || c=='[' || c==']') {
+					if (!state.word_started) {
+						state.word_start   = state.i;
+						state.word_started = true;
+					}
+				} else
+					if (state.word_started) {
+						if (input.substring(state.word_start,state.word_start+5) == "class") {
+							state.expect = SQM_EXPECT.CLASS_NAME;
+							
+							if (action_type != SQM_ACTION.FIND_CLASS_END && action_type != SQM_ACTION.FIND_CLASS_END_CONVERT)
+								state.class_start = state.word_start;
+						} else 
+							if (input.substring(state.word_start,state.word_start+4) == "enum") {
+								state.expect    = SQM_EXPECT.ENUM_BRACKET;
+								state.separator = '{';
+							} else 
+								if (input.substring(state.word_start,state.word_start+6) == "__EXEC") {
+									state.expect    = SQM_EXPECT.EXEC_BRACKET;
+									state.separator = '(';
+								} else {
+									state.expect          = SQM_EXPECT.EQUALITY;
+									state.separator       = '=';
+									state.property_start  = state.word_start;
+									state.property_end    = state.i;
+									state.property        = input.substring(state.property_start, state.property_end);
+									state.is_array        = input[state.i-2]=='[' && input[state.i-1]==']';
+									state.array_started   = !state.is_array;
+									//console.log("property: "+state.property + " isarray:"+state.is_array);
+								}
+
+						state.word_started = false;
+					}
+				
+				if (state.separator == ' ') {
+					break;
+				}
+			}
+			
+			case SQM_EXPECT.EQUALITY     : 
+			case SQM_EXPECT.ENUM_BRACKET : 
+			case SQM_EXPECT.EXEC_BRACKET : {
+				if (c == state.separator) {
+					state.expect++;
+					state.separator = ' ';
+				} else 
+					if (state.expect==SQM_EXPECT.EQUALITY && c=='(') {
+						state.expect            = SQM_EXPECT.MACRO_CONTENT;
+						state.separator         = ' ';
+						state.parenthesis_level = 1;
+					} else 
+						if (state.expect == SQM_EXPECT.ENUM_BRACKET) { // ignore what's between "enum" keyword and bracket
+							if (c != '{')
+								break;
+						} else
+							if (!GS_isspace(c)) {	//ignore syntax error
+								//console.log("syntax error: " + c);
+								state.i--;
+								state.separator = ' ';
+								state.expect    = SQM_EXPECT.SEMICOLON;
+							}
+				
+				break;
+			}
+			
+			case SQM_EXPECT.VALUE : {
+				if (c == '"')
+					state.in_quote = !state.in_quote;
+
+				if (!state.in_quote && (c=='{' || c=='[')) {
+					state.array_level++;
+					state.array_started = true;
+					
+					if (SQM_ACTION.FIND_CLASS_END_CONVERT)
+						input[state.i] = '{';
+				}
+
+				if (!state.in_quote && (c=='}' || c==']')) {
+					state.array_level--;
+					
+					if (SQM_ACTION.FIND_CLASS_END_CONVERT)
+						input[state.i] = '}';
+
+					// Remove trailing commas
+					/*for (int z=state.i-1; z>0 && (GS_isspace(text[z]) || text[z]==',' || text[z]=='}' || text[z]==']'); z--)
+						if (text[z]==',')
+							text[z] = ' ';*/
+				}
+
+				// Convert semi-colons to commas
+				/*if (!state.in_quote && c==';' && state.is_array && state.array_level>0)
+					text[state.i] = ',';*/
+
+				if (!state.word_started) {
+					if (!GS_isspace(c)) {
+						state.word_start   = state.i;
+						state.word_started = true;
+					}
+				} else {
+					if (!state.in_quote && state.array_started && state.array_level==0 && (c==';' || c=='\r' || c=='\n')) {
+						state.value_start = state.word_start;
+						state.value_end   = state.i;
+						state.value       = input.substring(state.value_start, state.value_end);
+						
+						// Include separator in the length
+						for (var z=state.i; z<=input.length; z++) {
+							if (z == input.length) {
+								state.value_end = z;
+								break;
+							}
+							
+							if (input[z]==';' || input[z]=='\n') {
+								state.value_end = z + 1;
+								break;
+							}
+						}
+						
+						//console.log("value: "+state.value+" action:");
+						state.word_started = false;
+						state.expect       = SQM_EXPECT.PROPERTY;
+						
+						if (
+							action_type == SQM_ACTION.GET_NEXT_ITEM || 
+							(
+								action_type           == SQM_ACTION.FIND_PROPERTY && 
+								state.class_level     == initial_level && 
+								state.property.length == to_find.length &&
+								state.property        == to_find
+							)
+						) {
+							state.i++;
+							return SQM_OUTPUT.PROPERTY;
+						}
+					}
+				}
+				
+				break;
+			}
+			
+			case SQM_EXPECT.CLASS_NAME    :
+			case SQM_EXPECT.CLASS_INHERIT : {
+				if (GS_isalnum(c) || c=='_') {
+					if (!state.word_started) {
+						state.word_start   = state.i;
+						state.word_started = true;
+					}
+				} else
+					if (state.word_started) {
+						if (state.expect == SQM_EXPECT.CLASS_NAME) {
+							state.class_name_start = state.word_start;
+							state.class_name_end   = state.i;
+							state.class_name       = input.substring(state.class_name_start, state.class_name_end);
+							state.inherit          = "";
+						} else {
+							state.inherit = input.substring(state.word_start, state.i);
+						}
+						
+						state.is_inherit          = state.expect == SQM_EXPECT.CLASS_INHERIT;
+						state.word_started        = false;
+						state.expect              = state.expect==SQM_EXPECT.CLASS_NAME ? SQM_EXPECT.CLASS_COLON : SQM_EXPECT.CLASS_BRACKET;
+						state.class_name_full_end = state.i;
+					}
+				
+				if (state.expect!=SQM_EXPECT.CLASS_COLON && state.expect!=SQM_EXPECT.CLASS_BRACKET)
+					break;
+			}
+			
+			case SQM_EXPECT.CLASS_COLON   :
+			case SQM_EXPECT.CLASS_BRACKET : {
+				if (state.expect==SQM_EXPECT.CLASS_COLON && c==':')
+					state.expect = SQM_EXPECT.CLASS_INHERIT;
+				else 
+					if (c == '{') {
+						state.class_level++;
+						state.expect = SQM_EXPECT.PROPERTY;
+						
+						// Return starting position of this class
+						if (
+							action_type == SQM_ACTION.GET_NEXT_ITEM || 
+							(
+								action_type             == SQM_ACTION.FIND_CLASS && 
+								state.class_level-1     == initial_level && 
+								state.class_name.length == to_find.length && 
+								state.class_name        == to_find
+							)
+						) {
+							state.i++;
+							return SQM_OUTPUT.CLASS;
+						}
+					} else
+						if (!GS_isspace(c)) {	//ignore syntax error
+							state.i--;
+							state.expect = SQM_EXPECT.SEMICOLON;
+						}
+				
+				break;
+			}
+			
+			case SQM_EXPECT.ENUM_CONTENT : 
+			case SQM_EXPECT.EXEC_CONTENT : {
+				if ((state.expect==SQM_EXPECT.EXEC_CONTENT && c==')') || (state.expect==SQM_EXPECT.ENUM_CONTENT && c=='}'))
+					state.expect = SQM_EXPECT.SEMICOLON;
+
+				break;
+			}
+			
+			case SQM_EXPECT.MACRO_CONTENT : {
+				if (c == '"')
+					state.in_quote = !state.in_quote;
+					
+				if (!state.in_quote) {
+					if (c == '(')
+						state.parenthesis_level++;
+						
+					if (c == ')')
+						state.parenthesis_level--;
+						
+					if (state.parenthesis_level == 0)
+						state.expect = SQM_EXPECT.SEMICOLON;
+				}
+					
+				break;
+			}
+		}
+	}
+	
+	state.scope_end = input.length;
+	return SQM_OUTPUT.END_OF_SCOPE;
+}
+
+// Remove quotation marks
+function GS_trimq(input) {
+	if (input[0] == '"' && input[input.length-1] == '"')
+		return input.slice(1,-1);
+	else
+		return input;
+}
+
+// Handle file input
+function GS_read_server_config(input, array) {		
+	for (var i=0; i<input.files.length; i++) {
+		(function(file) {
+			var is_game_config = false;
+			
+			switch(file.name.toLowerCase()) {
+				case "coldwarassault.cfg" : is_game_config=true; $('#version').val("1.99"); break;
+				case "flashpoint.cfg"     : is_game_config=true; $('#version').val("1.96"); break;
+				case "armaresistance.cfg" : is_game_config=true; $('#version').val("2.01"); break;
+			}
+			
+			var reader    = new FileReader();
+			reader.onload = function(e) {
+				var text  = e.target.result; 
+				var state = SQM_Init();
+				
+				while (state.i < text.length) {
+					switch (SQM_Parse(text, state, SQM_ACTION.GET_NEXT_ITEM, "")) {
+						case SQM_OUTPUT.PROPERTY :
+							for (var i=0; i<array.length; i++) {
+								if (state.property.toLowerCase() == array[i][0].toLowerCase()) {
+									state.value = GS_trimq(state.value.trim());
+										
+									if (state.value[0]=='{'  &&  state.value[state.value.length-1]=='}') {
+										var trim       = state.value.slice(1,-1);
+										var message    = "";
+										var word_start = -1;
+										
+										for (var j=0; j<state.value.length; j++) {
+											if (state.value[j] == '"') {
+												if (word_start < 0) {
+													word_start = j + 1;
+												} else {
+													message   += state.value.substring(word_start,j) + " ";
+													word_start = -1;
+												}
+											}
+										}
+										
+										state.value = message;
+									}
+									
+									$('#'+array[i][1]).val(state.value);
+									array[i].push(true);
+								}
+							}
+							break;
+					}
+				}
+				
+				// Set default value for properties that were not found
+				for (var i=0; i<array.length; i++) {
+					if (array[i].length == 2) {
+						if ((array[i][0]=='MaxCustomFileSize' && !is_game_config)  ||  (array[i][0]!='MaxCustomFileSize' && is_game_config))
+							continue;
+						
+						if (array[i][0] == "equalModRequired")
+							$('#'+array[i][1]).val("0");
+						else
+							$('#'+array[i][1]).val("");
+					}
+				}
+			}
+			
+			reader.readAsText(file, "UTF-8");
+		})(input.files[i]);
+	}
+}
+
+// When drag & dropping files
+function GS_drop_handler(event, field) {
+	event.preventDefault();
+	GS_read_server_config(event.dataTransfer, [['hostname','name'], ['password','password'], ['equalModRequired','equalmodreq'], ['MaxCustomFileSize','maxcustomfilesize'], ['motd[]','message']]);
+	field.style.backgroundColor = "transparent";
+}
+
+// ondragover disable
+function GS_drag_over_handler(event, field, enable) {
+	event.preventDefault();
+	field.style.backgroundColor = enable ? "coral" : "transparent";
+}
+
+
+
 
 
 

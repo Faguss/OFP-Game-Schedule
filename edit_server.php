@@ -11,13 +11,28 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$voice_links_combined = substr($voice_links_combined, 0, -2) . ". " . lang("GS_STR_SERVER_VOICE_HINT");
 	
 	if ($form->hidden["display_form"] == "Edit")
-		$form->title=lang("GS_STR_SERVER_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
+		$form->title=lang("GS_STR_SERVER_PAGE_TITLE", ["<b>{$form->hidden["display_name"]}</b>"]);
 	else
 		$form->title=lang("GS_STR_INDEX_ADDNEW_SERVER");
 		
+	$form->add_text("ip", lang("GS_STR_SERVER_ADDRESS"), lang("GS_STR_SERVER_ADDRESS_HINT"), "192.168.1.101:2302");
+	
+	// Auto configuration
+	$form->include_file("usersc/js/gs_functions.js");
+	$form->add_html("
+	<div class=\"form-group\" style=\"margin-left:35px;margin-right:35px;\">
+		<div id=\"gs_drop_zone\" class=\"gs_drop_zone\" ondrop=\"GS_drop_handler(event, this);\" ondragover=\"GS_drag_over_handler(event, this, 1);\" ondragleave=\"GS_drag_over_handler(event, this, 0);\">
+			<p>".lang("GS_STR_SERVER_DRAGDROP")."</p>
+			<label class=\"gs_drop_zone_upload\">
+				<input style=\"display:none\" type=\"file\" multiple=\"multiple\" onchange=\"GS_read_server_config(this, [['hostname','name'], ['password','password'], ['equalModRequired','equalmodreq'], ['MaxCustomFileSize','maxcustomfilesize'], ['motd[]','message']])\">
+				".lang("GS_STR_SERVER_SELECT_FILES")."
+			</label>
+		</div>
+	</div>
+	<script type=\"text/javascript\">		
+	</script>");
+	
 	$form->add_text("name"             , lang("GS_STR_SERVER_NAME")         , lang("GS_STR_SERVER_NAME_HINT")      , lang("GS_STR_SERVER_NAME_EXAMPLE"));
-	$form->add_text("ip"               , lang("GS_STR_SERVER_ADDRESS")      , lang("GS_STR_SERVER_ADDRESS_HINT")   , "192.168.1.101");
-	$form->add_text("port"             , lang("GS_STR_SERVER_PORT")         , lang("GS_STR_SERVER_PORT_HINT")      , "2302");
 	$form->add_text("password"         , lang("GS_STR_SERVER_PASSWORD")     , lang("GS_STR_SERVER_PASSWORD_HINT")  , "123", "", 0, "");
 	$form->add_text("access"           , lang("GS_STR_SERVER_ACCESSCODE")   , lang("GS_STR_SERVER_ACCESSCODE_HINT"), "", "", 0, "");
 	$form->add_select("version"        , lang("GS_STR_SERVER_VERSION")      , lang("GS_STR_SERVER_VERSION_HINT")   , [["1.99",1.99], ["1.96",1.96], ["2.01",2.01]]);
@@ -30,13 +45,14 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->add_text("voice"            , lang("GS_STR_SERVER_VOICE_ADDRESS"), $voice_links_combined                , "ts3server://192.168.1.101?password=123");
 	$form->add_imagefile("logo"        , lang("GS_STR_SERVER_LOGO")         , lang("GS_STR_SERVER_LOGO_HINT")      , GS_LOGO_FOLDER, 10240*2.5);
 	
+	// Trigger info download on IP change
+	$form->change_control("location", ["Group"=>"id=\"location_group\""]);
+	$form->change_control("ip", ["Property"=>"onchange=\"GS_get_server_status('ip', this, 'location_group', 'name', 'password', 'version', 'equalmodreq', 'location')\""]);
+	
 	
 	// If user submitted form
 	if (in_array($form->hidden["action"], ["Edit","Add New"])) {
 		$data = &$form->save_input();
-
-		if ($data["port"] == "")
-			$data["port"] = 0;
 		
 		$data["website"] = filter_var($data["website"], FILTER_SANITIZE_URL);
 		$data["access"]  = preg_replace("/[^A-Za-z0-9 ]/", '', $data["access"]);
@@ -46,11 +62,11 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 		
 		// Validate user input				
 		$form->init_validation     (["max"=>GS_MAX_TXT_INPUT_LENGTH]);
-		$form->add_validation_rules(["ip"]                                    , ["required"=>true]);
-		$form->add_validation_rules(["message","voice"]                       , ["max"=>GS_MAX_MSG_INPUT_LENGTH]);	
-		$form->add_validation_rules(["access"]                                , ["max"=>GS_MAX_CODE_INPUT_LENGTH]);	
-		$form->add_validation_rules(["version", "Custom"]                     , ["is_num"=>true]);
-		$form->add_validation_rules(["equalmodreq","port","maxcustomfilesize"], ["is_int"=>true]);
+		$form->add_validation_rules(["ip"]                             , ["required"=>true]);
+		$form->add_validation_rules(["message","voice"]                , ["max"=>GS_MAX_MSG_INPUT_LENGTH]);	
+		$form->add_validation_rules(["access"]                         , ["max"=>GS_MAX_CODE_INPUT_LENGTH]);	
+		$form->add_validation_rules(["version", "Custom"]              , ["is_num"=>true]);
+		$form->add_validation_rules(["equalmodreq","maxcustomfilesize"], ["is_int"=>true]);
 
 		$custom_errors = [];
 		if (!empty($data["website"])  &&  !filter_var($data["website"], FILTER_VALIDATE_URL))
@@ -116,9 +132,6 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 					echo $sql . $db->errorString();
 				$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));
 			}
-	
-	if (isset($form->data["port"])  &&  $form->data["port"] == 0)
-		$form->data["port"] = "";
 		
 	$form->add_button("action", $form->hidden["display_form"], lang($form->hidden["display_form"]=="Edit" ? "GS_STR_SERVER_SUBMIT" : "GS_STR_INDEX_ADDNEW_SERVER"), "btn-primary btn-lg");
 }	

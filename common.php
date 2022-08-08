@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2022,8,1,1,23,40,54,115,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2022,8,7,0,21,51,11,286,120,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -940,7 +940,6 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			gs_serv.id,
 			gs_serv.name, 
 			gs_serv.ip,
-			gs_serv.port,
 			gs_serv.password,
 			gs_serv.version,
 			gs_serv.equalmodreq,
@@ -1164,9 +1163,17 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 								$new_value = GS_convert_size_in_bytes($value, "game");
 							} break;
 							
-							case "port"              : if ($value=="0") $add_value=false;
-							case "ip"                : 
-							case "password"          : $new_value="\"\"".GS_encrypt($value, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\"\""; break;
+							case "ip" : {
+								$ip       = $value;
+								$ip_parts = explode(":", $value);
+								if (count($ip_parts) >= 2) {
+									$ip = $ip_parts[0];
+									$output["info"][$id]["sqf"] .= "_server_port=\"\"".GS_encrypt($ip_parts[1], GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\"\";";
+								}
+								$new_value = "\"\"".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\"\""; break;
+							} break;
+							
+							case "password" : $new_value="\"\"".GS_encrypt($value, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\"\""; break;
 							
 							case "voice" : {
 								$add_value = false;
@@ -1782,7 +1789,7 @@ function GS_get_current_url($add_https=true, $add_path=true) {
 }
 
 // Read array with servers and output html
-function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=false, $server_order=[]) {
+function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=false, $server_order=[], $query_server=false) {
 	$html         = "";
 	$js_starttime = [];
 	$js_duration  = [];
@@ -1790,6 +1797,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 	$js_started   = [];
 	$user_list    = [];
 	$js_addedon   = [];
+	$js_serv_id   = [];
 	
 	// Get user list first
 	if ($extended_info) {
@@ -1934,6 +1942,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 		$js_duration[]  = $current_duration;
 		$js_type[]      = $current_type;
 		$js_started[]   = $current_started;
+		$js_serv_id[]   = $uniqueid;
 		
 		$html .= "</dl>";
 
@@ -1945,7 +1954,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 				$html .= "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$server["admin"]], date("jS M Y",strtotime($server["adminsince"]))])."</small>";
 		}
 		
-		$html .= "</div>
+		$html .= "<div id=\"query{$server["uniqueid"]}\"></div></div>
 		<div>
 			
 			<a href=\"show.php?server={$server["uniqueid"]}".($server["access"]!="" ? "&password={$server["access"]}" : "")."\"><span class=\"glyphicon glyphicon-link\"></span></a>
@@ -1983,8 +1992,53 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 	<script type=\"text/javascript\" src=\"usersc/js/{$locale_file}.js\"></script>
 	<script type=\"text/javascript\">
 		GS_convert_server_events(".json_encode($js_starttime).",".json_encode($js_duration).",".json_encode($js_type).",".json_encode($js_started).",".json_encode($localized_strings).");
-		GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");
-	</script>
+		GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");";
+		
+	if ($query_server) {
+		$server_status_list   = [lang("GS_STR_SERVER_OFFLINE")];
+		$server_status_list   = array_pad($server_status_list, 4, lang("GS_STR_SERVER_CREATE"));
+		$server_status_list[] = [lang("GS_STR_SERVER_EDIT")];
+		$server_status_list   = array_pad($server_status_list, 7, lang("GS_STR_SERVER_WAIT"));
+		$server_status_list   = array_pad($server_status_list, 9, lang("GS_STR_SERVER_SETUP"));
+		$server_status_list   = array_pad($server_status_list, 11, lang("GS_STR_SERVER_DEBRIEFING"));
+		$server_status_list   = array_pad($server_status_list, 13, lang("GS_STR_SERVER_SETUP"));
+		$server_status_list[] = [lang("GS_STR_SERVER_BRIEFING")];
+		$server_status_list[] = [lang("GS_STR_SERVER_PLAY")];
+		
+		$html .= "
+		var GS_serv_id     = ".json_encode($js_serv_id)."
+		var GS_game_status = ".json_encode($server_status_list)."
+		
+		window.onload = function() {
+			for (var i=0; i<GS_serv_id.length; i++) {
+				var current_id = GS_serv_id[i];
+				$.post('js_request.php',  {'queryserver':current_id}, function(data) {
+					var server = JSON.parse(data);
+					if (server != null && server.error == null) {
+						var field = document.getElementById('query'+current_id);
+						var html  = '<dl>';
+
+						html += '<dt>".lang("GS_STR_SERVER_STATUS").":</dt><dd>' + GS_game_status[server.gstate] + '</dd>';
+						
+						if (server.gametype != '')
+							html += '<dt>".lang("GS_STR_SERVER_MISSION").":</dt><dd>' + server.gametype + '.' + server.mapname + '</dd>';
+						
+						html += '<dt>".lang("GS_STR_SERVER_PLAYERS").":</dt><dd>' + server.numplayers;
+
+						for (var j=0; j<server.players.length; j++)
+							html += '<br>' + server.players[j].player;
+						
+						html += '</dd>';
+						
+						field.innerHTML = html + '</dl>';
+					}
+				});
+			}
+		}
+		";
+	}
+	
+	$html .= "</script>
 	";
 		
 	return $html;

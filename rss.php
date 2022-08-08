@@ -58,7 +58,7 @@ foreach($table as $row) {
 	$description = "";
 	
 	if (isset($row["server_name"])) {
-		if ($row["typenum"] == GS_LOG_SERVER_ADDED)
+		if ($row["typenum"] == GS_LOG_SERVER_ADDED && !empty($row["message"]))
 			$description .= "{$row["message"]}<br><br>";
 		
 		$description .= "<a href=\"{$url}show.php?server={$row["server_id"]}\">".lang("GS_STR_SERVER")."</a><br>";
@@ -73,7 +73,7 @@ foreach($table as $row) {
 		if (isset($row["mod_version"]))	
 			$version = "&ver=".(floatval($row["mod_version"])-0.01);
 		
-		if ($row["typenum"] == GS_LOG_MOD_ADDED)
+		if ($row["typenum"] == GS_LOG_MOD_ADDED && !empty($row["mod_desc"]))
 			$description .= "{$row["mod_desc"]}<br><br>";
 		
 		$description .= "<a href=\"{$url}show.php?mod={$row["mod_id"]}$version\">".lang("GS_STR_MOD_PREVIEW_INST")."</a><br>";

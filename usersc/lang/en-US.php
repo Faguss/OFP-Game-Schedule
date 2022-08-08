@@ -66,8 +66,6 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_NAME_EXAMPLE" => "Adam Smiths' server with WW4 mod and missions",
 	"GS_STR_SERVER_ADDRESS" => "Address",
 	"GS_STR_SERVER_ADDRESS_HINT" => "Server's IP address. Won't be shown publicly",
-	"GS_STR_SERVER_PORT" => "Port",
-	"GS_STR_SERVER_PORT_HINT" => "Optional port number. Won't be shown publicly",
 	"GS_STR_SERVER_PASSWORD" => "Password",
 	"GS_STR_SERVER_PASSWORD_HINT" => "Server's password if required to connnect. Won't be shown publicly",
 	"GS_STR_SERVER_ACCESSCODE" => "Password in the Schedule",
@@ -93,6 +91,8 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_VOICE_PROGRAM" => "Voice Program",
 	"GS_STR_SERVER_VOICE_HINT" => "Won't be shown publicly",
 	"GS_STR_SERVER_SUBMIT" => "Change Details",
+	"GS_STR_SERVER_DRAGDROP" => "Drag & drop here server.cfg and flashpoint.cfg / coldwarassault.cfg / armaresistance.cfg to automatically fill some of the form fields",
+	"GS_STR_SERVER_SELECT_FILES" => "Select Files",
 
     #Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Invalid website address",
@@ -109,6 +109,17 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_MODS" => "Mods",
 	"GS_STR_SERVER_GAMETIME" => "Game Time",
 	"GS_STR_SERVER_HOWTO_CONNECT" => "How to join",
+	"GS_STR_SERVER_STATUS" => "Status",
+	"GS_STR_SERVER_OFFLINE" => "Offline",
+	"GS_STR_SERVER_CREATE" => "Creating",
+	"GS_STR_SERVER_EDIT" => "Editing",
+	"GS_STR_SERVER_WAIT" => "Waiting",
+	"GS_STR_SERVER_SETUP" => "Setting up",
+	"GS_STR_SERVER_DEBRIEFING" => "Debriefing",
+	"GS_STR_SERVER_BRIEFING" => "Briefing",
+	"GS_STR_SERVER_PLAY" => "Playing",
+	"GS_STR_SERVER_MISSION" => "Misja",
+	"GS_STR_SERVER_PLAYERS" => "Players",
 	
     #Edit server schedule page
 	"GS_STR_SERVER_EVENT_PAGE_TITLE" => "Schedule for the %m1% Server",

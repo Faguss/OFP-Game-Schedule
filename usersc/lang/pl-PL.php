@@ -66,8 +66,6 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_NAME_EXAMPLE" => "Adama Kowalskiego serwer z modem WW4 i misjami",
 	"GS_STR_SERVER_ADDRESS" => "Adres",
 	"GS_STR_SERVER_ADDRESS_HINT" => "Adres IP serwera. Nie będzie pokazany publicznie",
-	"GS_STR_SERVER_PORT" => "Port",
-	"GS_STR_SERVER_PORT_HINT" => "Nieobowiązkowo numer portu. Nie będzie pokazany publicznie",
 	"GS_STR_SERVER_PASSWORD" => "Hasło",
 	"GS_STR_SERVER_PASSWORD_HINT" => "Hasło jeśli jest wymagane do podłączenia się. Nie będzie pokazane publicznie",
 	"GS_STR_SERVER_ACCESSCODE" => "Hasło w rozkładzie",
@@ -93,6 +91,8 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_LOGO" => "Ikona",
 	"GS_STR_SERVER_LOGO_HINT" => "Obraz JPG/PAA do \$max_image_size (zalecane 128x128). Gra musi zostać uruchomiona ponownie żeby obraz się odświeżył",
 	"GS_STR_SERVER_SUBMIT" => "Zmień szczegóły",
+	"GS_STR_SERVER_DRAGDROP" => "Przeciągnij tutaj pliki server.cfg oraz flashpoint.cfg / coldwarassault.cfg / armaresistance.cfg żeby automatycznie wypełnić niektóre pola formularza",
+	"GS_STR_SERVER_SELECT_FILES" => "Wybierz Pliki",
 
     #Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Błędny adres strony",
@@ -109,6 +109,17 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_MODS" => "Mody",
 	"GS_STR_SERVER_GAMETIME" => "Harmonogram",
 	"GS_STR_SERVER_HOWTO_CONNECT" => "Jak dołączyć",
+	"GS_STR_SERVER_STATUS" => "Stan",
+	"GS_STR_SERVER_OFFLINE" => "Brak połączenia",
+	"GS_STR_SERVER_CREATE" => "Tworzenie",
+	"GS_STR_SERVER_EDIT" => "Edycja",
+	"GS_STR_SERVER_WAIT" => "Oczekiwanie",
+	"GS_STR_SERVER_SETUP" => "Ustawianie",
+	"GS_STR_SERVER_DEBRIEFING" => "Sprawozdanie",
+	"GS_STR_SERVER_BRIEFING" => "Odprawa",
+	"GS_STR_SERVER_PLAY" => "Gra",
+	"GS_STR_SERVER_MISSION" => "Misja",
+	"GS_STR_SERVER_PLAYERS" => "Gracze",
 
     #Edit server schedule page
 	"GS_STR_SERVER_EVENT_PAGE_TITLE" => "Harmonogram serwera %m1%",

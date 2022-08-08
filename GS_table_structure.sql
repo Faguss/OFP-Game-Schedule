@@ -318,7 +318,6 @@ CREATE TABLE `gs_serv` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `ip` varchar(100) NOT NULL,
-  `port` int(11) NOT NULL DEFAULT 0,
   `password` varchar(100) NOT NULL,
   `version` float NOT NULL DEFAULT 1.99,
   `equalmodreq` tinyint(1) NOT NULL DEFAULT 0,

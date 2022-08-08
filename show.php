@@ -25,7 +25,7 @@ $csrf          = Session::get(Config::get('session/token_name'));
 if (!empty($servers["id"]))
 	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
 		
-echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, 1, $input["server"], 0) . "</div>";
+echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, true, $input["server"], true) . "</div>";
 
 
 
@@ -134,7 +134,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 	if (isset($user_list[$mod["createdby"]])) {
 		$js_addedon[] = date("c",strtotime($mod["created"]));
 		echo "<span style=\"font-size:x-small;\">{$mod["uniqueid"]}</span><small><span style=\"float:right;\">".lang("GS_STR_ADDED_BY_ON",[$user_list[$mod["createdby"]],"<span class=\"mod_addedon\">".date("jS M Y",strtotime($mod["created"]))."</span>"])."</span></small>";
-		
+
 		if ($mod["admin"] != $mod["createdby"])
 			echo "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$mod["admin"]], date("jS M Y",strtotime($mod["adminsince"]))])."</small>";
 	}

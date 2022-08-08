@@ -127,6 +127,19 @@ $output = "";
 
 if (isset($_POST['filenamefromurl']))
 	$output = get_filename_from_page($_POST['filenamefromurl']);
+else
+	if (isset($_POST['queryserver']) && !empty($_POST['queryserver'])) {
+		require_once "minimal_init.php";
+		$db = DB::getInstance();
+		$ip = $db->cell("gs_serv.ip",["uniqueid","=",$_POST['queryserver']]);
+
+		if (isset($ip)) {
+			if (strpos($ip,":") === FALSE)
+				$ip .= ":2302";
+			
+			$output = url_get_contents("https://ofp-api.herokuapp.com/{$ip}");
+		}
+	}
 
 echo $output;	
 ?>

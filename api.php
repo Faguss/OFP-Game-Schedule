@@ -16,7 +16,7 @@ $mods    = GS_list_mods($servers["mods"], array_keys($input["modver"]), $input["
 $servers_keys = array_keys($servers["info"]);
 $mod_keys     = array_keys($mods["info"]);
 $all_user_id  = [];
-$to_remove    = ["id", "ip", "port", "password", "access", "type", "starttime", "timezone", "duration", "modified1", "modified2"];
+$to_remove    = ["id", "ip", "password", "access", "type", "starttime", "timezone", "duration", "modified1", "modified2"];
 
 
 // Edit server columns
