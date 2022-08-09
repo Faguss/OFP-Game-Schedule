@@ -170,10 +170,70 @@ echo "
 </div>";
 
 $paragraphs = [
-    ["1", "2", "br", "3", "1.png", "br", "*4", "2.png", "br", "*5", "3.png", "br", "6", "4.jpg", "5.jpg", "7", "8"],
-    ["1", "6.png", "2", "3", "7.png", "8.png", "br", "4", "9.png", "5", "10.png", "6", "11.png"],
-    ["1", "12.png", "2", "3", "br", "4"],
-    ["1", "2", "16.png", "3", "17.png", "br", "4", "13.png", "5", "14.png", "br", "br", "6", "7", "18.png", "19.png", "8", "20.png", "21.png", "22.png"]
+    [ //Section 1
+		"1", 
+		"2", 
+		"br", 
+		"3", 
+		"1_installation.png", 
+		"br", 
+		"*4", 
+		"2_option1.png", 
+		"br", 
+		"*5", 
+		"3_option2.png", 
+		"br", 
+		"6", 
+		"4_availableupdates.jpg", 
+		"5_downloadmods.jpg", 
+		"7", 
+		"8"
+	],
+    [ //Section 2
+		"1", 
+		"6_example1.png", 
+		"2", 
+		"3", 
+		"7_preview1.png", 
+		"8_preview2.png", 
+		"br", 
+		"4", 
+		"9_example2.png", 
+		"5", 
+		"10_preview3.png", 
+		"6", 
+		"11_preview4.png"
+	],
+    [ //Section 3
+		"1", 
+		"12_editexisting.png", 
+		"2", 
+		"3", 
+		"br", 
+		"4"
+	],
+    [ //Section 4
+		"1", 
+		"2", 
+		"13_path.png", 
+		"3", 
+		"14_pathjump.png", 
+		"br", 
+		"4", 
+		"15_jumpadd.png", 
+		"5", 
+		"16_jumppreview.png", 
+		"br", 
+		"br", 
+		"6", 
+		"7", 
+		"17_jumpnewest.png", 
+		"18_jumpnewestpath.png", 
+		"8", 
+		"19_jumpnewestpath2.png", 
+		"20_jumpnewestpreview1.png", 
+		"21_jumpnewestpreview2.png"
+	]
 ];
 
 foreach($paragraphs as $index=>$paragraph) {
@@ -191,7 +251,7 @@ foreach($paragraphs as $index=>$paragraph) {
             if (strpos($item,".") !== FALSE) {
                 $parts = explode(".", $item);
                 echo "<div class=\"text-center\">
-				<img src=\"images/modupdate_{$parts[0]}_" . substr($lang["THIS_CODE"],0,2) . ".{$parts[1]}\" alt=\"\" class=\"img-thumbnail blackborder\" style=\"width: 40%;\">
+				<img src=\"images/modupdate/{$parts[0]}_" . substr($lang["THIS_CODE"],0,2) . ".{$parts[1]}\" alt=\"\" class=\"img-thumbnail blackborder\" style=\"width: 40%;\">
                 </div><br>";
             } else {
                 $li = false;

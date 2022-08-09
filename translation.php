@@ -115,32 +115,32 @@ $table_info = [
 		"name"            => "Website: general",
 		"source"          => "",
 		"context_key"     => [
-			"GS_STR_DISABLED"         => "images/context/enabled_disabled.png",
-			"GS_STR_ENABLED"          => "images/context/enabled_disabled.png",
-			"GS_STR_ADDED_BY_ON"      => "images/context/managed_by.png",
-			"GS_STR_MANAGED_BY_SINCE" => "images/context/managed_by.png"
+			"GS_STR_DISABLED"         => "images/translation/enabled_disabled.png",
+			"GS_STR_ENABLED"          => "images/translation/enabled_disabled.png",
+			"GS_STR_ADDED_BY_ON"      => "images/translation/managed_by.png",
+			"GS_STR_MANAGED_BY_SINCE" => "images/translation/managed_by.png"
 		],
 		"context_section" => [
-			"Drop-down menu in the navigation bar"       => "images/context/drop_down_menu_ru.png",
-			"Home page"                                  => "images/context/home_page_ru.png",
-			"Edit server details page"                   => "images/context/edit_server_details_page_ru.png",
-			"Edit server details page feedback"          => "images/context/edit_server_details_page_feedback_ru.png",
-			"Display server info page"                   => "images/context/display_server_info_page_ru.png",
-			"Edit server schedule page"                  => "images/context/edit_server_schedule_page_ru.png",
-			"Edit server schedule page feedback"         => "images/context/edit_server_schedule_page_feedback_ru.png",
-			"Edit server mods page"                      => "images/context/edit_server_mods_page_ru.png",
-			"Edit server mods feedback"                  => "images/context/edit_server_mods_page_feedback_ru.png",
-			"Edit mod details page"                      => "images/context/edit_mods_details_page_ru.png",
-			"Convert download link modal"                => "images/context/convert_download_link_modal_ru.png",
-			"Edit mod details page feedback"             => "images/context/edit_mod_details_page_feedback_ru.png",
-			"Display mod info page"                      => "images/context/display_mod_info_page_ru.png",
-			"Add/Edit mod version section"               => "images/context/addedit_mod_version_section_ru.png",
-			"Add/Edit mod version section feedback"      => "images/context/addedit_mod_version_section_feedback_ru.png",
-			"Jump between mod versions section"          => "images/context/jump_between_mod_versions_section_ru.png",
-			"Jump between mod versions section feedback" => "images/context/jump_between_mod_versions_section_feedback_ru.png",
-			"Share server/mod page"                      => "images/context/share_servermod_page_ru.png",
-			"Share server/mod page feedback"             => "images/context/share_servermod_page_feedback_ru.png",
-			"Delete page"                                => "images/context/delete_page_ru.png",
+			"Drop-down menu in the navigation bar"       => "images/translation/drop_down_menu_ru.png",
+			"Home page"                                  => "images/translation/home_page_ru.png",
+			"Edit server details page"                   => "images/translation/edit_server_details_page_ru.png",
+			"Edit server details page feedback"          => "images/translation/edit_server_details_page_feedback_ru.png",
+			"Display server info page"                   => "images/translation/display_server_info_page_ru.png",
+			"Edit server schedule page"                  => "images/translation/edit_server_schedule_page_ru.png",
+			"Edit server schedule page feedback"         => "images/translation/edit_server_schedule_page_feedback_ru.png",
+			"Edit server mods page"                      => "images/translation/edit_server_mods_page_ru.png",
+			"Edit server mods feedback"                  => "images/translation/edit_server_mods_page_feedback_ru.png",
+			"Edit mod details page"                      => "images/translation/edit_mods_details_page_ru.png",
+			"Convert download link modal"                => "images/translation/convert_download_link_modal_ru.png",
+			"Edit mod details page feedback"             => "images/translation/edit_mod_details_page_feedback_ru.png",
+			"Display mod info page"                      => "images/translation/display_mod_info_page_ru.png",
+			"Add/Edit mod version section"               => "images/translation/addedit_mod_version_section_ru.png",
+			"Add/Edit mod version section feedback"      => "images/translation/addedit_mod_version_section_feedback_ru.png",
+			"Jump between mod versions section"          => "images/translation/jump_between_mod_versions_section_ru.png",
+			"Jump between mod versions section feedback" => "images/translation/jump_between_mod_versions_section_feedback_ru.png",
+			"Share server/mod page"                      => "images/translation/share_servermod_page_ru.png",
+			"Share server/mod page feedback"             => "images/translation/share_servermod_page_feedback_ru.png",
+			"Delete page"                                => "images/translation/delete_page_ru.png",
 			"Activity log"                               => "recent_activity"
 		],
 		"hide_rows"       => true,
@@ -187,88 +187,88 @@ $table_info = [
 		"name"            => "Game Main Menu",
 		"source"          => "translation_strings.php",
 		"context_key"     => [
-			0 => "images/context/mainmenu/failedtocreatedialog.jpg",
-			1 => "images/context/mainmenu/resourceisoutdated.jpg",
-			2 => "images/context/mainmenu/modsmenu.jpg",
-			3 => "images/context/mainmenu/modsmenu.jpg",
-			4 => "images/context/mainmenu/thisisthecurrentmasterserver.jpg",
-			5 => "images/context/mainmenu/typeinpasswordtoshowprivategames.jpg",
-			6 => "images/context/mainmenu/modsmenu.jpg",
-			7 => "images/context/mainmenu/thisisthecurrentmasterserver.jpg",
-			8 => "images/context/mainmenu/theresnothingtosave.jpg",
-			9 => "images/context/mainmenu/itsalreadyonthelist.jpg",
-			10 => "images/context/mainmenu/downloadingschedule.jpg",
-			11 => "images/context/mainmenu/downloaditem.jpg",
-			12 => "images/context/mainmenu/openinvite.jpg",
-			13 => "images/context/mainmenu/failedtocreatedirectory.jpg",
-			14 => "images/context/mainmenu/downloadingschedule.jpg",
-			15 => "images/context/mainmenu/downloadfailed.jpg",
-			16 => "images/context/mainmenu/downloadingschedule.jpg",
-			17 => "images/context/mainmenu/downloadingschedule.jpg",
-			18 => "images/context/mainmenu/invaliddata.jpg",
-			19 => "images/context/mainmenu/no_servers.jpg",
-			20 => "images/context/mainmenu/incorrectscheduleversion.jpg",
-			23 => "images/context/mainmenu/sortinggametimes.jpg",
-			24 => "images/context/mainmenu/gameschedule.jpg",
-			25 => "images/context/mainmenu/gameschedule.jpg",
-			26 => "images/context/mainmenu/serverconnect.jpg",
-			27 => "images/context/mainmenu/serverconnect.jpg",
-			28 => "images/context/mainmenu/serverdownloadmods.jpg",
-			29 => "images/context/mainmenu/serverdownloadmods.jpg",
-			30 => "images/context/mainmenu/serverdownloadmods.jpg",
-			31 => "images/context/mainmenu/serverdownloadmods.jpg",
-			32 => "images/context/mainmenu/serverdownloadmods.jpg",
-			33 => "images/context/mainmenu/withvoice.jpg",
-			34 => "images/context/mainmenu/withvoice.jpg",
-			36 => "images/context/mainmenu/modfolderconflict.jpg",
-			37 => "images/context/mainmenu/modfolderconflict.jpg",
-			38 => "images/context/mainmenu/modfolderconflict.jpg",
-			39 => "images/context/mainmenu/modfolderconflict.jpg",
-			42 => "images/context/mainmenu/restart_when_done.jpg",
-			43 => "images/context/mainmenu/installation_process.jpg",
-			44 => "images/context/mainmenu/installation_process.jpg",
-			46 => "images/context/mainmenu/requires_exact_mods.jpg",
-			47 => "images/context/mainmenu/game_will_be_restarted_at.jpg",
-			48 => "images/context/mainmenu/update_fwatch.jpg",
-			49 => "images/context/mainmenu/update_fwatch.jpg",
-			50 => "images/context/mainmenu/server_info.jpg",
-			58 => "images/context/mainmenu/server_info.jpg",
-			59 => "images/context/mainmenu/server_info.jpg",
-			60 => "images/context/mainmenu/server_info.jpg",
-			61 => "images/context/mainmenu/server_info.jpg",
-			62 => "images/context/mainmenu/server_info.jpg",
-			65 => "images/context/mainmenu/server_info.jpg",
-			66 => "images/context/mainmenu/server_info.jpg",
-			67 => "images/context/mainmenu/server_info.jpg",
-			68 => "images/context/mainmenu/server_info.jpg",
-			69 => "images/context/mainmenu/server_info.jpg",
-			70 => "images/context/mainmenu/server_info.jpg",
-			71 => "images/context/mainmenu/server_info.jpg",
-			72 => "images/context/mainmenu/server_info.jpg",
-			73 => "images/context/mainmenu/server_info.jpg",
-			74 => "images/context/mainmenu/requires_exact_mods.jpg",
-			76 => "images/context/mainmenu/cannot_update_while_loaded.jpg",
-			77 => "images/context/mainmenu/cannot_update_while_loaded.jpg",
-			80 => "images/context/mainmenu/update_fwatch.jpg",
-			82 => "images/context/mainmenu/modsmenu.jpg",
-			83 => "images/context/mainmenu/download_mods.jpg",
-			84 => "images/context/mainmenu/download_mods.jpg",
-			85 => "images/context/mainmenu/installation_process.jpg",
-			86 => "images/context/mainmenu/there_is_new_fwatch_available.jpg",
-			87 => "images/context/mainmenu/available_mod_updates.jpg",
-			88 => "images/context/mainmenu/installation_process.jpg",
-			89 => "images/context/mainmenu/download_mods.jpg",
-			91 => "images/context/mainmenu/download_mods.jpg",
-			92 => "images/context/mainmenu/type_mod_or_category_name.jpg",
-			93 => "images/context/mainmenu/mod_info.jpg",
-			94 => "images/context/mainmenu/mod_info.jpg",
-			95 => "images/context/mainmenu/mod_info.jpg",
-			96 => "images/context/mainmenu/mod_info.jpg",
-			97 => "images/context/mainmenu/mod_info.jpg",
-			98 => "images/context/mainmenu/mod_info.jpg",
-			99 => "images/context/mainmenu/mod_info.jpg",
-			104 => "images/context/mainmenu/mod_info.jpg",
-			105 => "images/context/mainmenu/mod_info_right_click.jpg"
+			0 => "images/translation/mainmenu/failedtocreatedialog.jpg",
+			1 => "images/translation/mainmenu/resourceisoutdated.jpg",
+			2 => "images/translation/mainmenu/modsmenu.jpg",
+			3 => "images/translation/mainmenu/modsmenu.jpg",
+			4 => "images/translation/mainmenu/thisisthecurrentmasterserver.jpg",
+			5 => "images/translation/mainmenu/typeinpasswordtoshowprivategames.jpg",
+			6 => "images/translation/mainmenu/modsmenu.jpg",
+			7 => "images/translation/mainmenu/thisisthecurrentmasterserver.jpg",
+			8 => "images/translation/mainmenu/theresnothingtosave.jpg",
+			9 => "images/translation/mainmenu/itsalreadyonthelist.jpg",
+			10 => "images/translation/mainmenu/downloadingschedule.jpg",
+			11 => "images/translation/mainmenu/downloaditem.jpg",
+			12 => "images/translation/mainmenu/openinvite.jpg",
+			13 => "images/translation/mainmenu/failedtocreatedirectory.jpg",
+			14 => "images/translation/mainmenu/downloadingschedule.jpg",
+			15 => "images/translation/mainmenu/downloadfailed.jpg",
+			16 => "images/translation/mainmenu/downloadingschedule.jpg",
+			17 => "images/translation/mainmenu/downloadingschedule.jpg",
+			18 => "images/translation/mainmenu/invaliddata.jpg",
+			19 => "images/translation/mainmenu/no_servers.jpg",
+			20 => "images/translation/mainmenu/incorrectscheduleversion.jpg",
+			23 => "images/translation/mainmenu/sortinggametimes.jpg",
+			24 => "images/translation/mainmenu/gameschedule.jpg",
+			25 => "images/translation/mainmenu/gameschedule.jpg",
+			26 => "images/translation/mainmenu/serverconnect.jpg",
+			27 => "images/translation/mainmenu/serverconnect.jpg",
+			28 => "images/translation/mainmenu/serverdownloadmods.jpg",
+			29 => "images/translation/mainmenu/serverdownloadmods.jpg",
+			30 => "images/translation/mainmenu/serverdownloadmods.jpg",
+			31 => "images/translation/mainmenu/serverdownloadmods.jpg",
+			32 => "images/translation/mainmenu/serverdownloadmods.jpg",
+			33 => "images/translation/mainmenu/withvoice.jpg",
+			34 => "images/translation/mainmenu/withvoice.jpg",
+			36 => "images/translation/mainmenu/modfolderconflict.jpg",
+			37 => "images/translation/mainmenu/modfolderconflict.jpg",
+			38 => "images/translation/mainmenu/modfolderconflict.jpg",
+			39 => "images/translation/mainmenu/modfolderconflict.jpg",
+			42 => "images/translation/mainmenu/restart_when_done.jpg",
+			43 => "images/translation/mainmenu/installation_process.jpg",
+			44 => "images/translation/mainmenu/installation_process.jpg",
+			46 => "images/translation/mainmenu/requires_exact_mods.jpg",
+			47 => "images/translation/mainmenu/game_will_be_restarted_at.jpg",
+			48 => "images/translation/mainmenu/update_fwatch.jpg",
+			49 => "images/translation/mainmenu/update_fwatch.jpg",
+			50 => "images/translation/mainmenu/server_info.jpg",
+			58 => "images/translation/mainmenu/server_info.jpg",
+			59 => "images/translation/mainmenu/server_info.jpg",
+			60 => "images/translation/mainmenu/server_info.jpg",
+			61 => "images/translation/mainmenu/server_info.jpg",
+			62 => "images/translation/mainmenu/server_info.jpg",
+			65 => "images/translation/mainmenu/server_info.jpg",
+			66 => "images/translation/mainmenu/server_info.jpg",
+			67 => "images/translation/mainmenu/server_info.jpg",
+			68 => "images/translation/mainmenu/server_info.jpg",
+			69 => "images/translation/mainmenu/server_info.jpg",
+			70 => "images/translation/mainmenu/server_info.jpg",
+			71 => "images/translation/mainmenu/server_info.jpg",
+			72 => "images/translation/mainmenu/server_info.jpg",
+			73 => "images/translation/mainmenu/server_info.jpg",
+			74 => "images/translation/mainmenu/requires_exact_mods.jpg",
+			76 => "images/translation/mainmenu/cannot_update_while_loaded.jpg",
+			77 => "images/translation/mainmenu/cannot_update_while_loaded.jpg",
+			80 => "images/translation/mainmenu/update_fwatch.jpg",
+			82 => "images/translation/mainmenu/modsmenu.jpg",
+			83 => "images/translation/mainmenu/download_mods.jpg",
+			84 => "images/translation/mainmenu/download_mods.jpg",
+			85 => "images/translation/mainmenu/installation_process.jpg",
+			86 => "images/translation/mainmenu/there_is_new_fwatch_available.jpg",
+			87 => "images/translation/mainmenu/available_mod_updates.jpg",
+			88 => "images/translation/mainmenu/installation_process.jpg",
+			89 => "images/translation/mainmenu/download_mods.jpg",
+			91 => "images/translation/mainmenu/download_mods.jpg",
+			92 => "images/translation/mainmenu/type_mod_or_category_name.jpg",
+			93 => "images/translation/mainmenu/mod_info.jpg",
+			94 => "images/translation/mainmenu/mod_info.jpg",
+			95 => "images/translation/mainmenu/mod_info.jpg",
+			96 => "images/translation/mainmenu/mod_info.jpg",
+			97 => "images/translation/mainmenu/mod_info.jpg",
+			98 => "images/translation/mainmenu/mod_info.jpg",
+			99 => "images/translation/mainmenu/mod_info.jpg",
+			104 => "images/translation/mainmenu/mod_info.jpg",
+			105 => "images/translation/mainmenu/mod_info_right_click.jpg"
 		],
 		"context_section" => [],
 		"hide_rows"       => false,
@@ -616,9 +616,15 @@ function stringtable_to_html_table($stringtable, $languages, $permissions, $cont
 				$link = "&nbsp;<a class=\"context_link\" target=\"_blank\" href=\"{$context_section[$stringtable_values]}\">context</a>";
 			
 			$output .= "
-			<tr onclick=\"display_table_section(this, 'toggle')\" id=\"$section_id\" class=\"info\">
+			<tr id=\"$section_id\" class=\"info\">
 			<td class=\"context_cell\" colspan=\"".(count($languages)+1)."\">
-				<center><b>{$stringtable_values}</b>$link</center>
+				<center>
+					<b>{$stringtable_values}</b> 
+					&nbsp; 
+					<a id=\"{$section_id}_toggle\" class=\"context_link\" onclick=\"display_table_section('{$section_id}_toggle', '$section_id', 'toggle')\">".($show_current_section ? "hide" : "show")."</a> 
+					&nbsp; 
+					$link
+				</center>
 			</td>
 			</tr>";
 		}
@@ -700,10 +706,10 @@ function display_table(selected_table) {
 function calculate_untranslated_cells(table) {
 	var number = 0;
  
-	for (var i = 0, row; row = table.rows[i]; i++)
-		for (var j = 0, col; col = row.cells[j]; j++)
+	for (var i=0, row; row=table.rows[i]; i++)
+		for (var j=0, col; col=row.cells[j]; j++)
 			if (col.classList.contains('danger'))
-			number++;
+				number++;
 	
 	var paragraph = document.getElementById("instructions");
 	var pos       = paragraph.innerHTML.indexOf("<b>Unfinished:</b>");
@@ -741,16 +747,22 @@ function table_column_toggle(checkbox, column_class) {
 }
 
 // Show or hide a single section in a table
-function display_table_section(section_row, action) {
+function display_table_section(button_id, section_row_id, action) {
+	var button         = document.getElementById(button_id);
+	var section_row    = document.getElementById(section_row_id);
 	var table_body     = section_row.parentNode;
 	var table_rows     = table_body.children;
 	var started_toggle = false;
+	var button_text    = "";
 
 	for (var i=0; i<table_rows.length; i++) {
 		var row = table_rows[i];
 		
 		if (started_toggle)
 			if (row.getAttribute('class') != "info") {
+				if (button_text == "")
+					button_text = row.style.display=="none" ? "hide" : "show";
+				
 				if (action == "toggle")
 					row.style.display = row.style.display=="none" ? "table-row" : "none";
 				else
@@ -765,6 +777,9 @@ function display_table_section(section_row, action) {
 		if (row == section_row) 
 			started_toggle = true;
 	}
+	
+	if (button_text != "")
+		button.innerHTML = button_text;
 }
 
 // Find table row with selected key and return table object and row object
@@ -796,7 +811,7 @@ function find_stringtable_key(key) {
 				break
 		}
 		
-		display_table_section(last_info_row, "show");
+		display_table_section(last_info_row.id+"_toggle", last_info_row, "show");
 	}
 	
 	return {active_table:table, active_row:table_row}; 

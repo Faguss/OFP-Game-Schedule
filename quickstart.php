@@ -153,7 +153,7 @@ foreach ($strings as $i=>$string) {
 		echo "<div class=\"text-center\">";
 		
 		forEach ($array as $index=>$item) {
-			$image_name = "images/" . $item . "_" . substr($lang["THIS_CODE"],0,2) . ".png";
+			$image_name = "images/quickstart/" . $item . "_" . substr($lang["THIS_CODE"],0,2) . ".png";
 			
 			if (!file_exists($image_name))
 				$image_name = substr($image_name,0,-3) . "jpg";
