@@ -110,6 +110,12 @@ switch($input["area"]) {
 		$add_tab      = true;
 		break;
 		
+	case "website_installationscripts" : 
+		$file_name    = "installationscripts.php";
+		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
+		$add_tab      = true;
+		break;
+		
 	case "mainmenu" : 
 		$file_name    = "translation_strings.php"; 
 		$to_find_list = ["\${$input["area"]} = [", "\"{$languages[$input["language"]]}\" => [", "{$input["stringtable_key"]}"]; 

@@ -2856,7 +2856,7 @@ function GS_scripting_highlighting($code) {
 						$output .= "<a class=\"scripting_command\" href=\"install_scripts#{$all_commands[array_keys($all_commands)[$command_id]]}\" target=\"_blank\">$word</a>";
 				} else {
 					$end     = strpos($code,"\n", $i);
-					$i       = ($end===false ? strlen($code) : $end) - 1;
+					$i       = ($end===false ? strlen($code) : $end);
 					$word    = substr($code, $word_begin, $i-$word_begin);
 					$output .= "<span class=\"scripting_command_comment\">$word</span>";
 				}

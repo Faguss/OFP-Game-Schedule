@@ -183,6 +183,41 @@ $table_info = [
 		"instructions"    => ""
 	],
 	
+	"website_installationscripts" => [
+		"name"            => "Website: installation scripts",
+		"source"          => "installationscripts.php",
+		"context_key"     => [], 
+		"context_section" => [
+			"Header" => "install_scripts",
+			"Automatic installation" => "install_scripts#auto_installation",
+			"Link format" => "install_scripts#links",
+			"Manual installation" => "install_scripts#manual_installation",
+			"Unpack command" => "install_scripts#unpack",
+			"Move command" => "install_scripts#move",
+			"Unpbo command" => "install_scripts#unpbo",
+			"Makepbo command" => "install_scripts#makepbo",
+			"Edit command" => "install_scripts#edit",
+			"Delete command" => "install_scripts#delete",
+			"If_version command" => "install_scripts#if_version",
+			"Alias command" => "install_scripts#alias",
+			"Rename command" => "install_scripts#rename",
+			"Makedir command" => "install_scripts#makedir",
+			"Filedate command" => "install_scripts#filedate",
+			"Get command" => "install_scripts#get",
+			"Ask_get command" => "install_scripts#ask_get",
+			"Ask_run command" => "install_scripts#ask_run",
+			"Exit command" => "install_scripts#exit",
+			"Mission files" => "install_scripts#missions",
+			"Example scripts" => "install_scripts#installation_examples",
+			"Example - WW4" => "install_scripts#installation_examples_ww4",
+			"Example - FDF" => "install_scripts#installation_examples_fdf",
+			"Example - WGL" => "install_scripts#installation_examples_wgl",
+			"Testing scripts" => "installationscripts#testing"
+		],
+		"hide_rows"       => true,
+		"instructions"    => ""
+	],
+	
 	"mainmenu" => [
 		"name"            => "Game Main Menu",
 		"source"          => "translation_strings.php",
