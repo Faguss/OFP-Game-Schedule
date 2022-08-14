@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2022,8,7,0,21,51,11,286,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2022,8,14,0,12,44,8,290,120,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -953,6 +953,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			gs_serv.access,
 			gs_serv.maxcustomfilesize,
 			gs_serv.voice,
+			gs_serv.persistent,
 			gs_serv.created,
 			gs_serv.createdby,
 			gs_serv.modifiedby,
@@ -1136,7 +1137,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 
 			
 			// Add server to list
-			if ($last_id != $id   &&   ($valid || !$ignore_outdated)) {
+			if ($last_id != $id   &&   ($valid || !$ignore_outdated || $row["persistent"])) {
 				$last_id                       = $id;
 				$output["info"][$id]["events"] = [];
 				$output["id"][$id]             = $row["uniqueid"];
@@ -1234,7 +1235,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			}
 
 			// Add game time to list
-			if ($valid)
+			if ($valid && !$row["persistent"])
 				$output["info"][$id]["events"][] = $playtime;
 		}
 	}

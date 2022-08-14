@@ -41,6 +41,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_INDEX_DESCRIPTION" => "Organize multiplayer Operation Flashpoint sessions",
 	"GS_STR_INDEX_QUICKSTART" => "How does it work?",
 	"GS_STR_INDEX_UPCOMING" => "Upcoming Games",
+	"GS_STR_INDEX_PERSISTENT" => "Persistent Servers",
 	"GS_STR_INDEX_ALLMODS" => "All Available Modfolders",
 	"GS_STR_INDEX_RECENT" => "Recent Activity",
 	"GS_STR_INDEX_MYSERVERS" => "My Server Records",
@@ -93,6 +94,9 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_SUBMIT" => "Change Details",
 	"GS_STR_SERVER_DRAGDROP" => "Drag & drop here server.cfg and flashpoint.cfg / coldwarassault.cfg / armaresistance.cfg to automatically fill some of the form fields",
 	"GS_STR_SERVER_SELECT_FILES" => "Select Files",
+	"GS_STR_SERVER_PERSISTENT" => "Schedule",
+	"GS_STR_SERVER_PERSISTENT_HINT" => "Is the server relying on specific game times?",
+	"GS_STR_SERVER_PERSISTENT_OFF" => "This server doesn't have a schedule. Keep it on the list",
 
     #Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Invalid website address",

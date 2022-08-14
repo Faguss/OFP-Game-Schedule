@@ -41,6 +41,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_INDEX_DESCRIPTION" => "Przygotuj spotkanie w grze Operation Flashpoint",
 	"GS_STR_INDEX_QUICKSTART" => "Jak to działa?",
 	"GS_STR_INDEX_UPCOMING" => "Nadchodzące spotkania",
+	"GS_STR_INDEX_PERSISTENT" => "Stałe serwery",
 	"GS_STR_INDEX_ALLMODS" => "Wszystkie dostępne mody",
 	"GS_STR_INDEX_RECENT" => "Ostatnia aktywność",
     "GS_STR_INDEX_MYSERVERS" => "Moje wpisy serwerów",
@@ -93,6 +94,9 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_SUBMIT" => "Zmień szczegóły",
 	"GS_STR_SERVER_DRAGDROP" => "Przeciągnij tutaj pliki server.cfg oraz flashpoint.cfg / coldwarassault.cfg / armaresistance.cfg żeby automatycznie wypełnić niektóre pola formularza",
 	"GS_STR_SERVER_SELECT_FILES" => "Wybierz Pliki",
+	"GS_STR_SERVER_PERSISTENT" => "Harmonogram",
+	"GS_STR_SERVER_PERSISTENT_HINT" => "Czy ten serwer ma konkretne czasy grania?",
+	"GS_STR_SERVER_PERSISTENT_OFF" => "Ten serwer nie ma harmonogramu. Niech ciągle będzie na liście",
 
     #Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Błędny adres strony",

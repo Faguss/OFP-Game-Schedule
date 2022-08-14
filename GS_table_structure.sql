@@ -335,7 +335,8 @@ CREATE TABLE `gs_serv` (
   `modifiedby` int(11) NOT NULL DEFAULT 0,
   `access` varchar(10) NOT NULL,
   `maxcustomfilesize` varchar(10) NOT NULL,
-  `voice` text NOT NULL
+  `voice` text NOT NULL,
+  `persistent` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

@@ -41,6 +41,7 @@ $lang = array_merge($lang, array(
 	"GS_STR_INDEX_DESCRIPTION" => "Создайте многопользовательскую игру",
 	"GS_STR_INDEX_QUICKSTART" => "Как это работает?",
 	"GS_STR_INDEX_UPCOMING" => "Будущие игры",
+"GS_STR_INDEX_PERSISTENT" => "Persistent Servers",
 	"GS_STR_INDEX_ALLMODS" => "Все доступные папки с модами",
 	"GS_STR_INDEX_RECENT" => "Недавняя активность",
 	"GS_STR_INDEX_MYSERVERS" => "Мои серверы",
@@ -93,6 +94,9 @@ $lang = array_merge($lang, array(
 	"GS_STR_SERVER_SUBMIT" => "Изменить детали",
 "GS_STR_SERVER_DRAGDROP" => "Drag & drop here server.cfg and flashpoint.cfg / coldwarassault.cfg / armaresistance.cfg to automatically fill some of the form fields",
 "GS_STR_SERVER_SELECT_FILES" => "Select Files",
+	"GS_STR_SERVER_PERSISTENT" => "Расписание",
+"GS_STR_SERVER_PERSISTENT_HINT" => "Is the server relying on specific game times?",
+"GS_STR_SERVER_PERSISTENT_OFF" => "This server doesn't have a schedule. Keep it on the list",
 
 	#Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Неправильный адрес веб-сайта",

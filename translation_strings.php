@@ -1,7 +1,7 @@
 <?php
 $mainmenu_updated = [	
 	"en-US" => [],
-	"ru-RU" => [85,86,87,88,89,88,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107],
+	"ru-RU" => [85,86,87,88,89,88,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108],
 	"pl-PL" => [],
 ];
 $mainmenu = [
@@ -113,7 +113,8 @@ $mainmenu = [
 		104 => "Right-click or space for options",
 		105 => "[Add to Queue]",
 		106 => "Offline",
-		107 => "Right-click or space for status"
+		107 => "Right-click or space for status",
+		108 => "Persistent"
 	],
 
 	"ru-RU" => [
@@ -224,7 +225,8 @@ $mainmenu = [
 		104 => "щелкните правой кнопкой или пробел для параметров",
 		105 => "[Добавить в Очередь]",
 		106 => "Offline",
-		107 => "Right-click or space for status"
+		107 => "Right-click or space for status",
+		108 => "Persistent"
 	],
 
 	"pl-PL" => [
@@ -335,7 +337,8 @@ $mainmenu = [
 		104 => "Opcje pod prawym przyciskiem lub spacją",
 		105 => "[Dodaj do kolejki]",
 		106 => "Brak połączenia",
-		107 => "Status pod prawym przyciskiem lub spacją"
+		107 => "Status pod prawym przyciskiem lub spacją",
+		108 => "Ciągłe"
 	]
 ];
 
