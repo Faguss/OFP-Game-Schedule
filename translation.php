@@ -107,6 +107,8 @@ if ($permissions["en-US"]) {
 	echo "<br>";
 }
 
+echo "<b>How to use:</b> click on the table cell to display text input. Edit it and then click elsewhere to close and save changes. Alternatively press TAB to save and move to the cell below. Press ESC to cancel.<br>";
+
 
 
 // Define each table
@@ -215,7 +217,7 @@ $table_info = [
 			"Testing scripts" => "installationscripts#testing"
 		],
 		"hide_rows"       => true,
-		"instructions"    => ""
+		"instructions"    => "Do not translate this one as I'm still working on it."
 	],
 	
 	"mainmenu" => [
@@ -345,7 +347,7 @@ forEach($table_info as $table_id=>$table_options) {
 		$first_table_id = $table_id;
 }
 	
-$output .= "</select><br><br><p id=\"instructions\"></p><br>";
+$output .= "</select><br><p id=\"instructions\"></p><br>";
 
 // Buttons for hiding table columns
 $output .= "<label>Show columns:</label> &nbsp; ";
@@ -696,7 +698,8 @@ window.onload = function() {
 
 // If URL fragment has changed then show appropiate table and scroll to the selected row
 $(window).bind('hashchange', function () {
-	var index = table_ids.indexOf(window.location.hash.slice(1));
+	var table_info = {active_table : null, active_row   : null};
+	var index      = table_ids.indexOf(window.location.hash.slice(1));
 	
 	if (index >= 0) {
 		table_info.active_table = table_ids[index];	
@@ -704,7 +707,8 @@ $(window).bind('hashchange', function () {
 	} else
 		table_info = find_stringtable_key(window.location.hash.slice(1));
 	
-	display_table(table_info.active_table);
+	if (table_info.active_table)
+		display_table(table_info.active_table);
 
 	if (table_info.active_row)
 		scroll_to_table_row(table_info.active_row, false);
@@ -891,7 +895,7 @@ function create_text_input_inside_table_cell(table_cell) {
 	if (document.getElementsByTagName("textarea").length == 0) {
 		var text_original = table_cell.innerHTML;
 		var width         = table_cell.offsetWidth - (table_cell.offsetWidth/20);
-		var height        = table_cell.offsetHeight / 1.25;
+		var height        = table_cell.offsetHeight * 1.25;
 		var text_input    = document.createElement("textarea");
 		
 		if (text_original == "...")

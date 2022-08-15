@@ -217,20 +217,25 @@ fclose($file);
 
 // Rewrite file if text was replaced
 if ($replaced) {
-	$file = fopen($file_name, 'wb');
-	
-	if ($file) {
-		$contents = str_replace("\r", "", $contents);
-		$contents = str_replace("\n", "\r\n", $contents);
+	if (copy($file_name, $file_name."_backup")) {
+		$file = fopen($file_name, 'wb');
 		
-		if (fwrite($file, $contents) !== false) {
-			echo "OK";
+		if ($file) {
+			$contents = str_replace("\r", "", $contents);
+			$contents = str_replace("\n", "\r\n", $contents);
+			
+			if (fwrite($file, $contents) !== false) {
+				echo "OK";
+			} else {
+				copy($file_name."_backup", $file_name);
+				echo "[Write error]";
+			}
+			
+			fclose($file);
 		} else
-			echo "[Write error]";
-		
-		fclose($file);
+			die("[Failed to rewrite file]");
 	} else
-		die("[Failed to rewrite file]");
+		die("[Failed to create backup]");
 } else
 	echo "[Key not found] {$to_find} - {$to_find_pos} - " . implode(",", $to_find_list);
 ?>
