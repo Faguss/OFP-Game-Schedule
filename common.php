@@ -123,6 +123,12 @@ define("GS_PERMISSION_MAX_SERV_CONTRIBUTORS", [
 ]);
 define("GS_PERMISSION_MAX_MOD_CONTRIBUTORS", GS_PERMISSION_MAX_SERV_CONTRIBUTORS);
 
+// Function options
+define("GS_NO_OPTIONS", 0);
+define("GS_USER_INFO", 1);
+define("GS_QUERY_SERVER", 2);
+define("GS_SPLIT_PERSISTENT", 4);
+
 // Request types for GS_list_servers and GS_list_mods
 define("GS_REQTYPE_WEBSITE", 0);
 define("GS_REQTYPE_GAME", 1);
@@ -1790,18 +1796,19 @@ function GS_get_current_url($add_https=true, $add_path=true) {
 }
 
 // Read array with servers and output html
-function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=false, $server_order=[], $query_server=false) {
-	$html         = "";
-	$js_starttime = [];
-	$js_duration  = [];
-	$js_type      = [];
-	$js_started   = [];
-	$user_list    = [];
-	$js_addedon   = [];
-	$js_serv_id   = [];
+function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTIONS, $server_order=[]) {
+	$html                 = "";
+	$js_starttime         = [];
+	$js_duration          = [];
+	$js_type              = [];
+	$js_started           = [];
+	$user_list            = [];
+	$js_addedon           = [];
+	$js_serv_id           = [];
+	$add_persistent_title = -1;
 	
 	// Get user list first
-	if ($extended_info) {
+	if ($options & GS_USER_INFO) {
 		$user_id_list = [];
 		
 		foreach ($servers["info"] as $server_id=>$server) {
@@ -1822,7 +1829,24 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 	
 	if (count($server_order) == 0)
 		$server_order = $servers["id"];
+	
+	// Option: put servers with events first and those without at the end
+	if ($options & GS_SPLIT_PERSISTENT) {
+		$event_based          = [];
+		$persistent           = [];
+		$add_persistent_title = true;
 
+		forEach ($servers["info"] as $index=>$server) {
+			if (count($server["events"]) == 0)
+				$persistent[] = $servers["id"][$index];
+			else
+				$event_based[] = $servers["id"][$index];
+		}
+		
+		$server_order = array_merge($event_based, $persistent);
+	}
+
+	// Display server information
 	foreach($server_order as $uniqueid) {
 		$id = array_search($uniqueid, $servers["id"]);
 		if ($id === FALSE)
@@ -1834,6 +1858,11 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 		$current_duration  = [];
 		$current_type      = [];
 		$current_started   = [];
+		
+		if ($options & GS_SPLIT_PERSISTENT  &&  $add_persistent_title  &&  count($server["events"])==0) {
+			$add_persistent_title = false;
+			$html .= "</div><div class=\"gs_section_title\">".lang("GS_STR_INDEX_PERSISTENT")."</div><div class=\"row\">";
+		}
 		
 		$html .= "<div class=\"col-lg-$box_size\">";
 		
@@ -1995,7 +2024,8 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $extended_info=fals
 		GS_convert_server_events(".json_encode($js_starttime).",".json_encode($js_duration).",".json_encode($js_type).",".json_encode($js_started).",".json_encode($localized_strings).");
 		GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");";
 		
-	if ($query_server) {
+	// Show server status
+	if ($options & GS_QUERY_SERVER) {
 		$server_status_list   = [lang("GS_STR_SERVER_OFFLINE")];
 		$server_status_list   = array_pad($server_status_list, 4, lang("GS_STR_SERVER_CREATE"));
 		$server_status_list[] = [lang("GS_STR_SERVER_EDIT")];

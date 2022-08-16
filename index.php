@@ -161,29 +161,8 @@ if(isset($user) && $user->isLoggedIn()){
 $servers    = GS_list_servers(["current"], [], GS_REQTYPE_WEBSITE, 0, $lang["THIS_LANGUAGE"], $user);
 $mods       = GS_list_mods($servers["mods"], [], [], [], GS_REQTYPE_WEBSITE, $servers["lastmodified"]);
 
-// Split server list into servers with events and without
-$persistent = ["info"=>[], "mods"=>$servers["mods"], "id"=>[], "lastmodified"=>$servers["lastmodified"], "rights"=>$servers["rights"]];
-$todelete   = [];
-
-forEach ($servers["info"] as $index=>$server) {
-	if (count($server["events"]) == 0) {
-		$persistent["info"][$index] = $server;
-		$persistent["id"][$index]   = $servers["id"][$index];
-		$todelete[$index]           = $index;
-	}
-}
-
-$servers["info"] = array_diff_key($servers["info"], $todelete);
-$servers["id"]   = array_diff_key($servers["id"], $todelete);
-
-
 // Show servers
-echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12) . "</div>";
-
-if (count($persistent["info"]) > 0) {
-	echo "<div class=\"gs_section_title\">".lang("GS_STR_INDEX_PERSISTENT")."</div>";
-	echo "<div class=\"row\">" . GS_format_server_info($persistent, $mods, 12) . "</div>";
-}
+echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, GS_SPLIT_PERSISTENT) . "</div>";
 
 if (isset($user) && $user->isLoggedIn())
 	echo "<hr style=\"margin-bottom: 40px;\">";

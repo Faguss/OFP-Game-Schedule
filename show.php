@@ -24,8 +24,8 @@ $csrf          = Session::get(Config::get('session/token_name'));
 // Display servers	
 if (!empty($servers["id"]))
 	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
-		
-echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, true, $input["server"], true) . "</div>";
+
+echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, GS_USER_INFO | GS_QUERY_SERVER, $input["server"]) . "</div>";
 
 
 
