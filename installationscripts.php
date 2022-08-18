@@ -30,23 +30,23 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_CHANGELOG" => "Version History",
 	
 	#Automatic installation
-	"GS_IS_AUTO_PAR1" => "Simply paste a direct download link to the file and the installer will figure out what to do on its own. If there's more than one file to download then paste another link in a new line.",
-	"GS_IS_AUTO_PAR2" => "Add <code>/password:</code> switch if an archive requires a password.",
+	"GS_IS_AUTO_PAR1" => "Simply paste a direct download link to the file and the installer will figure out what to do on its own. If there's more than one file to download then put another link in a new line.",
+	"GS_IS_AUTO_PAR2" => "If an archive requires a password then add <code>/password:</code> to the line.",
 	"GS_IS_AUTO_PAR3" => "How does it work?",
-	"GS_IS_AUTO_PAR4" => "Installer examines extension of the downloaded file:",
+	"GS_IS_AUTO_PAR4" => "Installer examines the extension of the downloaded file:",
 	"GS_IS_AUTO_PAR5" => "If it's <code>.rar</code>, <code>.zip</code>, <code>.7z</code>, <code>.ace</code>, <code>.exe</code> or <code>.cab</code> then it will extract it and inspect its contents.",
 	"GS_IS_AUTO_PAR6" => "If an <code>.exe</code> couldn't be unpacked and nothing else was copied up until that point then it will ask the user to run it.",
 	"GS_IS_AUTO_PAR7" => "If it's a <code>.pbo</code> then it will detect its type and move it to the <code>addons</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> directory in the modfolder.",
 	"GS_IS_AUTO_PAR8" => "Other types of files are ignored.",
 	"GS_IS_AUTO_PAR9" => "When installer encounters a directory it will check its name and contents:",
-	"GS_IS_AUTO_PAR10" => "If the name matches the name of the mod being installed then it will be moved to the game directory. All remaining files and folders (except for other mods) from this location will be moved to the modfolder. If directory <code>addons</code> is present then it will be merged with <code>IslandCutscenes</code> in the modfolder.",
+	"GS_IS_AUTO_PAR10" => "If its name matches the name of the mod that's being installed then it will be moved to the game directory. All remaining files and folders in this location (except for other mods) will be moved to the modfolder. If directory <code>addons</code> is present then it will be merged with <code>IslandCutscenes</code> in the modfolder.",
 	"GS_IS_AUTO_PAR11" => "Other modfolders will be ignored (exceptions: 1. <code>Res</code> folder 2. if the downloaded archive contains only a single folder then it won't be skipped).",
-	"GS_IS_AUTO_PAR12" => "If the name matches <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> or <code>IslandCutscenes</code> then it will be moved to the modfolder (contents will be merged). If <code>MPMissions</code> contains only a single folder then that folder will be moved instead. If <code>Missions</code> contains only a single folder that matches mod name then its contents will be merged with the mod missions. If it doesn't match then it will be moved as a separate folder.",
+	"GS_IS_AUTO_PAR12" => "If its name matches <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> or <code>IslandCutscenes</code> then it will be moved to the modfolder (contents will be merged). If <code>MPMissions</code> contains only a single folder then that folder will be moved instead. If <code>Missions</code> contains only a single folder that matches mod name then its contents will be merged with the mod missions. If it doesn't match then it will be moved as a separate folder.",
 	"GS_IS_AUTO_PAR13" => "If it contains <code>overview.html</code> then it will be moved to the <code>Missions</code> folder in the modfolder.",
-	"GS_IS_AUTO_PAR14" => "If the name ends with \"anim\", \"_anim\" or \"_anims\" then it will be moved to the <code>IslandCutscenes</code>. If any of the parent folders was named \"res\" or they have words \"res\" and \"addons\" in their names then the current directory will be moved to the <code>IslandCutscenes_Res</code> instead.",
-	"GS_IS_AUTO_PAR15" => "If it's a mission then installer will detect its type and move it to the <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> in the modfolder. If the folder name contains words \"demo\" or \"template\" or if any of the parent folders names had words \"user\" or \"mission\" and \"demo/editor/template\" then the current folder will be moved to the <code>MissionsUsers</code> or <code>MPMissionsUsers</code> instead.",
+	"GS_IS_AUTO_PAR14" => "If its name ends with \"anim\", \"_anim\" or \"_anims\" then it will be moved to the <code>IslandCutscenes</code>. If any of the parent folders was named \"res\" or they have words \"res\" and \"addons\" in their names then the current directory will be moved to the <code>IslandCutscenes_Res</code> instead.",
+	"GS_IS_AUTO_PAR15" => "If it's a mission folder then the installer will detect its type and move it to the <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> in the modfolder. If the folder name contains words \"demo\" or \"template\" or if any of the parent folders names had words \"user\" or \"mission\" and \"demo/editor/template\" then the current folder will be moved to the <code>MissionsUsers</code> or <code>MPMissionsUsers</code> instead.",
 	"GS_IS_AUTO_PAR16" => "In any other case it will go through its contents and apply the same rules for each folder (first) and file there.",
-	"GS_IS_AUTO_PAR17" => "Installer will overwrite existing files. If folders in the destination path don't exist it will create them.",
+	"GS_IS_AUTO_PAR17" => "Installer overwrites existing files. Automatically creates necessary folders.",
 	
 	#Link format
 	"GS_IS_URL_PAR1" => "1. Links should start with the protocol. Spaces should be replaced with <code>%20</code>. Links have to directly point to the file.",
@@ -54,27 +54,30 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_URL_STARTING_URL" => "starting url",
 	"GS_IS_URL_INTERMEDIATE_URL" => "optionally intermediate links",
 	"GS_IS_URL_FILE_NAME" => "file name",
-	"GS_IS_URL_PAR3" => "You don't actually have to type in full intermediary URL but only the unique part that's easily searcheable in the page's source code. Last item is the name of the file that's going to be downloaded. If it contains spaces then put it in quotation marks.",
+	"GS_IS_URL_PAR3" => "You don't actually have to type in full intermediary URL but only the unique part that's easy to find in the page's source code. Last item is the name of the file that's going to be downloaded. If it contains spaces then put it in quotation marks.",
 	"GS_IS_URL_PAR4" => "In the above example installer will:",
 	"GS_IS_URL_PAR5" => "Download page https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25",
 	"GS_IS_URL_PAR6" => "Find URL containing phrase <span class=\"courier\">/downloads/start/</span> and download web page behind that link",
 	"GS_IS_URL_PAR7" => "Find URL containing phrase <span class=\"courier\">/downloads/mirror/</span> and download its contents as ww4mod25rel.rar",
-	"GS_IS_URL_PAR8" => "On the mod update page, next to the script input box you'll find a tool that automatically converts URL to the correct format (for a few selected sites). More information on how to find intermediate links you'll find <a href=\"#testing\">below</a>.",
+	"GS_IS_URL_PAR8" => "On the mod update page, below the script input field you'll find a tool that automatically writes intermediate links (for a few selected sites). More information on how to find such links yourself you'll find <a href=\"#testing\">below</a>.",
 	"GS_IS_URL_PAR9" => "3. If you have <b>backup links</b> then place all of them between a pair of curly brackets. Example:",
-	"GS_IS_URL_PAR10" => "If the first one fails then installer will try the second one and so on.",
-	"GS_IS_URL_PAR11" => "4. To save disk space downloaded file is deleted when the next download starts. To keep that file use <a href=\"#get\">GET</a> command.",
+	"GS_IS_URL_PAR10" => "If the first one fails then the installer will try the second one and so on.",
+	"GS_IS_URL_PAR11" => "4. To save disk space downloaded file is deleted as soon as the next download starts. To keep the files use <a href=\"#get\">GET</a> command.",
 	
 	#Manual installation
 	"GS_IS_MANUAL_PAR1" => "There are commands to make the installer do exactly what you want:",
 	"GS_IS_MANUAL_PAR2" => "Some commands have aliases. For example <code>remove</code> and <code>delete</code> are the same.",
 	"GS_IS_MANUAL_PAR3" => "Write each command in a separate line.",
-	"GS_IS_MANUAL_PAR4" => "Commands usually require arguments that have to be given in the specified order. Separate them by spaces. If an argument contains space then put it in quotation marks.",
-	"GS_IS_MANUAL_PAR5" => "Optionally information can be passed to the commands in the form of switches. They begin with a forward slash and may be placed anywhere in the argument order.",
+	"GS_IS_MANUAL_PAR4" => "Commands usually require arguments. They have to be given in the specified order. Separate them by spaces. If an argument contains space then put it in quotation marks.",
+	"GS_IS_MANUAL_PAR5" => "Commands may also use switches which are optional arguments that may be written anywhere in the argument order. They begin with a forward slash.",
 	"GS_IS_MANUAL_PAR6" => "I recommend to capitalize commands for readability.",
 	"GS_IS_MANUAL_PAR7" => "Invalid command names will be ignored.",
 	"GS_IS_MANUAL_PAR8" => "Leading and trailing spaces will be ignored.",
 	"GS_IS_MANUAL_PAR9" => "Script can consist of both automatic installation and commands.",
 
+	"GS_IS_COMMAND" => "command",
+	"GS_IS_ARGUMENT" => "argument",
+	"GS_IS_SWITCH" => "switch",
 	"GS_IS_URL_OR_FILE" => "url or file",
 	"GS_IS_FILE_OR_URL" => "file or url",
 	"GS_IS_FILE" => "file",
@@ -92,6 +95,8 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_NAME2" => "name2",
 	"GS_IS_DATE" => "date",
 	"GS_IS_WILDCARDS" => "Wildcards (see <a href=\"https://docs.microsoft.com/en-us/archive/blogs/jeremykuhne/wildcards-in-windows\" target=\"_blank\">MSDN</a> and <a href=\"https://superuser.com/questions/475874/how-does-the-windows-rename-command-interpret-wildcards\" target=\"_blank\">StackExchange</a>) can be used to match multiple files.",
+	"GS_IS_GAME_FOLDER" => "game folder",
+	"GS_IS_MOD_FOLDER" => "modfolder",
 
 	#Unpack command
 	"GS_IS_UNPACK_PAR1" => "Extracts selected archive from the <span class=\"courier\">fwatch\\tmp\\</span> directory to the <span class=\"courier\">_extracted</span> subfolder (its previous contents are wiped). If URL was given then it will download the file to the <span class=\"courier\">fwatch\\tmp\\</span> and extract it.",
@@ -154,7 +159,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_ALIAS_PAR1" => "Changes the behavior of the automatic installation as well as <code>Move</code> and <code>Copy</code> commands so that they will merge specified folder with the modfolder that's being installed. Effect lasts until the end of the current script (to make it work for all the versions use option from the mod details page).",
 	"GS_IS_ALIAS_PAR2" => "For example: mod @wgl5 is being installed. Archive \"CoC_UA110_Setup.exe\" was downloaded which contains folders: @CoC and @wgl5. By default auto installation will copy @wgl5 and ignore @CoC but if you'll write:",
 	"GS_IS_ALIAS_PAR3" => "then the installer won't skip @CoC but merge its contents with the @wgl5 in the game directory.",
-	"GS_IS_ALIAS_PAR4" => "If no argument was given then changes are disabled.",
+	"GS_IS_ALIAS_PAR4" => "If no argument was given then the option is turned off.",
 
 	#Rename command
 	"GS_IS_RENAME_PAR1" => "Renames file or folder from the modfolder.",
@@ -187,8 +192,8 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_MISSION_PAR2" => "When you launch the game with a mod it will move contents of the mod sub-folders to the folders in the game directory.",
 	"GS_IS_MISSION_PAR3" => "Source",
 	"GS_IS_MISSION_PAR4" => "Destination",
-	"GS_IS_MISSION_PAR5" => "By default PBO files and folders are moved. In the case of cutscenes and user missions only folders are moved.",
-	"GS_IS_MISSION_PAR6" => "Changes are reverted when you quit the game.",
+	"GS_IS_MISSION_PAR5" => "Both PBO files and mission folders are moved. In the case of cutscenes and user missions only folders are moved.",
+	"GS_IS_MISSION_PAR6" => "Files are moved back when you quit the game.",
 	
 	#Example script (WW4)
 	"GS_IS_EXAMPLE_PAR1" => "This is a script for installing WW4 2.5 mod",
@@ -273,7 +278,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	#Title
 "GS_IS_TITLE" => "How to Write Installation Scripts",
 "GS_IS_DESCRIPTION" => "which determine how your mod is going to be installed",
-	
+
 	#Table of Contents
 "GS_IS_CONTENTS" => "Contents",
 "GS_IS_AUTOMATIC" => "Automatic Installation",
@@ -285,23 +290,23 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_CHANGELOG" => "Version History",
 
 	#Automatic installation
-"GS_IS_AUTO_PAR1" => "Simply paste a direct download link to the file and the installer will figure out what to do on its own. If there's more than one file to download then paste another link in a new line.",
-"GS_IS_AUTO_PAR2" => "Add <code>/password:</code> switch if an archive requires a password.",
+"GS_IS_AUTO_PAR1" => "Simply paste a direct download link to the file and the installer will figure out what to do on its own. If there's more than one file to download then put another link in a new line.",
+"GS_IS_AUTO_PAR2" => "If an archive requires a password then add <code>/password:</code> to the line.",
 "GS_IS_AUTO_PAR3" => "How does it work?",
-"GS_IS_AUTO_PAR4" => "Installer examines extension of the downloaded file:",
+"GS_IS_AUTO_PAR4" => "Installer examines the extension of the downloaded file:",
 "GS_IS_AUTO_PAR5" => "If it's <code>.rar</code>, <code>.zip</code>, <code>.7z</code>, <code>.ace</code>, <code>.exe</code> or <code>.cab</code> then it will extract it and inspect its contents.",
 "GS_IS_AUTO_PAR6" => "If an <code>.exe</code> couldn't be unpacked and nothing else was copied up until that point then it will ask the user to run it.",
 "GS_IS_AUTO_PAR7" => "If it's a <code>.pbo</code> then it will detect its type and move it to the <code>addons</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> directory in the modfolder.",
 "GS_IS_AUTO_PAR8" => "Other types of files are ignored.",
 "GS_IS_AUTO_PAR9" => "When installer encounters a directory it will check its name and contents:",
-"GS_IS_AUTO_PAR10" => "If the name matches the name of the mod being installed then it will be moved to the game directory. All remaining files and folders (except for other mods) from this location will be moved to the modfolder. If directory <code>addons</code> is present then it will be merged with <code>IslandCutscenes</code> in the modfolder.",
+"GS_IS_AUTO_PAR10" => "If its name matches the name of the mod that's being installed then it will be moved to the game directory. All remaining files and folders in this location (except for other mods) will be moved to the modfolder. If directory <code>addons</code> is present then it will be merged with <code>IslandCutscenes</code> in the modfolder.",
 "GS_IS_AUTO_PAR11" => "Other modfolders will be ignored (exceptions: 1. <code>Res</code> folder 2. if the downloaded archive contains only a single folder then it won't be skipped).",
-"GS_IS_AUTO_PAR12" => "If the name matches <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> or <code>IslandCutscenes</code> then it will be moved to the modfolder (contents will be merged). If <code>MPMissions</code> contains only a single folder then that folder will be moved instead. If <code>Missions</code> contains only a single folder that matches mod name then its contents will be merged with the mod missions. If it doesn't match then it will be moved as a separate folder.",
+"GS_IS_AUTO_PAR12" => "If its name matches <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> or <code>IslandCutscenes</code> then it will be moved to the modfolder (contents will be merged). If <code>MPMissions</code> contains only a single folder then that folder will be moved instead. If <code>Missions</code> contains only a single folder that matches mod name then its contents will be merged with the mod missions. If it doesn't match then it will be moved as a separate folder.",
 "GS_IS_AUTO_PAR13" => "If it contains <code>overview.html</code> then it will be moved to the <code>Missions</code> folder in the modfolder.",
-"GS_IS_AUTO_PAR14" => "If the name ends with \"anim\", \"_anim\" or \"_anims\" then it will be moved to the <code>IslandCutscenes</code>. If any of the parent folders was named \"res\" or they have words \"res\" and \"addons\" in their names then the current directory will be moved to the <code>IslandCutscenes_Res</code> instead.",
-"GS_IS_AUTO_PAR15" => "If it's a mission then installer will detect its type and move it to the <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> in the modfolder. If the folder name contains words \"demo\" or \"template\" or if any of the parent folders names had words \"user\" or \"mission\" and \"demo/editor/template\" then the current folder will be moved to the <code>MissionsUsers</code> or <code>MPMissionsUsers</code> instead.",
+"GS_IS_AUTO_PAR14" => "If its name ends with \"anim\", \"_anim\" or \"_anims\" then it will be moved to the <code>IslandCutscenes</code>. If any of the parent folders was named \"res\" or they have words \"res\" and \"addons\" in their names then the current directory will be moved to the <code>IslandCutscenes_Res</code> instead.",
+"GS_IS_AUTO_PAR15" => "If it's a mission folder then the installer will detect its type and move it to the <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> in the modfolder. If the folder name contains words \"demo\" or \"template\" or if any of the parent folders names had words \"user\" or \"mission\" and \"demo/editor/template\" then the current folder will be moved to the <code>MissionsUsers</code> or <code>MPMissionsUsers</code> instead.",
 "GS_IS_AUTO_PAR16" => "In any other case it will go through its contents and apply the same rules for each folder (first) and file there.",
-"GS_IS_AUTO_PAR17" => "Installer will overwrite existing files. If folders in the destination path don't exist it will create them.",
+"GS_IS_AUTO_PAR17" => "Installer overwrites existing files. Automatically creates necessary folders.",
 
 	#Link format
 "GS_IS_URL_PAR1" => "1. Links should start with the protocol. Spaces should be replaced with <code>%20</code>. Links have to directly point to the file.",
@@ -309,27 +314,30 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_URL_STARTING_URL" => "starting url",
 "GS_IS_URL_INTERMEDIATE_URL" => "optionally intermediate links",
 "GS_IS_URL_FILE_NAME" => "file name",
-"GS_IS_URL_PAR3" => "You don't actually have to type in full intermediary URL but only the unique part that's easily searcheable in the page's source code. Last item is the name of the file that's going to be downloaded. If it contains spaces then put it in quotation marks.",
+"GS_IS_URL_PAR3" => "You don't actually have to type in full intermediary URL but only the unique part that's easy to find in the page's source code. Last item is the name of the file that's going to be downloaded. If it contains spaces then put it in quotation marks.",
 "GS_IS_URL_PAR4" => "In the above example installer will:",
 "GS_IS_URL_PAR5" => "Download page https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25",
 "GS_IS_URL_PAR6" => "Find URL containing phrase <span class=\"courier\">/downloads/start/</span> and download web page behind that link",
 "GS_IS_URL_PAR7" => "Find URL containing phrase <span class=\"courier\">/downloads/mirror/</span> and download its contents as ww4mod25rel.rar",
-"GS_IS_URL_PAR8" => "On the mod update page, next to the script input box you'll find a tool that automatically converts URL to the correct format (for a few selected sites). More information on how to find intermediate links you'll find <a href=\"#testing\">below</a>.",
+"GS_IS_URL_PAR8" => "On the mod update page, below the script input field you'll find a tool that automatically writes intermediate links (for a few selected sites). More information on how to find such links yourself you'll find <a href=\"#testing\">below</a>.",
 "GS_IS_URL_PAR9" => "3. If you have <b>backup links</b> then place all of them between a pair of curly brackets. Example:",
-"GS_IS_URL_PAR10" => "If the first one fails then installer will try the second one and so on.",
-"GS_IS_URL_PAR11" => "4. To save disk space downloaded file is deleted when the next download starts. To keep that file use <a href=\"#get\">GET</a> command.",
-
+"GS_IS_URL_PAR10" => "If the first one fails then the installer will try the second one and so on.",
+"GS_IS_URL_PAR11" => "4. To save disk space downloaded file is deleted as soon as the next download starts. To keep the files use <a href=\"#get\">GET</a> command.",
+	
 	#Manual installation
 "GS_IS_MANUAL_PAR1" => "There are commands to make the installer do exactly what you want:",
 "GS_IS_MANUAL_PAR2" => "Some commands have aliases. For example <code>remove</code> and <code>delete</code> are the same.",
 "GS_IS_MANUAL_PAR3" => "Write each command in a separate line.",
-"GS_IS_MANUAL_PAR4" => "Commands usually require arguments that have to be given in the specified order. Separate them by spaces. If an argument contains space then put it in quotation marks.",
-"GS_IS_MANUAL_PAR5" => "Optionally information can be passed to the commands in the form of switches. They begin with a forward slash and may be placed anywhere in the argument order.",
+"GS_IS_MANUAL_PAR4" => "Commands usually require arguments. They have to be given in the specified order. Separate them by spaces. If an argument contains space then put it in quotation marks.",
+"GS_IS_MANUAL_PAR5" => "Commands may also use switches which are optional arguments that may be written anywhere in the argument order. They begin with a forward slash.",
 "GS_IS_MANUAL_PAR6" => "I recommend to capitalize commands for readability.",
 "GS_IS_MANUAL_PAR7" => "Invalid command names will be ignored.",
 "GS_IS_MANUAL_PAR8" => "Leading and trailing spaces will be ignored.",
 "GS_IS_MANUAL_PAR9" => "Script can consist of both automatic installation and commands.",
 
+"GS_IS_COMMAND" => "command",
+"GS_IS_ARGUMENT" => "argument",
+"GS_IS_SWITCH" => "switch",
 "GS_IS_URL_OR_FILE" => "url or file",
 "GS_IS_FILE_OR_URL" => "file or url",
 "GS_IS_FILE" => "file",
@@ -347,6 +355,8 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_NAME2" => "name2",
 "GS_IS_DATE" => "date",
 "GS_IS_WILDCARDS" => "Wildcards (see <a href=\"https://docs.microsoft.com/en-us/archive/blogs/jeremykuhne/wildcards-in-windows\" target=\"_blank\">MSDN</a> and <a href=\"https://superuser.com/questions/475874/how-does-the-windows-rename-command-interpret-wildcards\" target=\"_blank\">StackExchange</a>) can be used to match multiple files.",
+"GS_IS_GAME_FOLDER" => "game folder",
+"GS_IS_MOD_FOLDER" => "modfolder",
 
 	#Unpack command
 "GS_IS_UNPACK_PAR1" => "Extracts selected archive from the <span class=\"courier\">fwatch\\tmp\\</span> directory to the <span class=\"courier\">_extracted</span> subfolder (its previous contents are wiped). If URL was given then it will download the file to the <span class=\"courier\">fwatch\\tmp\\</span> and extract it.",
@@ -409,7 +419,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_ALIAS_PAR1" => "Changes the behavior of the automatic installation as well as <code>Move</code> and <code>Copy</code> commands so that they will merge specified folder with the modfolder that's being installed. Effect lasts until the end of the current script (to make it work for all the versions use option from the mod details page).",
 "GS_IS_ALIAS_PAR2" => "For example: mod @wgl5 is being installed. Archive \"CoC_UA110_Setup.exe\" was downloaded which contains folders: @CoC and @wgl5. By default auto installation will copy @wgl5 and ignore @CoC but if you'll write:",
 "GS_IS_ALIAS_PAR3" => "then the installer won't skip @CoC but merge its contents with the @wgl5 in the game directory.",
-"GS_IS_ALIAS_PAR4" => "If no argument was given then changes are disabled.",
+"GS_IS_ALIAS_PAR4" => "If no argument was given then the option is turned off.",
 
 	#Rename command
 "GS_IS_RENAME_PAR1" => "Renames file or folder from the modfolder.",
@@ -442,8 +452,8 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_MISSION_PAR2" => "When you launch the game with a mod it will move contents of the mod sub-folders to the folders in the game directory.",
 "GS_IS_MISSION_PAR3" => "Source",
 "GS_IS_MISSION_PAR4" => "Destination",
-"GS_IS_MISSION_PAR5" => "By default PBO files and folders are moved. In the case of cutscenes and user missions only folders are moved.",
-"GS_IS_MISSION_PAR6" => "Changes are reverted when you quit the game.",
+"GS_IS_MISSION_PAR5" => "Both PBO files and mission folders are moved. In the case of cutscenes and user missions only folders are moved.",
+"GS_IS_MISSION_PAR6" => "Files are moved back when you quit the game.",
 	
 	#Example script (WW4)
 "GS_IS_EXAMPLE_PAR1" => "This is a script for installing WW4 2.5 mod",
@@ -540,27 +550,27 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_CHANGELOG" => "Historia zmian",
 	
 	#Automatic installation
-	"GS_IS_AUTO_PAR1" => "Po prostu wklej bezpośredni odsyłacz do pliku, a instalator sam wykryje co trzeba zrobić. Jeśli jest więcej niż jeden plik do ściągnięcia to umieść kolejny link w następnej linijce.",
-	"GS_IS_AUTO_PAR2" => "Dodaj przełącznik <code>/password:</code> jeśli archiwum wymaga hasła.",
+	"GS_IS_AUTO_PAR1" => "Po prostu wklej bezpośredni odsyłacz do pliku, a instalator sam wykryje co trzeba zrobić. W przypadku wielu plików umieść kolejne linki w następnych linijkach.",
+	"GS_IS_AUTO_PAR2" => "Jeśli archiwum wymaga hasła to dodaj <code>/password:</code> w tej same linijce.",
 	"GS_IS_AUTO_PAR3" => "Jak to działa?",
 	"GS_IS_AUTO_PAR4" => "Instalator sprawdza rozszerzenie ściągnętego pliku:",
-	"GS_IS_AUTO_PAR5" => "W przypadku <code>.rar</code>, <code>.zip</code>, <code>.7z</code>, <code>.ace</code>, <code>.exe</code> lub <code>.cab</code> otworzy go i sprawdzi zawartość.",
+	"GS_IS_AUTO_PAR5" => "W przypadku <code>.rar</code>, <code>.zip</code>, <code>.7z</code>, <code>.ace</code>, <code>.exe</code> lub <code>.cab</code> otworzy go i zbada zawartość.",
 	"GS_IS_AUTO_PAR6" => "Jeśli <code>.exe</code> nie mogło być rozpakowane i żaden inny plik nie został dotychczas przekopiowany to wtedy instalator poprosi użytkownika o uruchomienie tego pliku.",
 	"GS_IS_AUTO_PAR7" => "W przypadku <code>.pbo</code> sprawdzi jego typ i przeniesie go do katalogu <code>addons</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> albo <code>SPTemplates</code> w folderze z modem.",
 	"GS_IS_AUTO_PAR8" => "Inne typy plików zostaną pominięte.",
 	"GS_IS_AUTO_PAR9" => "Jeśli instalator napotka folder to sprawdzi jego nazwę i zawartość:",
-	"GS_IS_AUTO_PAR10" => "Jeśli nazwa jest taka sama jak nazwa instalowanego moda to przeniesie go do katalogu z grą. Wszystkie inne pliki znajdujące się w tej lokalizacji (oprócz innych modów) zostaną przeniesione do katalogu z modem. Jeśli występuje tu folder <code>addons</code> to zostanie on połączony z folderem <code>IslandCutscenes</code> w katalogu z modem.",
+	"GS_IS_AUTO_PAR10" => "Jeśli jego nazwa jest taka sama jak nazwa instalowanego moda to przeniesie go do katalogu z grą. Wszystkie inne pliki znajdujące się w tej lokalizacji (oprócz innych modów) zostaną przeniesione do katalogu z modem. Jeśli występuje tu folder <code>addons</code> to zostanie on połączony z folderem <code>IslandCutscenes</code> w katalogu z modem.",
 	"GS_IS_AUTO_PAR11" => "Inne modfoldery zostaną pominięte (wyjątki: 1. folder <code>Res</code> 2. jeśli ściągnęte archiwum zawiera tylko pojedynczy katalog to instalator go nie pominie).",
-	"GS_IS_AUTO_PAR12" => "Jeśli nazwa to <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> lub <code>IslandCutscenes</code> to zostanie przeniesiony do katalogu z modem (połączy zawartość). Jeśli <code>MPMissions</code> zawiera tylko pojedynczy folder to wtedy zawartość tego podfolderu zostanie przeniesiona. Jeśli <code>Missions</code> zawiera tylko pojedynczy folder, którego nazwa jest taka sama jak nazwa modu to wtedy jego zawartość zostanie połączona z misjami moda. Jeśli nie jest taka sama to będzie przeniesiony jako oddzielny katalog.",
+	"GS_IS_AUTO_PAR12" => "Jeśli jego nazwa to <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> lub <code>IslandCutscenes</code> to zostanie przeniesiony do katalogu z modem (połączy zawartość). Jeśli <code>MPMissions</code> zawiera tylko pojedynczy folder to wtedy zawartość tego podfolderu zostanie przeniesiona. Jeśli <code>Missions</code> zawiera tylko pojedynczy folder, którego nazwa jest taka sama jak nazwa modu to wtedy jego zawartość zostanie połączona z misjami moda. Jeśli nie jest taka sama to będzie przeniesiony jako oddzielny katalog.",
 	"GS_IS_AUTO_PAR13" => "Jeśli zawiera <code>overview.html</code> to wtedy zostanie przeniesiony do <code>Missions</code> w katalogu z modem.",
-	"GS_IS_AUTO_PAR14" => "Jeśli nazwa kończy się na \"anim\", \"_anim\" lub \"_anims\" to zostanie przeniesiony on do <code>IslandCutscenes</code>. Jeśli jakikolwiek nadrzędny katalog nazywa się \"res\" albo miał słowa \"res\" i \"addons\" w nazwie to obecny folder będzie przeniesiony do <code>IslandCutscenes_Res</code>.",
-	"GS_IS_AUTO_PAR15" => "Jeśli jest to misja to instalator wykryje jej typ i przeniesie do  <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> lub <code>SPTemplates</code> w katalogu z modem. Jeśli folder ma słowa \"demo\" lub \"template\" w nazwie albo jakikolwiek poprzedni katalog miał w nazwie słowa \"user\" lub \"mission\" i \"demo/editor/template\" to obecny folder zostanie przeniesiony do <code>MissionsUsers</code> lub <code>MPMissionsUsers</code>.",
+	"GS_IS_AUTO_PAR14" => "Jeśli jego nazwa kończy się na \"anim\", \"_anim\" lub \"_anims\" to zostanie przeniesiony on do <code>IslandCutscenes</code>. Jeśli jakikolwiek nadrzędny katalog nazywa się \"res\" albo miał słowa \"res\" i \"addons\" w nazwie to obecny folder będzie przeniesiony do <code>IslandCutscenes_Res</code>.",
+	"GS_IS_AUTO_PAR15" => "Jeśli jest to folder misji to instalator wykryje jej typ i przeniesie do  <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> lub <code>SPTemplates</code> w katalogu z modem. Jeśli folder ma słowa \"demo\" lub \"template\" w nazwie albo jakikolwiek poprzedni katalog miał w nazwie słowa \"user\" lub \"mission\" i \"demo/editor/template\" to obecny folder zostanie przeniesiony do <code>MissionsUsers</code> lub <code>MPMissionsUsers</code>.",
 	"GS_IS_AUTO_PAR16" => "W innym przypadku zbada zawartość katalogu stosując powyższe reguły do każdego zawartego w nim folderu (najpierw) i pliku.",
-	"GS_IS_AUTO_PAR17" => "Instalator nadpisze istniejące pliki. Jeśli foldery w ścieżce docelowej nie istnieją to je utworzy.",
+	"GS_IS_AUTO_PAR17" => "Instalator nadpisze istniejące pliki. Automatycznie tworzy potrzebne foldery.",
 	
 	#Link format
 	"GS_IS_URL_PAR1" => "1. Odsyłacze powinny zaczynać się od protokołu. Odstępy powinny być zamienione na <code>%20</code>. Linki muszą bezpośrednio wskazywać na plik.",
-	"GS_IS_URL_PAR2" => "2. Jeśli serwis wymaga przejścia przez pośrednie strony zanim udostępni bezpośredni link to napisz adres każdej podstrony.",
+	"GS_IS_URL_PAR2" => "2. Jeśli serwis wymaga przejścia przez pośrednie strony zanim udostępni bezpośredni link to napisz adres do każdej podstrony.",
 	"GS_IS_URL_STARTING_URL" => "startowy url",
 	"GS_IS_URL_INTERMEDIATE_URL" => "opcjonalnie linki do przejściowych stron",
 	"GS_IS_URL_FILE_NAME" => "nazwa pliku",
@@ -569,22 +579,25 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_URL_PAR5" => "Ściągnie stronę https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25",
 	"GS_IS_URL_PAR6" => "Znajdzie URL zawierający wyrażenie <span class=\"courier\">/downloads/start/</span> i ściągnię stronę pod tym linkiem.",
 	"GS_IS_URL_PAR7" => "Znajdzie URL zawierający wyrażenie <span class=\"courier\">/downloads/mirror/</span> i ściągnie jego zawartość pod nazwą ww4mod25rel.rar",
-	"GS_IS_URL_PAR8" => "Na stronie edycji instalacji modu, pod polem do wpisywaniu skryptu znajdziesz narzędzie do automatycznej konwersji linków (do kilku wybranych stron). Więcej informacji jak wyszukiwać odsyłacze do stron przejściowych znajdziesz <a href=\"#testing\">poniżej</a>.",
+	"GS_IS_URL_PAR8" => "Na stronie edycji instalacji modu, pod polem do wpisywaniu skryptu znajdziesz narzędzie, które automatycznie doda pośrednie linki (do kilku wybranych stron). Więcej informacji jak samemu szukać takowych odsyłaczy znajdziesz <a href=\"#testing\">poniżej</a>.",
 	"GS_IS_URL_PAR9" => "3. Jeśli masz <b>zapasowe linki</b> to umieść je wszystkie w nawiasie klamrowym. Na przykład:",
 	"GS_IS_URL_PAR10" => "Jeśli pierwszy zawiedzie to instalator przejdzie do drugiego i tak dalej.",
-	"GS_IS_URL_PAR11" => "4. Dla zaoszczędzenia miejsca na dysku instalator kasuje ostatni ściągnięty plik gdy zacznie ściągać nowy. Aby go zachować użyj komendy <a href=\"#get\">GET</a>.",
+	"GS_IS_URL_PAR11" => "4. Dla zaoszczędzenia miejsca na dysku instalator kasuje ostatni ściągnięty plik jak tylko zacznie się pobieranie następnego. Aby zachować pliki użyj komendy <a href=\"#get\">GET</a>.",
 	
 	#Manual installation
 	"GS_IS_MANUAL_PAR1" => "Dostępne są komendy dzięki którym możesz kontrolować zachowanie instalatora:",
 	"GS_IS_MANUAL_PAR2" => "Niektóre z nich mają dodatkowe nazwy. Na przykład <code>remove</code> i <code>delete</code> są identyczne.",
 	"GS_IS_MANUAL_PAR3" => "Komendy umieszczaj w oddzielnych linijkach.",
-	"GS_IS_MANUAL_PAR4" => "Komendy zazwyczaj wymagają argumentów, które muszą zostać podane w opisanej kolejności. Oddzielaj je spacją. Jeśli argument zawiera spację to zamknij go w cudzysłów.",
-	"GS_IS_MANUAL_PAR5" => "Opcjonalnie dane mogą zostać przekazane do komend w postaci przełączników. Zaczynają się od prawego ukośnika i mogą być podane gdziekolwiek w szeregu argumentów.",
+	"GS_IS_MANUAL_PAR4" => "Komendy zazwyczaj wymagają argumentów. Muszą być one podane w określonej kolejności. Oddzielaj je spacją. Jeśli argument zawiera spację to zamknij go w cudzysłów.",
+	"GS_IS_MANUAL_PAR5" => "Komendy mogą używać także przełączników. Są to opcjonalne argumenty, które można umieścić gdziekolwiek w szeregu argumentów. Zaczynają się od prawego ukośnika.",
 	"GS_IS_MANUAL_PAR6" => "Pisz nazwy komend dużymi literami dla zwiększenia czytelności.",
 	"GS_IS_MANUAL_PAR7" => "Nieprawidłowe komendy zostaną zignorowane.",
 	"GS_IS_MANUAL_PAR8" => "Odstępy na początku i końcu linii zostaną zignorowane.",
 	"GS_IS_MANUAL_PAR9" => "Skrypt może mieć zarówno automatyczną instalację jak i komendy.",
 
+	"GS_IS_COMMAND" => "komenda",
+	"GS_IS_ARGUMENT" => "argument",
+	"GS_IS_SWITCH" => "przełącznik",
 	"GS_IS_URL_OR_FILE" => "url lub plik",
 	"GS_IS_FILE_OR_URL" => "plik lub url",
 	"GS_IS_FILE" => "plik",
@@ -602,7 +615,9 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_NAME2" => "nazwa2",
 	"GS_IS_DATE" => "data",
 	"GS_IS_WILDCARDS" => "Wieloznaczniki (patrz <a href=\"https://docs.microsoft.com/en-us/archive/blogs/jeremykuhne/wildcards-in-windows\" target=\"_blank\">MSDN</a> i <a href=\"https://superuser.com/questions/475874/how-does-the-windows-rename-command-interpret-wildcards\" target=\"_blank\">StackExchange</a>) mogą zostać użyte do wybrania wielu plików naraz.",
-
+	"GS_IS_GAME_FOLDER" => "katalog z grą",
+	"GS_IS_MOD_FOLDER" => "katalog z modem",
+	
 	#Unpack command
 	"GS_IS_UNPACK_PAR1" => "Wypakowuje wybrane archiwum z folderu <span class=\"courier\">fwatch\\tmp\\</span> do podfolderu <span class=\"courier\">_extracted</span> (którego poprzednia zawartość jest usuwana). Jeśli został podany URL to wtedy ściągnie plik do <span class=\"courier\">fwatch\\tmp\\</span> a następnie go rozpakuje.",
 	"GS_IS_UNPACK_PAR2" => "Jak otwierać archiwa w archiwach:",
@@ -664,7 +679,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_ALIAS_PAR1" => "Zmienia zachowanie automatycznej instalacji oraz komend <code>Move</code> i <code>Copy</code> tak, aby łączyły treść wskazanego folderu z katalogiem z modem. Efekt trwa do końca obecnego skryptu (żeby działał na całą instalację skorzystaj z opcji na stronie edycji szczegółów moda).",
 	"GS_IS_ALIAS_PAR2" => "Na przykład: instalowany jest mod @wgl5. Zostało ściągnięte archiwum \"CoC_UA110_Setup.exe\" które zawiera katalogi: @CoC i @wgl5. Domyślnie automatyczna instalacja skopiuje @wgl5 i zignoruje @CoC ale jeśli napiszesz:",
 	"GS_IS_ALIAS_PAR3" => "to wtedy instalator nie zignoruje @CoC lecz połączy jego zawartość z  @wgl5 w katalogu z grą.",
-	"GS_IS_ALIAS_PAR4" => "Jeśli argument nie został podany to zmiany zostają wyłączone.",
+	"GS_IS_ALIAS_PAR4" => "Jeśli argument nie został podany to opcja zostaje wyłączona.",
 
 	#Rename command
 	"GS_IS_RENAME_PAR1" => "Zmienia nazwę pliku lub folderu znajdującego się w katalogu z modem.",
@@ -697,7 +712,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_MISSION_PAR2" => "Kiedy włączasz grę z danym modem to treść jego podfolderów zostanie przeniesiona do odpowiednich folderów w katalogu z grą.",
 	"GS_IS_MISSION_PAR3" => "Źródło",
 	"GS_IS_MISSION_PAR4" => "Przeznaczenie",
-	"GS_IS_MISSION_PAR5" => "Domyślnie pliki PBO jak i foldery są przenoszone. W przypadku przerywników filmowych i misji dla edytora tylko foldery są przenoszone.",
+	"GS_IS_MISSION_PAR5" => "Zarówno pliki PBO jak i foldery misji są przenoszone. W przypadku przerywników filmowych i misji dla edytora tylko foldery są przenoszone.",
 	"GS_IS_MISSION_PAR6" => "Pliki są przywracane po wyjściu z gry.",
 	
 	#Example script (WW4)
@@ -827,27 +842,26 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 		<h4 class="commandtitle"><?=lang("GS_IS_AUTO_PAR3")?></h4>
 		<p><?=lang("GS_IS_AUTO_PAR4")?>
 			<ul>
-				<li><?=lang("GS_IS_AUTO_PAR5")?></li>
-				<li><?=lang("GS_IS_AUTO_PAR6")?></li>
-				<li><?=lang("GS_IS_AUTO_PAR7")?></li>
-				<li><?=lang("GS_IS_AUTO_PAR8")?></li>
+				<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR5")?></li>
+				<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR6")?></li>
+				<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR7")?></li>
+				<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR8")?></li>
 			</ul>
 		</p>
-
+		<br>
+		
 		<p><?=lang("GS_IS_AUTO_PAR9")?>
 		<ul>
-			<li><?=lang("GS_IS_AUTO_PAR10")?></li>
-			<li><?=lang("GS_IS_AUTO_PAR11")?></li>
-			<br>
-			<li><?=lang("GS_IS_AUTO_PAR12")?></li>
-			<li><?=lang("GS_IS_AUTO_PAR13")?></li>
-			<br>
-			<li><?=lang("GS_IS_AUTO_PAR14")?></li>
-			<li><?=lang("GS_IS_AUTO_PAR15")?></li>
-			<br>
-			<li><?=lang("GS_IS_AUTO_PAR16")?></li>
+			<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR10")?></li>
+			<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR11")?></li>
+			<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR12")?></li>
+			<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR13")?></li>
+			<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR14")?></li>
+			<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR15")?></li>
+			<li style="margin-bottom:0.5em;"><?=lang("GS_IS_AUTO_PAR16")?></li>
 		</ul>
 		</p>
+		<br>
 
 		<p><?=lang("GS_IS_AUTO_PAR17")?></p>
 	</div>
@@ -925,7 +939,9 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<p><?=lang("GS_IS_MANUAL_PAR2")?></p>
 	<p><?=lang("GS_IS_MANUAL_PAR3")?></p>
 	<p><?=lang("GS_IS_MANUAL_PAR4")?></p>
+	<pre><code><span class="scripting_command"><?=strtoupper(lang("GS_IS_COMMAND"))?> <span class="scripting_command_arg1"><?=lang("GS_IS_ARGUMENT")?>1</span> <span class="scripting_command_arg2">"<?=lang("GS_IS_ARGUMENT")?> 2"</span> <span class="scripting_command_arg3">...</span></code></pre>
 	<p><?=lang("GS_IS_MANUAL_PAR5")?></p>
+	<pre><code><span class="scripting_command"><?=strtoupper(lang("GS_IS_COMMAND"))?> <span class="scripting_command_switch">/<?=lang("GS_IS_SWITCH")?></span> <span class="scripting_command_arg1"><?=lang("GS_IS_ARGUMENT")?></span></code></pre>
 	<p><?=lang("GS_IS_MANUAL_PAR6")?></p>
 	<p><?=lang("GS_IS_MANUAL_PAR7")?></p>
 	<p><?=lang("GS_IS_MANUAL_PAR8")?></p>
@@ -936,7 +952,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<a name="unpack"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Unpack, Extract</h3>
-	<pre><code>UNPACK  &lt;<?=lang("GS_IS_URL_OR_FILE")?>&gt;  /password:&lt;<?=lang("GS_IS_TEXT")?>&gt;</code></pre>
+	<pre><code><span class="scripting_command">UNPACK</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_URL_OR_FILE")?>&gt;</span>  <span class="scripting_command_switch">/password:&lt;<?=lang("GS_IS_TEXT")?>&gt;</span></code></pre>
 	
 	<p><?=lang("GS_IS_UNPACK_PAR1")?></p>
 	<br>
@@ -961,7 +977,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<a name="move"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Move, Copy</h3>
-	<pre><code>MOVE  &lt;<?=lang("GS_IS_FILE_OR_URL")?>&gt;  &lt;<?=lang("GS_IS_DESTINATION")?>&gt;  &lt;<?=lang("GS_IS_NEW_NAME")?>&gt;  /no_overwrite  /match_dir  /match_dir_only</code></pre>
+	<pre><code><span class="scripting_command">MOVE</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FILE_OR_URL")?>&gt;</span>  <span class="scripting_command_arg2">&lt;<?=lang("GS_IS_DESTINATION")?>&gt;</span>  <span class="scripting_command_arg3">&lt;<?=lang("GS_IS_NEW_NAME")?>&gt;</span>  <span class="scripting_command_switch">/no_overwrite</span>  <span class="scripting_command_switch">/match_dir</span>  <span class="scripting_command_switch">/match_dir_only</span></code></pre>
 	
 	<p><?=lang("GS_IS_MOVE_PAR1")?></p>
 	<p><?=lang("GS_IS_MOVE_PAR2")?></p>
@@ -975,10 +991,10 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<p>
 		<?=lang("GS_IS_MOVE_PAR4")?>
 		<br>
-		<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\fwatch\tmp\_extracted\FDFmod Readme.html</span><br>
+		<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\fwatch\tmp\_extracted\FDFmod Readme.html</span><br>
 		<?=lang("GS_IS_MOVE_PAR5")?>
 		<br>
-		<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\&lt;modfolder&gt;\</span>
+		<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\</span>
 	</p>
 	<br>
 	<br>
@@ -987,10 +1003,10 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<p>
 		<?=lang("GS_IS_MOVE_PAR4")?>
 		<br>
-		<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\fwatch\tmp\_extracted\example.pbo</span><br>
+		<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\fwatch\tmp\_extracted\example.pbo</span><br>
 		<?=lang("GS_IS_MOVE_PAR5")?>
 		<br>
-		<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\&lt;modfolder&gt;\addons\</span>
+		<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\addons\</span>
 	</p>
 	<br>
 	<br>
@@ -1000,10 +1016,10 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<p>
 		<?=lang("GS_IS_MOVE_PAR4")?>
 		<br>
-		<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\fwatch\tmp\_extracted\finmod</span><br>
+		<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\fwatch\tmp\_extracted\finmod</span><br>
 		<?=lang("GS_IS_MOVE_PAR5")?>
 		<br>
-		<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\</span>
+		<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\</span>
 	</p>
 	<p><?=lang("GS_IS_MOVE_PAR7")?></p>
 	<br>
@@ -1051,7 +1067,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<a name="unpbo"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">UnPBO, UnpackPBO, ExtractPBO</h3>
-	<pre><code>UNPBO  &lt;<?=lang("GS_IS_FILE")?>&gt;  &lt;<?=lang("GS_IS_DESTINATION")?>&gt;</code></pre>
+	<pre><code><span class="scripting_command">UNPBO</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FILE")?>&gt;</span>  <span class="scripting_command_arg2">&lt;<?=lang("GS_IS_DESTINATION")?>&gt;</span></code></pre>
 	<p><?=lang("GS_IS_UNPBO_PAR1")?></p>
 	<p><?=lang("GS_IS_UNPBO_PAR2")?></p>
 	<br>
@@ -1075,7 +1091,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<a name="makepbo"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">MakePBO</h3>
-	<pre><code>MAKEPBO  &lt;<?=lang("GS_IS_FOLDER")?>&gt;  /keep_source  /timestamp:</code></pre>
+	<pre><code><span class="scripting_command">MAKEPBO</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FOLDER")?>&gt;</span>  <span class="scripting_command_switch">/keep_source</span>  <span class="scripting_command_switch">/timestamp:&lt;<?=lang("GS_IS_DATE")?>&gt;</span></code></pre>
 	<p><?=lang("GS_IS_MAKEPBO_PAR1")?></p>
 	<br>
 	<br>
@@ -1098,7 +1114,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<a name="edit"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Edit</h3>
-	<pre><code>EDIT  &lt;<?=lang("GS_IS_FILE_NAME")?>&gt;  &lt;<?=lang("GS_IS_LINE_NUMBER")?>&gt;  &lt;<?=lang("GS_IS_TEXT")?>&gt;  /insert  /newfile  /append  /timestamp:</code></pre>
+	<pre><code><span class="scripting_command">EDIT</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FILE_NAME")?>&gt;</span>  <span class="scripting_command_arg2">&lt;<?=lang("GS_IS_LINE_NUMBER")?>&gt;</span>  <span class="scripting_command_arg3">&lt;<?=lang("GS_IS_TEXT")?>&gt;</span>  <span class="scripting_command_switch">/insert</span>  <span class="scripting_command_switch">/newfile</span>  <span class="scripting_command_switch">/append</span>  <span class="scripting_command_switch">/timestamp:&lt;<?=lang("GS_IS_DATE")?>&gt;</span></code></pre>
 	<p><?=lang("GS_IS_EDIT_PAR1")?></p>
 	<p><?=lang("GS_IS_EDIT_PAR2", ["&gt;"])?></p>
 	<p><?=lang("GS_IS_EDIT_PAR3")?></p>
@@ -1121,7 +1137,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<a name="delete"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Delete, Remove</h3>
-	<pre><code>DELETE  &lt;file&gt;  /match_dir</code></pre>
+	<pre><code><span class="scripting_command">DELETE</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FILE_NAME")?>&gt;</span>  <span class="scripting_command_switch">/match_dir</span></code></pre>
 	<p><?=lang("GS_IS_DELETE_PAR1")?></p>
 	<br>
 	<br>
@@ -1145,9 +1161,9 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<a name="if_version"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">If_version, else, endif</h3>
-	<pre><code>IF_VERSION  &lt;<?=lang("GS_IS_OPERATOR")?>&gt;  &lt;<?=lang("GS_IS_NUMBER")?>&gt;
-ELSE
-ENDIF</code></pre>
+	<pre><code><span class="scripting_command">IF_VERSION</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_OPERATOR")?>&gt;</span>  <span class="scripting_command_arg2">&lt;<?=lang("GS_IS_NUMBER")?>&gt;</span>
+<span class="scripting_command">ELSE</span>
+<span class="scripting_command">ENDIF</span></code></pre>
 	<p><?=lang("GS_IS_IFVERSION_PAR1")?></p>
 	<p><?=lang("GS_IS_IFVERSION_PAR2")?></p>
 	<p><?=lang("GS_IS_IFVERSION_PAR3")?></p>
@@ -1165,7 +1181,7 @@ ENDIF</code></pre>
 	<a name="alias"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Merge_with, Alias</h3>
-	<pre><code>MERGE_WITH  &lt;<?=lang("GS_IS_NAME1")?>&gt; &lt;<?=lang("GS_IS_NAME2")?>&gt; &lt;...&gt;</code></pre>
+	<pre><code><span class="scripting_command">MERGE_WITH</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_NAME1")?>&gt;</span> <span class="scripting_command_arg2">&lt;<?=lang("GS_IS_NAME2")?>&gt;</span> <span class="scripting_command_arg3">&lt;...&gt;</span></code></pre>
 	<p><?=lang("GS_IS_ALIAS_PAR1")?></p>
 	<br>
 	<br>
@@ -1180,7 +1196,7 @@ ENDIF</code></pre>
 	<a name="rename"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Rename</h3>
-	<pre><code>RENAME  &lt;<?=lang("GS_IS_FILE")?>&gt;  &lt;<?=lang("GS_IS_NEW_NAME")?>&gt;  /match_dir</code></pre>
+	<pre><code><span class="scripting_command">RENAME</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FILE")?>&gt;</span>  <span class="scripting_command_arg2">&lt;<?=lang("GS_IS_NEW_NAME")?>&gt;</span>  <span class="scripting_command_switch">/match_dir</span></code></pre>
 	<p><?=lang("GS_IS_RENAME_PAR1")?></p>
 	<br>
 	<br>
@@ -1200,7 +1216,7 @@ ENDIF</code></pre>
 	<a name="makedir"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Makedir, Newfolder</h3>
-	<pre><code>MAKEDIR  &lt;<?=lang("GS_IS_PATH")?>&gt;</code></pre>
+	<pre><code><span class="scripting_command">MAKEDIR</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_PATH")?>&gt;</span></code></pre>
 	<p><?=lang("GS_IS_MAKEDIR_PAR1")?></p>
 	<br>
 	<br>
@@ -1208,16 +1224,16 @@ ENDIF</code></pre>
 	<p><?=lang("GS_IS_EXAMPLE")?></p>
 	<pre><code><?=GS_scripting_highlighting("MAKEDIR  addons\nMAKEDIR  dta\\hwtl")?></code></pre>
 	<p><?=lang("GS_IS_MAKEDIR_PAR2")?></p>
-	<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\&lt;modfolder&gt;</span><br>
-	<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\&lt;modfolder&gt;\addons</span><br>
-	<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\&lt;modfolder&gt;\dta</span><br>
-	<span class="courier" style="margin-left:2em;">&lt;game folder&gt;\&lt;modfolder&gt;\dta\hwtl</span><br>
+	<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;</span><br>
+	<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\addons</span><br>
+	<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\dta</span><br>
+	<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\dta\hwtl</span><br>
 
 
 
 	<a name="filedate"></a><hr class="betweencommands">
 	<h3 class="commandtitle">Filedate</h3>
-	<pre><code>FILEDATE  &lt;<?=lang("GS_IS_FILE")?>&gt;  &lt;<?=lang("GS_IS_DATE")?>&gt;</code></pre>
+	<pre><code><span class="scripting_command">FILEDATE</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FILE")?>&gt;</span>  <span class="scripting_command_arg2">&lt;<?=lang("GS_IS_DATE")?>&gt;</span></code></pre>
 	<p><?=lang("GS_IS_FILEDATE_PAR1")?></p>
 	<br>
 	<br>
@@ -1230,7 +1246,7 @@ ENDIF</code></pre>
 	<a name="get"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Get, Download</h3>
-	<pre><code>GET  &lt;url&gt;</code></pre>
+	<pre><code><span class="scripting_command">GET</span>  <span class="scripting_command_arg1">&lt;url&gt;</span></code></pre>
 	<p><?=lang("GS_IS_GET_PAR1")?></p>
 	<br>
 	<br>
@@ -1243,7 +1259,7 @@ ENDIF</code></pre>
 	<a name="ask_get"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Ask_get, Ask_download</h3>
-	<pre><code>ASK_GET  &lt;<?=lang("GS_IS_FILE_NAME")?>&gt;  &lt;url&gt;</code></pre>
+	<pre><code><span class="scripting_command">ASK_GET</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_FILE_NAME")?>&gt;</span>  <span class="scripting_command_arg2">&lt;url&gt;</span></code></pre>
 	<p><?=lang("GS_IS_ASK_GET_PAR1")?></p>
 	<br>
 	<br>
@@ -1256,7 +1272,7 @@ ENDIF</code></pre>
 	<a name="ask_run"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Ask_run, Ask_execute</h3>
-	<pre><code>ASK_RUN  &lt;url or file&gt;</code></pre>
+	<pre><code><span class="scripting_command">ASK_RUN</span>  <span class="scripting_command_arg1">&lt;<?=lang("GS_IS_URL_OR_FILE")?>&gt;</span></code></pre>
 	<p><?=lang("GS_IS_ASK_RUN_PAR1")?></p> 
 	<p><?=lang("GS_IS_ASK_RUN_PAR2")?></p>
 	<br>
@@ -1267,7 +1283,7 @@ ENDIF</code></pre>
 	<br>
 	<br>
 	
-	<p><?=lang("GS_IS_ASK_RUN_PAR3", ["&lt;mod%gt;"])?></p>
+	<p><?=lang("GS_IS_ASK_RUN_PAR3", ["&lt;mod&gt;"])?></p>
 	<pre><code><?=GS_scripting_highlighting("ASK_RUN  &lt;mod&gt;\\Install_win2k_XP.bat")?></code></pre>
 	<br>
 	<br>
@@ -1279,7 +1295,7 @@ ENDIF</code></pre>
 	<a name="exit"></a>
 	<hr class="betweencommands">
 	<h3 class="commandtitle">Exit, Quit</h3>
-	<pre><code>EXIT</code></pre>
+	<pre><code><span class="scripting_command">EXIT</span></code></pre>
 	<p><?=lang("GS_IS_EXIT_PAR1")?></p>
 	</div>
 </div>
@@ -1645,13 +1661,8 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 	<p><?=lang("GS_IS_TEST_PAR3")?></p>
 	<p><?=lang("GS_IS_TEST_PAR4")?></p>
 	<p><?=lang("GS_IS_TEST_PAR5", ["&lt;", "&gt;"])?></p>
-	<br>
-	
 	<p><?=lang("GS_IS_TEST_PAR6")?></p>
-	<br>
-	
 	<p><?=lang("GS_IS_TEST_PAR7")?></p>
-	
 	<ul>
 		<li><?=lang("GS_IS_TEST_PAR8")?></li>
 		<li><?=lang("GS_IS_TEST_PAR9")?></li>
@@ -1671,9 +1682,6 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 	<div class="panel-heading"><strong><?=lang("GS_IS_CHANGELOG")?></strong></div>
 	<div class="panel-body">
 <a name="changelog0.6"></a>
-<br>
-<br>
-
 <strong>0.6</strong> (29.04.21)<br>
 <ul>
 <li><code>Edit</code> -  added <code>/timestamp:</code> switch</li>
