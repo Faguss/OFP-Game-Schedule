@@ -30,7 +30,7 @@ foreach(["id","date","description"] as $cell)
 
 echo "</tr>";
 
-$table = GS_get_activity_log(600, [GS_LOG_SERVER_MOD_CHANGED], true);
+$table = GS_get_activity_log(600, [GS_LOG_SERVER_MOD_CHANGED], true, $gs_permission_level);
 
 foreach($table as $row) {
 	echo "<tr>
