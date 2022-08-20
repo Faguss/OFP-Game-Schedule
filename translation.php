@@ -217,7 +217,7 @@ $table_info = [
 			"Testing scripts" => "installationscripts#testing"
 		],
 		"hide_rows"       => true,
-		"instructions"    => "Do not translate this one as I'm still working on it."
+		"instructions"    => ""
 	],
 	
 	"mainmenu" => [

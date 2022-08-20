@@ -20,14 +20,14 @@ if ($lang["THIS_CODE"] == "en-US") {
 if ($lang["THIS_CODE"] == "ru-RU") {
 	$lang = array_merge($lang, array(
 		#Dedicated server support page
-"GS_DEDICATED_TITLE" => "Installing Mods on a Dedicated Server with Fwatch",
-"GS_DEDICATED_OVERVIEW" => "You can remotely install and update modfolders by running this special mission:",
-"GS_DEDICATED_INITSQS" => "Open file %m1% and change id value to your server public identifier (you'll find it in the \"Edit Server Details\" page)",
-"GS_DEDICATED_PRIVATE" => "If the server record has schedule password then copy file %m1% (which contains the password) from your computer to the server.",
-"GS_DEDICATED_SAFETY" => "For safety reasons only the server admin should have access to this mission.",
-"GS_DEDICATED_REQUIRED" => "Fwatch must be running on the server. It's not required for the player.",
-"GS_DEDICATED_PROCESS" => "After starting the mission current schedule will be downloaded and mods will be installed. If modfolder already exists but doesn't have id then installer will create a new copy. Installer will terminate when encountered commands %m1% that require user input.",
-"GS_DEDICATED_LOGFILES" => "In case of issues check log files:"
+"GS_DEDICATED_TITLE" => "Установка модов на выделенный сервер с помощью Fwatch. Переведено Google",
+"GS_DEDICATED_OVERVIEW" => "Вы можете удаленно устанавливать и обновлять папки модов, выполнив эту специальную миссию:",
+"GS_DEDICATED_INITSQS" => "Откройте файл %m1% и измените значение id на общедоступный идентификатор вашего сервера (вы найдете его на странице «Редактировать сведения о сервере»).",
+"GS_DEDICATED_PRIVATE" => "Если в записи сервера указан пароль расписания, скопируйте файл %m1% (который содержит пароль) с вашего компьютера на сервер.",
+"GS_DEDICATED_SAFETY" => "В целях безопасности только администратор сервера должен иметь доступ к этой миссии.",
+"GS_DEDICATED_REQUIRED" => "Fwatch должен быть запущен на сервере. Для игрока это не требуется.",
+"GS_DEDICATED_PROCESS" => "После запуска миссии будет загружено текущее расписание и установлены моды. Если папка мода уже существует, но не имеет идентификатора, установщик создаст новую копию. Установщик прекратит работу при обнаружении команд %m1%, требующих ввода данных пользователем.",
+"GS_DEDICATED_LOGFILES" => "В случае возникновения проблем проверьте лог-файлы:"
 	));
 }
 
