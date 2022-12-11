@@ -241,7 +241,7 @@ function GS_get_server_status(ip_id, ip_group, location_group_id, name_id, passw
 	ip_input.innerHTML  = "";
 	$(ip_input).addClass('schedule_modal_loader');
 	
-	$.get("https://ofp-api.herokuapp.com/"+ip+":"+port, function(data) {
+	$.get("https://ofp-api.ofpisnotdead.com/"+ip+":"+port, function(data) {
 		$(ip_input).removeClass('schedule_modal_loader');
 		ip_input.innerHTML = ip_input_backup;
 		

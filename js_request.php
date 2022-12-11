@@ -137,7 +137,7 @@ else
 			if (strpos($ip,":") === FALSE)
 				$ip .= ":2302";
 			
-			$output = url_get_contents("https://ofp-api.herokuapp.com/{$ip}");
+			$output = url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}");
 		}
 	}
 

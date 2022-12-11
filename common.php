@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2022,8,14,0,12,44,8,290,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2022,12,11,0,0,30,55,592,60,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1411,29 +1411,30 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 			}
 			
 			if (!empty($private_mods)) {
-				// Check if these private mods are used on any servers
-				if (!empty($password)) {
-					$sql = "
-					SELECT 
-						gs_mods.id
-						
-					FROM 
-						gs_serv, 
-						gs_mods, 
-						gs_serv_mods 
-
-					WHERE 
-						gs_serv.id = gs_serv_mods.serverid AND 
-						gs_mods.id = gs_serv_mods.modid AND 
-						gs_serv.access in (".substr( str_repeat(",?",count($password)), 1).") AND
-						gs_mods.id IN (".substr( str_repeat(",?",count($private_mods)), 1).")
-					";
+				// Check if these private mods are used on public servers or private servers for which we have a password
+				$sql = "
+				SELECT 
+					gs_mods.id
 					
-					// If so then allow to display it
-					if (!$db->query($sql,array_merge($password,$private_mods))->error())
-						foreach($db->results(true) as $row)
-							$private_mods = array_diff($private_mods, $row["id"]);
-				}
+				FROM 
+					gs_serv, 
+					gs_mods, 
+					gs_serv_mods 
+
+				WHERE 
+					gs_serv.id = gs_serv_mods.serverid AND 
+					gs_mods.id = gs_serv_mods.modid AND 
+					gs_serv.access IN (''".substr( str_repeat(",?",count($password)), 1).") AND
+					gs_mods.id IN (".substr( str_repeat(",?",count($private_mods)), 1).") AND
+					gs_serv.removed = 0 AND
+					gs_mods.removed = 0 AND
+					gs_serv_mods.removed = 0
+				";
+
+				// If so then allow to display it
+				if (!$db->query($sql,array_merge($password,$private_mods))->error())
+					foreach($db->results(true) as $row)
+						$private_mods = array_diff($private_mods, [$row["id"]]);
 			}
 				
 			// Check if logged-in user can preview these mods
