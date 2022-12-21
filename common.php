@@ -126,8 +126,7 @@ define("GS_PERMISSION_MAX_MOD_CONTRIBUTORS", GS_PERMISSION_MAX_SERV_CONTRIBUTORS
 // Function options
 define("GS_NO_OPTIONS", 0);
 define("GS_USER_INFO", 1);
-define("GS_QUERY_SERVER", 2);
-define("GS_SPLIT_PERSISTENT", 4);
+define("GS_SPLIT_PERSISTENT", 2);
 
 // Request types for GS_list_servers and GS_list_mods
 define("GS_REQTYPE_WEBSITE", 0);
@@ -970,7 +969,9 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			gs_serv_times.duration,
 			gs_serv_times.modified AS modified2,
 			gs_serv_admins.userid AS admin,
-			gs_serv_admins.modified AS adminsince
+			gs_serv_admins.modified AS adminsince,
+			gs_serv_status.status,
+			gs_serv_status.expires
 			
 		FROM 
 			gs_serv LEFT JOIN gs_serv_times 
@@ -980,6 +981,9 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			LEFT JOIN gs_serv_admins
 				ON gs_serv.id = gs_serv_admins.serverid
 				AND gs_serv_admins.isowner = 1
+				
+			LEFT JOIN gs_serv_status
+				ON gs_serv.id = gs_serv_status.serverid
 			
 		WHERE 
 			gs_serv.removed = 0
@@ -1847,6 +1851,17 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		$server_order = array_merge($event_based, $persistent);
 	}
 
+	// Prepare a list translating game status id to a description
+	$server_status_list   = [lang("GS_STR_SERVER_OFFLINE")];
+	$server_status_list   = array_pad($server_status_list, 4, lang("GS_STR_SERVER_CREATE"));
+	$server_status_list[] = lang("GS_STR_SERVER_EDIT");
+	$server_status_list   = array_pad($server_status_list, 7, lang("GS_STR_SERVER_WAIT"));
+	$server_status_list   = array_pad($server_status_list, 9, lang("GS_STR_SERVER_SETUP"));
+	$server_status_list   = array_pad($server_status_list, 11, lang("GS_STR_SERVER_DEBRIEFING"));
+	$server_status_list   = array_pad($server_status_list, 13, lang("GS_STR_SERVER_SETUP"));
+	$server_status_list[] = lang("GS_STR_SERVER_BRIEFING");
+	$server_status_list[] = lang("GS_STR_SERVER_PLAY");
+
 	// Display server information
 	foreach($server_order as $uniqueid) {
 		$id = array_search($uniqueid, $servers["id"]);
@@ -1974,8 +1989,43 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		$js_type[]      = $current_type;
 		$js_started[]   = $current_started;
 		$js_serv_id[]   = $uniqueid;
+		$js_expired[]   = strtotime("now") > strtotime($server["expires"]);
 		
-		$html .= "</dl>";
+		// Add server status
+		$server_status_name    = $server_status_list[0];
+		$server_status_mission = "";
+		$server_status_players = "";
+		
+		$server_status = json_decode($server["status"], true);
+		
+		if (isset($server_status)) {
+			if (isset($server_status["gstate"]))
+				$server_status_name = $server_status_list[$server_status["gstate"]];
+			
+			if (isset($server_status["gametype"]) && isset($server_status["mapname"]))
+				$server_status_mission = $server_status["gametype"] . "." . $server_status["mapname"];
+			
+			if (isset($server_status["numplayers"]) && isset($server_status["players"])) {
+				$server_status_players = $server_status["numplayers"];
+				
+				foreach($server_status["players"] as $player)
+					$server_status_players .= "<br>" . $player["player"];
+			}
+		}
+		
+		$display_mission = $server_status_mission=="" || $server_status_mission=="." ? "none" : "block";
+		$display_players = empty($server_status_name!=$server_status_list[0]) ? "none" : "block";
+	
+		$html .= "
+			<dt>".lang("GS_STR_SERVER_STATUS") .":</dt>
+			<dd id=\"query{$server["uniqueid"]}_status\">$server_status_name</dd>
+			
+			<dt id=\"query{$server["uniqueid"]}_mission_dt\" style=\"display:$display_mission;\">".lang("GS_STR_SERVER_MISSION").":</dt>
+			<dd id=\"query{$server["uniqueid"]}_mission\" style=\"display:$display_mission;\">$server_status_mission</dd>
+			
+			<dt id=\"query{$server["uniqueid"]}_players_dt\" style=\"display:$display_players;\">".lang("GS_STR_SERVER_PLAYERS").":</dt>
+			<dd id=\"query{$server["uniqueid"]}_players\" style=\"display:$display_players;\">$server_status_players</dd>
+		</dl>";
 
 		if (isset($user_list[$server["createdby"]])) {
 			$js_addedon[] = date("c",strtotime($server["created"]));
@@ -1985,9 +2035,9 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 				$html .= "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$server["admin"]], date("jS M Y",strtotime($server["adminsince"]))])."</small>";
 		}
 		
-		$html .= "<div id=\"query{$server["uniqueid"]}\"></div></div>
+		$html .= "
+		</div>
 		<div>
-			
 			<a href=\"show.php?server={$server["uniqueid"]}".($server["access"]!="" ? "&password={$server["access"]}" : "")."\"><span class=\"glyphicon glyphicon-link\"></span></a>
 			<br>
 			<a href=\"rss.php?server={$server["uniqueid"]}".($server["access"]!="" ? "&password={$server["access"]}" : "")."\"><span class=\"fa fa-rss\"></span></a>
@@ -2026,49 +2076,59 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");";
 		
 	// Show server status
-	if ($options & GS_QUERY_SERVER) {
-		$server_status_list   = [lang("GS_STR_SERVER_OFFLINE")];
-		$server_status_list   = array_pad($server_status_list, 4, lang("GS_STR_SERVER_CREATE"));
-		$server_status_list[] = [lang("GS_STR_SERVER_EDIT")];
-		$server_status_list   = array_pad($server_status_list, 7, lang("GS_STR_SERVER_WAIT"));
-		$server_status_list   = array_pad($server_status_list, 9, lang("GS_STR_SERVER_SETUP"));
-		$server_status_list   = array_pad($server_status_list, 11, lang("GS_STR_SERVER_DEBRIEFING"));
-		$server_status_list   = array_pad($server_status_list, 13, lang("GS_STR_SERVER_SETUP"));
-		$server_status_list[] = [lang("GS_STR_SERVER_BRIEFING")];
-		$server_status_list[] = [lang("GS_STR_SERVER_PLAY")];
-		
-		$html .= "
-		var GS_serv_id     = ".json_encode($js_serv_id)."
-		var GS_game_status = ".json_encode($server_status_list)."
-		
-		window.onload = function() {
-			for (var i=0; i<GS_serv_id.length; i++) {
-				var current_id = GS_serv_id[i];
-				$.post('js_request.php',  {'queryserver':current_id}, function(data) {
-					var server = JSON.parse(data);
-					if (server != null && server.error == null) {
-						var field = document.getElementById('query'+current_id);
-						var html  = '<dl>';
+	$html .= "
+	var GS_serv_id     = ".json_encode($js_serv_id)."
+	var GS_game_status = ".json_encode($server_status_list)."
+	var GS_expired     = ".json_encode($js_expired)."
+	
+	window.onload = function() {
+		for (var i=0; i<GS_serv_id.length; i++) {
+			if (GS_expired[i]) {
+				$.ajax({
+					type: 'POST',
+					data: {queryserver:GS_serv_id[i]},
+					input_id: GS_serv_id[i],
+					url: 'js_request.php',
+					dataType: 'json',
+					success: function (server) {
+						if (server != null) {							
+							if (server.gstate)
+								$('#query'+this.input_id+'_status').html(GS_game_status[server.gstate]);
+							else
+								$('#query'+this.input_id+'_status').html(GS_game_status[0]);
+							
+							if (server.gametype && server.gametype != '') {
+								var mission_name = server.gametype + '.' + server.mapname;
+								$('#query'+this.input_id+'_mission').html(mission_name);
+								$('#query'+this.input_id+'_mission').show();
+								$('#query'+this.input_id+'_mission_dt').show();
+							} else {
+								$('#query'+this.input_id+'_mission').hide();
+								$('#query'+this.input_id+'_mission_dt').hide();
+							}
+							
+							if (server.gstate && server.gstate != 0) {
+								var players = server.numplayers;
 
-						html += '<dt>".lang("GS_STR_SERVER_STATUS").":</dt><dd>' + GS_game_status[server.gstate] + '</dd>';
-						
-						if (server.gametype != '')
-							html += '<dt>".lang("GS_STR_SERVER_MISSION").":</dt><dd>' + server.gametype + '.' + server.mapname + '</dd>';
-						
-						html += '<dt>".lang("GS_STR_SERVER_PLAYERS").":</dt><dd>' + server.numplayers;
-
-						for (var j=0; j<server.players.length; j++)
-							html += '<br>' + server.players[j].player;
-						
-						html += '</dd>';
-						
-						field.innerHTML = html + '</dl>';
+								if (server.players) {
+									for (var j=0; j<server.players.length; j++)
+										players += '<br>' + server.players[j].player;
+									
+									$('#query'+this.input_id+'_players').html(players);
+									$('#query'+this.input_id+'_players').show();
+									$('#query'+this.input_id+'_players_dt').show();
+								}
+							} else {
+								$('#query'+this.input_id+'_players').hide();
+								$('#query'+this.input_id+'_players_dt').hide();
+							}
+						}
 					}
 				});
 			}
 		}
-		";
 	}
+	";
 	
 	$html .= "</script>
 	";

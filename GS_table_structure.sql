@@ -146,9 +146,9 @@ INSERT INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 25, 2021 at 12:32 AM
--- Server version: 10.2.36-MariaDB
--- PHP Version: 7.4.8
+-- Generation Time: Dec 21, 2022 at 07:17 PM
+-- Server version: 10.3.36-MariaDB
+-- PHP Version: 7.4.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -380,6 +380,19 @@ CREATE TABLE `gs_serv_mods` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `gs_serv_status`
+--
+
+CREATE TABLE `gs_serv_status` (
+  `id` int(11) NOT NULL,
+  `serverid` int(11) NOT NULL,
+  `status` text COLLATE utf8_unicode_ci NOT NULL,
+  `expires` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `gs_serv_times`
 --
 
@@ -486,6 +499,12 @@ ALTER TABLE `gs_serv_mods`
   ADD KEY `ServerID` (`serverid`);
 
 --
+-- Indexes for table `gs_serv_status`
+--
+ALTER TABLE `gs_serv_status`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `gs_serv_times`
 --
 ALTER TABLE `gs_serv_times`
@@ -562,6 +581,12 @@ ALTER TABLE `gs_serv_admins`
 -- AUTO_INCREMENT for table `gs_serv_mods`
 --
 ALTER TABLE `gs_serv_mods`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `gs_serv_status`
+--
+ALTER TABLE `gs_serv_status`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

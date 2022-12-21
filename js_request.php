@@ -131,13 +131,46 @@ else
 	if (isset($_POST['queryserver']) && !empty($_POST['queryserver'])) {
 		require_once "minimal_init.php";
 		$db = DB::getInstance();
-		$ip = $db->cell("gs_serv.ip",["uniqueid","=",$_POST['queryserver']]);
+		$sql = "
+			SELECT 
+				gs_serv.id,
+				gs_serv.ip, 
+				gs_serv_status.id AS status_id,
+				gs_serv_status.status, 
+				gs_serv_status.expires 
+				
+			FROM 
+				gs_serv LEFT JOIN gs_serv_status 
+					ON gs_serv.id = gs_serv_status.serverid 
+				
+			WHERE 
+				uniqueid = ?
+		";
 
-		if (isset($ip)) {
-			if (strpos($ip,":") === FALSE)
-				$ip .= ":2302";
+		if ($db->query($sql,[$_POST['queryserver']])) {
+			$data = $db->first(true);
 			
-			$output = url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}");
+			if (strtotime("now") > strtotime($data["expires"])) {
+				$ip = $data["ip"];
+				if (isset($ip)) {
+					if (strpos($ip,":") === FALSE)
+						$ip .= ":2302";
+					
+					$output = url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}");
+					$input = [
+						"serverid" => $data["id"], 
+						"status" => $output, 
+						"expires" => date('Y-m-d H:i:s', strtotime("+1 minute"))
+					];
+					
+					if (!empty($data["status_id"]))
+						$input = array_merge($input, ["id"=>$data["status_id"]]);
+					
+					$db->insert("gs_serv_status", $input, true);
+				}
+			} else {
+				$output = $data["status"];
+			}
 		}
 	}
 
