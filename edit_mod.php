@@ -89,7 +89,11 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	
 	$description_hint =  lang("GS_STR_MOD_DESCRIPTION_HINT"). ". <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a>";
 	
-	$form->add_text("name"       , lang("GS_STR_MOD_FOLDER")             , lang("GS_STR_MOD_FOLDER_HINT")     , "@ww4mod25");
+	$form->add_text("name", lang("GS_STR_MOD_FOLDER"), lang("GS_STR_MOD_FOLDER_HINT"), "@ww4mod25");
+	
+	if ($form->hidden["display_form"] == "Edit")
+		$form->add_text("subtitle", lang("GS_STR_MOD_SUBTITLE"), lang("GS_STR_MOD_SUBTITLE_HINT"), "Sanctuary");
+	
 	$form->add_text("description", lang("GS_STR_MOD_DESCRIPTION")        , $description_hint                  , lang("GS_STR_MOD_DESCRIPTION_EXAMPLE"));
 	$form->add_select("type"     , lang("GS_STR_MOD_TYPE")               , ""                                 , $mod_type_select, "0");
 	$form->add_text("access"     , lang("GS_STR_MOD_ACCESS")             , lang("GS_STR_MOD_ACCESS_HINT"));
@@ -150,6 +154,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 		$form->add_validation_rules(["alias"]      , ["max"=>GS_MAX_MSG_INPUT_LENGTH, "required"=>false]);
 		$form->add_validation_rules(["access"]     , ["max"=>GS_MAX_CODE_INPUT_LENGTH, "required"=>false]);
 		$form->add_validation_rules(["website"]    , ["required"=>false]);
+		$form->add_validation_rules(["subtitle"]   , ["max"=>10, "required"=>false]);
 
 
 		// Send data to table
@@ -167,6 +172,9 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				"website"     => $data["website"],
 				"logo"        => $data["logo"]
 			];
+			
+			if (isset($data["subtitle"]))
+				$mod_fields["subtitle"] = $data["subtitle"];
 			
 			$admin_fields = [
 				"modid"       => -1,
@@ -240,8 +248,16 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 			if (!$form->load_record("gs_mods", $id))
 				$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));
 		
-	if ($form->hidden["display_form"] == "Edit")
-		$form->change_control(["convertlink_field", "scripttext", "size", "sizetype"], "remove");
+	if ($form->hidden["display_form"] == "Edit") {
+		$fields_to_remove = ["convertlink_field", "scripttext", "size", "sizetype", "subtitle"];
+		
+		// If public duplicates of a mod exist then keep the "subtitle" input field; otherwise hide it
+		if ($db->query("SELECT COUNT(name) AS duplicates FROM gs_mods WHERE name=? AND gs_mods.removed=0 AND gs_mods.access='' GROUP BY name",[$form->data["name"]]))
+			if ($db->results(true)[0]["duplicates"] > 1)
+				$fields_to_remove = array_diff($fields_to_remove, ["subtitle"]);
+		
+		$form->change_control($fields_to_remove, "remove");
+	}
 	
 	$form->add_button("action", $form->hidden["display_form"], lang($form->hidden["display_form"]=="Edit" ? "GS_STR_SERVER_SUBMIT" : "GS_STR_INDEX_ADDNEW_MOD"), "btn-mods btn-lg");
 }	

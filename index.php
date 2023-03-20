@@ -172,6 +172,7 @@ else
 $sql = "
 	SELECT 
 		gs_mods.name,
+		gs_mods.subtitle,
 		gs_mods.uniqueid,
 		gs_mods.removed,
 		gs_mods.access
@@ -207,7 +208,7 @@ for ($i=0; $i<$number_of_columns; $i++) {
 $i = 0;
 foreach ($items as $item) {
 	$columns_id[$i][]   = $item["uniqueid"];
-	$columns_name[$i][] = $item["name"];
+	$columns_name[$i][] = [$item["name"], $item["subtitle"]];
 	
 	if (count($columns_id[$i]) >= $number_of_rows)
 		$i++;
@@ -224,8 +225,14 @@ $current_row    = 0;
 for ($current_row=0; $current_row<$number_of_rows; $current_row++) {
 	echo "<tr>";
 
-	for($current_column=0; $current_column<$number_of_columns; $current_column++)
-		echo "<td><a href=\"show.php?mod={$columns_id[$current_column][$current_row]}\" target=\"_blank\">{$columns_name[$current_column][$current_row]}</a></td>";
+	for($current_column=0; $current_column<$number_of_columns; $current_column++) {
+		echo "<td><a href=\"show.php?mod={$columns_id[$current_column][$current_row]}\" target=\"_blank\">{$columns_name[$current_column][$current_row][0]}</a>";
+		
+		if (!empty($columns_name[$current_column][$current_row][1]))
+			echo " <span class=\"gs_mod_subtitle\">(" . $columns_name[$current_column][$current_row][1] . ")</span>";
+		
+		echo "</td>";
+	}
 
 	echo "</tr>";
 }

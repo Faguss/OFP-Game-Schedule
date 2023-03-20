@@ -77,15 +77,18 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 			<div class=\"panel-body mods_background\" style=\"display:flex;\">
 				<div style=\"flex-grow:2\">";
 
+	// Mod subtitle
+	$subtitle = !empty($mod["subtitle"]) ? " &nbsp; <span class=\"gs_mod_subtitle\">({$mod["subtitle"]})</span>" : "";
+
 	// Show image
 	if (!empty($mod["logo"]) && substr($mod["logo"], -3)!="paa")
 		echo "
 		<div style=\"margin-bottom: 10px;\">
 		<img style=\"vertical-align:middle\" src=\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$mod["logo"]}\">
-		<span class=\"gs_servermod_title\">{$mod["name"]}</span>
+		<span class=\"gs_servermod_title\">{$mod["name"]} $subtitle</span>
 		</div>";
 	else
-		echo "<h2 style=\"margin-top:0;\">{$mod["name"]}</h2>";
+		echo "<h2 style=\"margin-top:0;\">{$mod["name"]} $subtitle</h2>";
 	
 	echo "<dl class=\"row\" style=\"margin-bottom:0;\">";
 	

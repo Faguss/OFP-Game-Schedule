@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2022,12,11,0,0,30,55,592,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,3,18,6,18,22,50,842,60,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -963,15 +963,15 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			gs_serv.createdby,
 			gs_serv.modifiedby,
 			gs_serv.modified AS modified1,
+			gs_serv.status,
+			gs_serv.status_expires,
 			gs_serv_times.type, 
 			gs_serv_times.starttime, 
 			gs_serv_times.timezone, 
 			gs_serv_times.duration,
 			gs_serv_times.modified AS modified2,
 			gs_serv_admins.userid AS admin,
-			gs_serv_admins.modified AS adminsince,
-			gs_serv_status.status,
-			gs_serv_status.expires
+			gs_serv_admins.modified AS adminsince
 			
 		FROM 
 			gs_serv LEFT JOIN gs_serv_times 
@@ -982,9 +982,6 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				ON gs_serv.id = gs_serv_admins.serverid
 				AND gs_serv_admins.isowner = 1
 				
-			LEFT JOIN gs_serv_status
-				ON gs_serv.id = gs_serv_status.serverid
-			
 		WHERE 
 			gs_serv.removed = 0
 			$specific_server
@@ -1337,6 +1334,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 			SELECT 
 				gs_mods.id,
 				gs_mods.name,
+				gs_mods.subtitle,
 				gs_mods.description,
 				gs_mods.uniqueid,
 				gs_mods.type,
@@ -1549,6 +1547,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				
 				if ($request_type == GS_REQTYPE_WEBSITE) {
 					$output["info"][$id]["name"]         = $row["name"];
+					$output["info"][$id]["subtitle"]     = $row["subtitle"];
 					$output["info"][$id]["description"]  = $row["description"];
 					$output["info"][$id]["version"]      = $version;
 					$output["info"][$id]["uniqueid"]     = $row["uniqueid"];
