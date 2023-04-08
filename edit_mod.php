@@ -235,6 +235,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				}
 				
 				$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$id, "type"=>($form->hidden["action"]=="Add New" ? GS_LOG_MOD_ADDED : GS_LOG_MOD_UPDATED), "added"=>date("Y-m-d H:i:s")]);
+				file_put_contents("mods_timestamp.txt", time());
 				
 				$form->hidden["display_name"] = $data["name"];
 				$form->title                  = lang("GS_STR_MOD_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
@@ -458,6 +459,7 @@ if ($form->hidden["display_form"] == "Update")
 					$update_fields["scriptid"] = $db->lastId();
 					$link_fields["scriptid"]   = $db->lastId();
 					$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$db->lastId(), "type"=>GS_LOG_MOD_SCRIPT_ADDED, "added"=>date("Y-m-d H:i:s")]);
+					file_put_contents("mods_timestamp.txt", time());
 				} else
 					$form->alert(lang("GS_STR_MOD_SCRIPT_ADDED_ERROR"));
 			} else {
@@ -475,8 +477,10 @@ if ($form->hidden["display_form"] == "Update")
 							lang("GS_STR_MOD_SCRIPT_UPDATED_ERROR")
 						);
 
-						if ($result)
+						if ($result) {
 							$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$script_row["id"], "type"=>GS_LOG_MOD_SCRIPT_UPDATED, "added"=>date("Y-m-d H:i:s")]);
+							file_put_contents("mods_timestamp.txt", time());
+						}
 					}
 				} else
 					$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));
@@ -497,6 +501,7 @@ if ($form->hidden["display_form"] == "Update")
 						if ($result) {
 							$data["version"] = $data["version_new"];
 							$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$db->lastId(), "type"=>GS_LOG_MOD_VERSION_ADDED, "added"=>date("Y-m-d H:i:s")]);
+							file_put_contents("mods_timestamp.txt", time());
 						}
 					} else {
 						// Edit existing mod version
@@ -510,8 +515,10 @@ if ($form->hidden["display_form"] == "Update")
 									lang("GS_STR_MOD_VERSION_UPDATED_ERROR")
 								);
 								
-								if ($result)
+								if ($result) {
 									$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$update_row["id"], "type"=>GS_LOG_MOD_VERSION_UPDATED, "added"=>date("Y-m-d H:i:s")]);
+									file_put_contents("mods_timestamp.txt", time());
+								}
 							}
 						} else
 							$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));							
@@ -529,8 +536,10 @@ if ($form->hidden["display_form"] == "Update")
 							lang("GS_STR_MOD_LINK_ADDED_ERROR")
 						);
 						
-						if ($result)
+						if ($result) {
 							$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$db->lastId(), "type"=>GS_LOG_MOD_LINK_ADDED, "added"=>date("Y-m-d H:i:s")]);
+							file_put_contents("mods_timestamp.txt", time());
+						}
 					} else {
 						// Edit existing version jump						
 						if ($db->get("gs_mods_links",["uniqueid","LIKE",$data["Link"]])) {
@@ -543,8 +552,10 @@ if ($form->hidden["display_form"] == "Update")
 									lang("GS_STR_MOD_LINK_UPDATED_ERROR")
 								);
 								
-								if ($result)
+								if ($result) {
 									$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$link_row["id"], "type"=>GS_LOG_MOD_LINK_UPDATED, "added"=>date("Y-m-d H:i:s")]);
+									file_put_contents("mods_timestamp.txt", time());
+								}
 							}
 						} else
 							$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));		
@@ -570,6 +581,7 @@ if ($form->hidden["display_form"] == "Update")
 				if ($result) {
 					$form->data = [];
 					$db->insert("gs_log", ["userid"=>$uid, "itemid"=>$recordID, "type"=>GS_LOG_MOD_LINK_DELETED, "added"=>date("Y-m-d H:i:s")]);
+					file_put_contents("mods_timestamp.txt", time());
 				}
 			} else
 				$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));				

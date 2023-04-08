@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,3,18,6,18,22,50,842,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,4,8,6,14,39,2,706,120,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -132,6 +132,7 @@ define("GS_SPLIT_PERSISTENT", 2);
 define("GS_REQTYPE_WEBSITE", 0);
 define("GS_REQTYPE_GAME", 1);
 define("GS_REQTYPE_GAME_DOWNLOAD_MODS", 2);
+define("GS_REQTYPE_INSTALL_SCRIPT", 3);
 
 // Available languages on the website
 define("GS_LANGUAGES", ["game"=>["English","Russian","Polish"], "file"=>["en-US","ru-RU","pl-PL"]]);
@@ -924,11 +925,11 @@ function GS_decrypt($string, $decrypt_key, $modulus_key) {
 }
 
 // List servers with upcoming events
-function GS_list_servers($server_id_list, $password, $request_type, $last_modified, $language="English", $user=NULL) {
-	$output          = ["info"=>[], "mods"=>[], "id"=>[], "lastmodified"=>$last_modified, "rights"=>[]];
+function GS_list_servers($server_id_list, $password, $request_type, $last_modified, $language="English", $user=NULL, $timeoffset=0) {
+	$output          = ["info"=>[], "mods"=>[], "id"=>[], "lastmodified"=>$last_modified, "rights"=>[], "listbox"=>[]];
 	$specific_server = "";
 	$ignore_outdated = true;
-	
+
 	if (count($server_id_list)==1 && ($server_id_list[0]=="all" || $server_id_list[0]=="current")) {
 		if ($server_id_list[0] == "all")
 			$ignore_outdated = false;
@@ -981,7 +982,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			LEFT JOIN gs_serv_admins
 				ON gs_serv.id = gs_serv_admins.serverid
 				AND gs_serv_admins.isowner = 1
-				
+			
 		WHERE 
 			gs_serv.removed = 0
 			$specific_server
@@ -1008,7 +1009,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				$private_servers[] = $row["id"];
 		}
 
-		// Check if logged-in user can preview these mods
+		// Check if logged-in user can preview these servers
 		if ($request_type==GS_REQTYPE_WEBSITE && isset($user) && $user->isLoggedIn()) {
 			$sql = "
 			SELECT 
@@ -1049,7 +1050,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 		}
 		
 		
-		// For every server
+		// Copy data from table rows to an array
 		foreach($table_rows as $row) {
 			$id = $row["id"];
 			
@@ -1061,95 +1062,19 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				if (strtotime($row["modified$i"]) > $output["lastmodified"])
 					$output["lastmodified"] = strtotime($row["modified$i"]);			
 			
-			// Check if game time hasn't expired
-			$playtime        = "";												// formatted string
-			$playtime_array  = [];
-			$valid           = false;											// discard or keep
-			
-			if (isset($row["starttime"])) {
-				$time_zone       = new DateTimeZone($row["timezone"]);				// time zone object
-				$start_date      = new DateTime($row["starttime"], $time_zone);		// when does the game start
-				$start_date_orig = clone $start_date;
-				$type            = ["single", "weekly", "daily"][$row["type"]];		// recurrence
-				$now             = new DateTime("now", $time_zone);					// get current time
-					
-				// if it's a recurrent event then I need to update it to the current time because of DST
-				if (date_diff($now, $start_date)->format("%R%a") < 0  &&  $type!="single") {				
-					$offset = 0;
-					
-					if ($type=="weekly"  &&  $now->format('w')!=$start_date->format('w')) {
-						$now_day   = intval($now->format('w'));
-						$start_day = intval($start_date->format('w'));
-
-						if ($start_day > $now_day)
-							$offset = $start_day - $now_day;
-						else
-							$offset = 7 - $now_day + $start_day;
-					}
-
-					$start_date->setDate($now->format('Y'), $now->format('m'), $now->format('d'));
-					$start_date->modify("+".$offset." day");
-				}
-
-				if (date_diff($now, $start_date)->format("%R%a") > -1  ||  $type!="single") {
-					$offset = $time_zone -> getOffset($start_date) / 60;		// difference from gmt in minutes
-					//$date   = getdate(date_timestamp_get($start_date));		// date object to array
-					$valid  = true;
-									
-					if ($request_type == GS_REQTYPE_GAME) {
-						//$date_orig = getdate(date_timestamp_get($start_date_orig));
-						$year     = $start_date_orig->format("Y");
-						$month    = $start_date_orig->format("n");
-						$day      = $start_date_orig->format("j");
-						$dayname  = $start_date_orig->format("w");
-						$hours    = $start_date->format("H");
-						$minutes  = $start_date->format("i");
-						$seconds  = $start_date->format("s");
-						$playtime = "[{$row["type"]},[$year,$month,$day,$dayname,$hours,$minutes,$seconds,0,$offset,false],{$row["duration"]}]";
-					}
-					
-					if ($request_type == GS_REQTYPE_WEBSITE) {
-						// Convert date to universal
-						$start_date->setTimezone(new DateTimeZone("UTC"));
-						
-						// Describe event
-						$playtime_text   = "";
-						$playtime_format = "Y jS F H:i";
-						
-						if (($type!="single") && $now < $start_date_orig)
-							$playtime_text .= $start_date_orig->format("Y jS F. ");
-						
-						switch($type) {
-							case "weekly" : $playtime_text.=lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$start_date->format("w"))." "; $playtime_format="H:i"; break;
-							case "daily"  : $playtime_text.=lang("GS_STR_SERVER_EVENT_REPEAT_DAILY_DESC")." "; $playtime_format="H:i"; break;
-						}
-						
-						$playtime_text .= $start_date->format($playtime_format);
-						
-						$end_date = clone $start_date;
-						$end_date->modify("+{$row["duration"]} minute");
-						$playtime_text .= $end_date->format(" - H:i T P");
-						
-						$playtime = [
-							"type"        => intval($row["type"]), 
-							"date"        => $start_date->getTimestamp(),
-							"starttime"   => $start_date->format('c'),
-							"duration"    => intval($row["duration"]),
-							"description" => $playtime_text,
-							"started"     => $now > $start_date_orig
-						];
-					}
-				}
-			}
-
-			
-			// Add server to list
-			if ($last_id != $id   &&   ($valid || !$ignore_outdated || $row["persistent"])) {
-				$last_id                       = $id;
-				$output["info"][$id]["events"] = [];
-				$output["id"][$id]             = $row["uniqueid"];
-
+			// Add server to the list
+			if ($last_id != $id) {
+				$last_id                           = $id;
+				$output["info"][$id]["events"]     = [];
+				$output["info"][$id]["persistent"] = $row["persistent"];
+				$output["info"][$id]["uniqueid"]   = $row["uniqueid"];
+				$output["id"][$id]                 = $row["uniqueid"];
+				
 				if ($request_type == GS_REQTYPE_GAME) {
+					$output["info"][$id]["status"]         = $row["status"];
+					$output["info"][$id]["status_expires"] = $row["status_expires"];
+					$output["info"][$id]["ip"]             = $row["ip"];
+									
 					foreach ($row as $key=>$value) {
 						$value     = html_entity_decode($value, ENT_QUOTES);
 						$new_value = $value;
@@ -1160,14 +1085,14 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 							case "website"           :
 							case "message"           : 
 							case "location"          : 
-							case "name"              : $new_value="\"\"".GS_convert_utf8_to_windows($value, $language)."\"\""; break;
+							case "name"              : $new_value="\"".GS_convert_utf8_to_windows($value, $language)."\""; if ($key=="name") $output["info"][$id]["name"]=GS_convert_utf8_to_windows($value, $language); break;
 							case "equalmodreq"       : $new_value=$value=="1" ? "true" : "false"; break;
 							case "version"           : $new_value="$value"; break;
-							case "logo"              : $new_value="\"\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$value}\"\""; break;
-							case "logohash"          : $new_value="\"\"{$value}\"\""; break;
+							case "logo"              : $new_value="\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$value}\""; break;
+							case "logohash"          : $new_value="\"{$value}\""; break;
 							case "maxcustomfilesize" : {
 								if ($add_value)
-									$output["info"][$id]["sqf"] .= "_server_maxcustombytes=\"\"$value\"\";";
+									$output["info"][$id]["sqf"] .= "_server_maxcustombytes=\"$value\";";
 								$new_value = GS_convert_size_in_bytes($value, "game");
 							} break;
 							
@@ -1176,19 +1101,19 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 								$ip_parts = explode(":", $value);
 								if (count($ip_parts) >= 2) {
 									$ip = $ip_parts[0];
-									$output["info"][$id]["sqf"] .= "_server_port=\"\"".GS_encrypt($ip_parts[1], GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\"\";";
+									$output["info"][$id]["sqf"] .= "_server_port=\"".GS_encrypt($ip_parts[1], GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\";";
 								}
-								$new_value = "\"\"".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\"\""; break;
+								$new_value = "\"".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\""; break;
 							} break;
 							
-							case "password" : $new_value="\"\"".GS_encrypt($value, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\"\""; break;
+							case "password" : $new_value="\"".GS_encrypt($value, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\""; break;
 							
 							case "voice" : {
 								$add_value = false;
 								$index = 0;
 								foreach(GS_VOICE as $program_name=>$program_info) {
 									if (substr($value,0,strlen($program_info["url"])) == $program_info["url"]) {
-										$new_value = "[$index,\"\"{$program_info["url"]}";
+										$new_value = "[$index,\"{$program_info["url"]}";
 										
 										switch ($program_name) {
 											case "TeamSpeak3" : {
@@ -1207,7 +1132,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 											default : $new_value.=GS_encrypt(substr($value,strlen($program_info["url"])), GS_ENCRYPT_KEY, GS_MODULUS_KEY); break;
 										}
 
-										$new_value .= "\"\"]";;
+										$new_value .= "\"]";;
 										$add_value = true;
 										break;
 									}
@@ -1221,7 +1146,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 								$new_value  = "[";
 								
 								foreach($temp_array as $item)
-									$new_value .= "]+[\"\"".trim($item)."\"\"";
+									$new_value .= "]+[\"".trim($item)."\"";
 									
 								$new_value .= "]";
 							} break;
@@ -1240,10 +1165,182 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				if ($request_type == GS_REQTYPE_WEBSITE)
 					$output["info"][$id] = $row;
 			}
+			
+			// Add game time to the list
+			if (!$row["persistent"] && isset($row["starttime"]))
+				$output["info"][$id]["events"][] = [
+					"timezone"  => $row["timezone"], 
+					"starttime" => $row["starttime"], 
+					"type"      => $row["type"], 
+					"duration"  => $row["duration"]
+				];
+		}
+		
+		// Sort game times
+		$playing_now    = [];
+		$playing_today  = [];
+		$playing_future = [];
+		$server_added   = [];
+		$persistent     = [];
+		
+		foreach($output["info"] as $id=>&$server) {
+			// Filter out outdated events
+			foreach($server["events"] as $key=>&$event) {
+				$time_zone       = new DateTimeZone($event["timezone"]);				// time zone object
+				$start_date      = new DateTime($event["starttime"], $time_zone);		// when does the game start
+				$start_date_orig = clone $start_date;
+				$type            = ["single", "weekly", "daily"][$event["type"]];		// recurrence
+				$now             = new DateTime("now", $time_zone);		
+				
+				// if it's a recurrent event then I need to update it to the current time because of DST
+				if ($start_date < $now  &&  $type!="single") {
+					$offset = 0;
+					
+					if ($type=="weekly"  &&  $now->format('w')!=$start_date->format('w')) {
+						$now_day   = intval($now->format('w'));
+						$start_day = intval($start_date->format('w'));
 
-			// Add game time to list
-			if ($valid && !$row["persistent"])
-				$output["info"][$id]["events"][] = $playtime;
+						if ($start_day > $now_day)
+							$offset = $start_day - $now_day;
+						else
+							$offset = 7 - $now_day + $start_day;
+					}
+
+					$start_date->setDate($now->format('Y'), $now->format('m'), $now->format('d'));
+					$start_date->modify("+".$offset." day");
+				}
+				
+				$end_date = clone $start_date;
+				$end_date->modify("+".$event["duration"]."minutes");
+				
+				// If the event has not ended
+				if ($end_date > $now) {
+					$playtime = null;
+					
+					if ($request_type == GS_REQTYPE_GAME) {
+						// Localize date time for the user
+						$utc_start = clone $start_date;
+						$utc_start->modify(($timeoffset>0?"+":"").$timeoffset." minutes");
+						
+						$utc_end = clone $end_date;
+						$utc_end->modify(($timeoffset>0?"+":"").$timeoffset." minutes");
+						
+						$locale = "en_GB";
+						if ($language == "Polish") $locale="pl_PL";
+						if ($language == "Russian") $locale="ru_RU";
+						
+						$formatter = new IntlDateFormatter($locale, IntlDateFormatter::FULL, IntlDateFormatter::FULL, "UTC", IntlDateFormatter::GREGORIAN);
+						$playtime = "\"";
+						
+						if ($type=="single" || (($type=="weekly" || $type=="daily") && $start_date_orig > $now)) {
+							$formatter->setPattern('d MMMM ');
+							$playtime .= $formatter->format($utc_start);
+						}
+						
+						if ($type == "daily")
+							$playtime .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"), $language) . " ";
+						
+						if ($type == "weekly")
+							$playtime .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$utc_start->format("w")), $language) . " ";
+						
+						$formatter->setPattern('HH:mm');
+						$playtime .= $formatter->format($utc_start) . " - " . $formatter->format($utc_end) . "\"";
+					}
+					
+					if ($request_type == GS_REQTYPE_WEBSITE) {
+						// Convert date to universal
+						$start_date->setTimezone(new DateTimeZone("UTC"));
+						
+						// Describe event
+						$playtime_text   = "";
+						$playtime_format = "Y jS F H:i";
+						
+						if (($type!="single") && $now < $start_date_orig)
+							$playtime_text .= $start_date_orig->format("Y jS F. ");
+						
+						switch($type) {
+							case "weekly" : $playtime_text.=lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$start_date->format("w"))." "; $playtime_format="H:i"; break;
+							case "daily"  : $playtime_text.=lang("GS_STR_SERVER_EVENT_REPEAT_DAILY_DESC")." "; $playtime_format="H:i"; break;
+						}
+						
+						$playtime_text .= $start_date->format($playtime_format) . $end_date->format(" - H:i T P");
+						
+						$playtime = [
+							"type"        => intval($row["type"]), 
+							"date"        => $start_date->getTimestamp(),
+							"starttime"   => $start_date->format('c'),
+							"duration"    => intval($row["duration"]),
+							"description" => $playtime_text,
+							"started"     => $now > $start_date_orig
+						];
+					}
+					
+					$event["date"]           = $start_date;
+					$event["date_formatted"] = $playtime;
+				
+					$array_reference = &$playing_now;
+					
+					// If the event has not started
+					if ($start_date > $now) {
+						if (date_diff($now, $start_date)->format("%a") == 0)
+							$array_reference = &$playing_today;
+						else
+							$array_reference = &$playing_future;
+					}
+					
+					if (!in_array($id,$server_added)) {
+						$server_added[]    = $id;
+						$array_reference[] = $id;
+					}
+				} else {
+					unset($server["events"][$key]);
+				}
+			}
+			
+			if (!$server["persistent"]) {
+				if (count($server["events"]) > 0 || !$ignore_outdated) {
+					// Sort events
+					uasort($server["events"], function ($a, $b) {return $a["date"] <=> $b["date"];});
+
+					// Include today game time
+					if (in_array($id,$playing_today)) {
+						$time_zone = new DateTimeZone($server["events"][0]["timezone"]);
+						$offset    = $time_zone->getOffset($server["events"][0]["date"]) / 60;
+						$output["info"][$id]["sqf"] .= "_today_game_time=" . $server["events"][0]["date"]->format("[Y,n,j,w,H,i,s") . ",0,$offset,false];";
+					}
+				} else {
+					unset($output["info"][$id]);
+					unset($output["id"][$id]);
+				}
+			} else {
+				$persistent[]   = $id;
+				$server_added[] = $id;
+			}
+		}
+		
+		if ($request_type == GS_REQTYPE_GAME)
+			$output["listbox"] = [
+				"now"        => $playing_now, 
+				"today"      => $playing_today, 
+				"future"     => $playing_future, 
+				"persistent" => $persistent
+			];
+		
+		// Update server status
+		foreach($server_added as $id) {
+			if (strtotime("now") > strtotime($output["info"][$id]["status_expires"])) {
+				$ip = $output["info"][$id]["ip"];
+				
+				if (strpos($ip,":") === FALSE)
+					$ip .= ":2302";
+				
+				$output["info"][$id]["status"] = GS_url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}?timeout=0.5", 1);
+
+				$db->update("gs_serv", $id, [
+					"status"         => $output["info"][$id]["status"], 
+					"status_expires" => date('Y-m-d H:i:s', strtotime("+1 minute"))
+				]);
+			}
 		}
 	}
 
@@ -1308,12 +1405,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 	$mods_updates    = [];
 	$where_condition = "";
 	$argument_list   = [];
-	$add_description = false;
-	
-	if ($request_type == GS_REQTYPE_GAME_DOWNLOAD_MODS) {
-		$request_type    = GS_REQTYPE_GAME;
-		$add_description = true;
-	}
+	$Parsedown       = new Parsedown();
 
 	if (!empty($mods_id_list)) {
 		$argument_list    = $mods_id_list;
@@ -1357,14 +1449,14 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				gs_mods_updates.createdby AS update_createdby,
 				gs_mods_scripts.id AS scriptid,
 				gs_mods_scripts.size,
-				gs_mods_scripts.script,
+				".($request_type==GS_REQTYPE_GAME ? "' '" : "gs_mods_scripts.script")." AS script,
 				gs_mods_scripts.modified AS modified3,
 				gs_mods_links.fromver,
 				gs_mods_links.removed,
 				gs_mods_links.alwaysnewest,
 				scripts2.id       AS scriptid2,
 				scripts2.size     AS size2,
-				scripts2.script   AS script2,
+				".($request_type==GS_REQTYPE_GAME ? "' '" : "scripts2.script")." AS scripts2,
 				scripts2.modified AS modified4,
                 gs_mods_admins.userid AS admin,
 				gs_mods_admins.modified AS adminsince
@@ -1384,8 +1476,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 						ON gs_mods_links.scriptid = scripts2.id
                         
                     LEFT JOIN gs_mods_admins
-                    	ON gs_mods.id = gs_mods_admins.modid
-						AND gs_mods_admins.isowner = 1
+                    	ON gs_mods.id = gs_mods_admins.modid AND gs_mods_admins.isowner = 1
 				
 			WHERE
 				$where_condition
@@ -1492,26 +1583,32 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					continue;
 
 				if ($last_id != $id) {
-					if ($request_type == GS_REQTYPE_GAME) {
-						$alias                            = $row["alias"]=="" ? "?" : $row["alias"];
-						$output["info"][$id]["name"]      = $row["name"];
-						$output["info"][$id]["type"]      = $row["type"];
-						$output["info"][$id]["createdby"] = $row["createdby"];
-						$output["info"][$id]["created"]   = $row["created"];
-						$output["info"][$id]["forcename"] = $row["forcename"] ? "true" : "false";
-						$output["info"][$id]["is_mp"]     = $row["is_mp"] ? "true" : "false";
-						$output["info"][$id]["script"]    = "begin_mod {$row["name"]} {$row["uniqueid"]} {$row["forcename"]} \"$alias\"";
-						$output["info"][$id]["website"]   = $row["website"];
-						$output["info"][$id]["logo"]      = $row["logo"];
-						$output["info"][$id]["logohash"]  = $row["logohash"];
-						
-						if (!in_array($row["createdby"], $output["userlist"]))
-							$output["userlist"][] = $row["createdby"];
-						
-						if ($add_description) {
-							$Parsedown = new Parsedown();
-							$output["info"][$id]["description"] = "\"".str_replace("\"", "\"\"\"\"", html_entity_decode(strip_tags($Parsedown->line($row["description"])),ENT_QUOTES))."\"";
-						}
+					switch($request_type) {
+						case GS_REQTYPE_GAME :
+							$output["info"][$id]["name"]      = $row["name"];
+							$output["info"][$id]["type"]      = $row["type"];
+							$output["info"][$id]["createdby"] = $row["createdby"];
+							$output["info"][$id]["created"]   = $row["created"];
+							$output["info"][$id]["forcename"] = $row["forcename"] ? "true" : "false";
+							$output["info"][$id]["is_mp"]     = $row["is_mp"] ? "true" : "false";
+							$output["info"][$id]["website"]   = $row["website"];
+							$output["info"][$id]["logo"]      = $row["logo"];
+							$output["info"][$id]["logohash"]  = $row["logohash"];
+							$output["info"][$id]["uniqueid"]  = $row["uniqueid"];
+							
+							if (!in_array($row["createdby"], $output["userlist"]))
+								$output["userlist"][] = $row["createdby"];
+							
+							if (isset($Parsedown))
+								$output["info"][$id]["description"] = "\"".str_replace("\"", "\"\"\"\"", html_entity_decode(strip_tags($Parsedown->line($row["description"])),ENT_QUOTES))."\"";
+							break;
+							
+						case GS_REQTYPE_INSTALL_SCRIPT :
+							$output["info"][$id]["name"]      = $row["name"];
+							$output["info"][$id]["forcename"] = $row["forcename"];
+							$output["info"][$id]["alias"]     = $row["alias"];
+							$output["info"][$id]["uniqueid"]  = $row["uniqueid"];
+							break;
 					}
 
 					$output["id"][$id] = $row["uniqueid"];
@@ -1533,7 +1630,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					$link_num        = count($mods_links[$id]);
 					
 					foreach($columns_to_copy as $column)
-						$mods_links[$id][$link_num][$column] = $request_type==GS_REQTYPE_GAME ? html_entity_decode($row[$column], ENT_QUOTES) : $row[$column];
+						$mods_links[$id][$link_num][$column] = in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_INSTALL_SCRIPT]) ? html_entity_decode($row[$column], ENT_QUOTES) : $row[$column];
 				}
 
 				if ($last_version != $version) {
@@ -1542,7 +1639,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					$update_num      = count($mods_updates[$id]);
 									
 					foreach($columns_to_copy as $column)
-						$mods_updates[$id][$update_num][$column] = $request_type==GS_REQTYPE_GAME ? html_entity_decode($row[$column], ENT_QUOTES) : $row[$column];
+						$mods_updates[$id][$update_num][$column] = in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_INSTALL_SCRIPT]) ? html_entity_decode($row[$column], ENT_QUOTES) : $row[$column];
 				}
 				
 				if ($request_type == GS_REQTYPE_WEBSITE) {
@@ -1576,7 +1673,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 			}
 		}
 
-		// For every mod
+		// Process mods updates for each mod
 		foreach ($mods_updates as $id=>$updates) {
 			$input_version = 0;
 			
@@ -1584,6 +1681,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				$input_version = $user_mods_version[$output["id"][$id]];
 			
 			$output["info"][$id]["updates"] = [];
+			$output["info"][$id]["userver"] = $input_version;
 			$current_version                = $input_version;
 			$temp_scripts_id                = [];
 			$dates                          = [];
@@ -1696,61 +1794,35 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 			}
 
 			// Format download size to a readable text
-			$formatted_download_size = "0 KB";
-			
-			if ($download_size[2] > 1024) {
-				$full_megs         = $download_size[2] / 1024;
-				$download_size[1] += $full_megs;
-				$download_size[0] -= $full_megs  * 1024;
-			}
-			
-			if ($download_size[1] > 1024) {
-				$full_gigs         = $download_size[1] / 1024;
-				$download_size[0] += $full_gigs;
-				$download_size[1] -= $full_gigs  * 1024;
-			}
-			
-			if ($download_size[0] > 0) {
-				$download_size[0]        += $download_size[1]/1024 + $download_size[2]/1048576;
-				$formatted_download_size  = floatval(sprintf("%01.1f", $download_size[0])) . " GB";
-			} 
-			else
-				if ($download_size[1] > 0) {
-					$download_size[1]        += $download_size[2]/1024;
-					$formatted_download_size  = floatval(sprintf("%01.0f", $download_size[1])) . " MB";
-				}
-				else
-					if ($download_size[2] > 0)
-						$formatted_download_size = floatval(sprintf("%01.0f", $download_size[2])) . " KB";
-			
-			if ($request_type == GS_REQTYPE_WEBSITE) {
-				$output["info"][$id]["size"]      = $formatted_download_size;
-				$output["info"][$id]["sizearray"] = "[" . implode(",", $download_size) . "]";			
-			}
-
-			if ($request_type == GS_REQTYPE_GAME) {
-				$output["info"][$id]["size"]      = $formatted_download_size;
-				$output["info"][$id]["sizearray"] = "[" . implode(",", $download_size) . "]";	
-				$output["info"][$id]["version"] = $current_version;
-				$output["info"][$id]["userver"] = $input_version;
+			if (in_array($request_type,[GS_REQTYPE_WEBSITE,GS_REQTYPE_GAME])) {
+				$formatted_download_size = "0 KB";
 				
-				for ($i=0; $i<count($output["info"][$id]["updates"]); $i++) {
-					// html_entity_decode was already run before so &amp;#xA9; has been converted to &#xA9;
-					// If I run it again I don't get what I want even when I specify the charset so I'm converting it manually:
-					$script_decoded = $output["info"][$id]["updates"][$i]["script"];
-					$index          = FALSE;
-					$offset         = 0;
-					
-					while (($index=strpos($script_decoded, "&#x", $offset)) !== FALSE) {
-						if ($script_decoded[$index+5] == ";") {
-							$hex_number     = substr($script_decoded, $index+3, 2);
-							$script_decoded = substr_replace($script_decoded, chr(intval($hex_number, 16)), $index, 6);
-						}
-						$offset = $index + 1;
-					}
-
-					$output["info"][$id]["script"] .= "\nbegin_ver {$output["info"][$id]["updates"][$i]["version"]} ".strtotime($output["info"][$id]["updates"][$i]["date"])."\n" . $script_decoded;
+				if ($download_size[2] > 1024) {
+					$full_megs         = $download_size[2] / 1024;
+					$download_size[1] += $full_megs;
+					$download_size[0] -= $full_megs  * 1024;
 				}
+				
+				if ($download_size[1] > 1024) {
+					$full_gigs         = $download_size[1] / 1024;
+					$download_size[0] += $full_gigs;
+					$download_size[1] -= $full_gigs  * 1024;
+				}
+				
+				if ($download_size[0] > 0) {
+					$download_size[0]        += $download_size[1]/1024 + $download_size[2]/1048576;
+					$formatted_download_size  = floatval(sprintf("%01.1f", $download_size[0])) . " GB";
+				} else
+					if ($download_size[1] > 0) {
+						$download_size[1]        += $download_size[2]/1024;
+						$formatted_download_size  = floatval(sprintf("%01.0f", $download_size[1])) . " MB";
+					} else
+						if ($download_size[2] > 0)
+							$formatted_download_size = floatval(sprintf("%01.0f", $download_size[2])) . " KB";
+				
+				$output["info"][$id]["size"]      = $formatted_download_size;
+				$output["info"][$id]["sizearray"] = "[" . implode(",", $download_size) . "]";
+				$output["info"][$id]["version"]   = $current_version;
 			}
 		}
 	}
@@ -1758,10 +1830,11 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 	return $output;
 }
 
+
 // Handle url query string
 function GS_get_common_input() {
 	$input      = ["modver"=>[]];
-	$input_keys = ["server", "mod", "ver", "password", "listid", "user"];
+	$input_keys = ["server", "mod", "ver", "password", "password_mods", "listid", "user"];
 
 	foreach($input_keys as $key) {
 		$input[$key] = isset($_GET[$key]) ? explode(",",$_GET[$key]) : [];
@@ -1785,6 +1858,14 @@ function GS_get_common_input() {
 			$input["language"] = GS_LANGUAGES["game"][$index];
 	}
 	
+	if (isset($_POST["timeoffset"]))
+		$input["timeoffset"] = $_POST["timeoffset"];
+	else
+		if (isset($_GET["timeoffset"]))
+			$input["timeoffset"] = $_GET["timeoffset"];	
+		else
+			$input["timeoffset"] = 0;
+
 	return $input;
 }
 
@@ -3010,5 +3091,22 @@ function GS_scripting_highlighting($code) {
 	}
 	
 	return $output;
+}
+
+function GS_url_get_contents($url, $timeout=NULL) {
+    if (!function_exists('curl_init'))
+        die('CURL is not installed!');
+
+    $request = curl_init();
+	curl_setopt($request, CURLOPT_URL, $url);
+	curl_setopt($request, CURLOPT_HEADER, 0);
+	curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
+	
+	if (isset($timeout))
+		curl_setopt($request, CURLOPT_TIMEOUT, $timeout);
+	
+    $output = curl_exec($request);
+    curl_close($request);
+    return $output;
 }
 ?>

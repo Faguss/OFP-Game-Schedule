@@ -122,7 +122,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_DEBRIEFING" => "Debriefing",
 	"GS_STR_SERVER_BRIEFING" => "Briefing",
 	"GS_STR_SERVER_PLAY" => "Playing",
-	"GS_STR_SERVER_MISSION" => "Misja",
+	"GS_STR_SERVER_MISSION" => "Mission",
 	"GS_STR_SERVER_PLAYERS" => "Players",
 	
     #Edit server schedule page

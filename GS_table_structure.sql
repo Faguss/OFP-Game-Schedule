@@ -146,7 +146,7 @@ INSERT INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 20, 2023 at 10:02 PM
+-- Generation Time: Apr 08, 2023 at 05:07 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 7.4.28
 
@@ -190,20 +190,6 @@ CREATE TABLE `gs_log` (
   `itemid` int(11) NOT NULL DEFAULT 0,
   `type` int(11) NOT NULL DEFAULT 0,
   `added` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `gs_log_serv_mods`
---
-
-CREATE TABLE `gs_log_serv_mods` (
-  `id` int(11) NOT NULL,
-  `logid` int(11) NOT NULL,
-  `serverid` int(11) NOT NULL,
-  `modid` int(11) NOT NULL,
-  `loadorder` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -419,18 +405,11 @@ ALTER TABLE `gs_log`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `gs_log_serv_mods`
---
-ALTER TABLE `gs_log_serv_mods`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `gs_mods`
 --
 ALTER TABLE `gs_mods`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uniqueID` (`uniqueid`),
-  ADD UNIQUE KEY `unical` (`subtitle`);
+  ADD UNIQUE KEY `uniqueID` (`uniqueid`);
 
 --
 -- Indexes for table `gs_mods_admins`
@@ -512,12 +491,6 @@ ALTER TABLE `gs_announce`
 -- AUTO_INCREMENT for table `gs_log`
 --
 ALTER TABLE `gs_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `gs_log_serv_mods`
---
-ALTER TABLE `gs_log_serv_mods`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

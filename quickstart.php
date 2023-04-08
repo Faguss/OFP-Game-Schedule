@@ -18,8 +18,8 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_WELCOME" => "Game Schedule for the game Operation Flashpoint / Arma: Cold War Assault with the Fwatch extension",
 	"GS_STR_QUICKSTART_DESCRIPTION" => "Bring players to the same server, at the same time with the same addons",
 	"GS_STR_QUICKSTART_DESCRIPTION2" => "Players automatically install mods and connect to the server",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "For players",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "For organizers",
+	"GS_STR_QUICKSTART_FORPLAYERS" => "How to join?",
+	"GS_STR_QUICKSTART_FORORGANIZERS" => "How to organize?",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "First you log in with your %m1% account",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Add a new server record. Fill the fields with information about the OFP server you're going to play on",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Now go to the \"Schedule\" section. Set the game start time",
@@ -41,8 +41,8 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	"GS_STR_QUICKSTART_WELCOME" => "Расписание Игр для Operation Flashpoint / Arma: Cold War Assault с расширением Fwatch",
 	"GS_STR_QUICKSTART_DESCRIPTION" => "Собирайтесь с другими игроками на одном сервере с одинаковыми аддонами в одно и то же время.",
 	"GS_STR_QUICKSTART_DESCRIPTION2" => "Игроки автоматически устанавливают моды и подключаются к серверу",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "Для игроков",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "Для организаторов",
+	"GS_STR_QUICKSTART_FORPLAYERS" => "Как подключиться?",
+	"GS_STR_QUICKSTART_FORORGANIZERS" => "Как устроить?",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Для начала нужно войти в аккаунт %m1%",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Добавьте новый сервер. Заполните поля для информации о сервере, на котором будете играть.",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Перейдите в раздел \"Расписание\". Задайте время начала игры",
@@ -64,8 +64,8 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_WELCOME" => "Rozkład Rozgrywek do gry Operation Flashpoint / Arma: Cold War Assault z rozszerzeniem Fwatch",
 	"GS_STR_QUICKSTART_DESCRIPTION" => "Zgromadź graczy na jednym serwerze, o tej samej porze, z identycznymi addonami",
 	"GS_STR_QUICKSTART_DESCRIPTION2" => "Gracze automatycznie instalują mody i podłączają się do serwera",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "Dla graczy",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "Dla organizatorów",
+	"GS_STR_QUICKSTART_FORPLAYERS" => "Jak dołączyć?",
+	"GS_STR_QUICKSTART_FORORGANIZERS" => "Jak zorganizować?",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Najpierw zaloguj się przy pomocy konta %m1%",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Dodaj nowy wpis serwera. Wypełnij puste pola danymi o serwerze na którym będzieci grali",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Przejdź do sekcji \"Harmonogram\". Ustaw czas rozpoczęcia gry",
@@ -88,50 +88,128 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 		<div class="jumbotron">
 			<h2 align="center"><?=lang("GS_STR_QUICKSTART_WELCOME")?></h2>
 			<p align="center" class="text-muted"><?=lang("GS_STR_QUICKSTART_DESCRIPTION2")?></p>
-			<br>
-			<h3 align="center"><a align="center" href="#players"><?=lang("GS_STR_QUICKSTART_FORPLAYERS") ?></a></h3>
-
-			<br>
-			<hr>
-			<h2 align="center" style="color:#cc4f80;font-size:45px"><?=lang("GS_STR_QUICKSTART_FORORGANIZERS") ?>:</h2>
-			<br>
+			<p align="center" style="font-size:24px;font-weight:500;">
+				<a align="center" href="#players"><?=lang("GS_STR_QUICKSTART_FORPLAYERS") ?></a>
+				&nbsp; &nbsp;
+				<a align="center" href="#organizers"><?=lang("GS_STR_QUICKSTART_FORORGANIZERS") ?></a>
+			</p>
 <?php
-$strings = [
-	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN",
-	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV",
-	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE",
-	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV",
-	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD",
-	"GS_STR_QUICKSTART_FORORGANIZERS_READY",
-	"GS_STR_QUICKSTART_FORPLAYERS_START",
-	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV",
-	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL",
-	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT",
-	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT",
-	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN"
-];
-$images = [
-	"1_mainmenu",
-	"2_addnewserver",
-	"3_schedule",
-	"4_assignmod",
-	"5_addnewmod",
-	"",
-	"6_serverdisplay",
-	"7_downloadmods",
-	"8_installing",
-	"9_connect",
-	["10_autoconnect", "11_autoconnect"],
-	""
+$paragraphs = [
+	[
+		"title"     => "GS_STR_QUICKSTART_FORPLAYERS",
+		"anchor"    => "players",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_START",
+		"image"     => "6_serverdisplay",
+		"arguments" => ["<A HREF=\"http://ofp-faguss.com/fwatch/116test\">", "</a><br><br>"],
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV",
+		"image"     => "7_downloadmods",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL",
+		"image"     => "8_installing",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_CONNECT",
+		"image"     => "9_connect",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT",
+		"image"     => ["10_autoconnect", "11_autoconnect"],
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN",
+	],
+	
+	[
+		"title"     => "GS_STR_QUICKSTART_FORORGANIZERS",
+		"anchor"    => "organizers",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_LOGIN",
+		"image"     => "1_mainmenu",
+		"arguments" => ["<a href='users/login.php' target='_blank'>Steam / Discord / VK / Google / Facebook</a>"],
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV",
+		"image"     => "2_addnewserver",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE",
+		"image"     => "3_schedule",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV",
+		"image"     => "4_assignmod",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD",
+		"image"     => "5_addnewmod",
+	],
+	[
+		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_READY",
+	],
 ];
 
-foreach ($strings as $i=>$string) {
+forEach($paragraphs as $paragraph) {
+	$arguments = isset($paragraph["arguments"]) ? $paragraph["arguments"] : [];
+	
+	if (isset($paragraph["string"]))
+		echo "<p align=\"center\">".lang($paragraph["string"], $arguments)."</p>";
+	
+	if (isset($paragraph["title"])) {
+		echo "
+		<a name=\"".$paragraph["anchor"]."\"></a>
+		<br>
+		<hr>
+		<br>
+		<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang($paragraph["title"])."</h2>
+		<br>
+		";
+	}
+	
+	if (isset($paragraph["image"])) {
+		$array = $paragraph["image"];
+		
+		if (!is_array($paragraph["image"]))
+			$array = [$paragraph["image"]];
+		
+		echo "<div class=\"text-center\">";
+		
+		forEach ($array as $index=>$item) {
+			$image_name = "images/quickstart/" . $item . "_" . substr($lang["THIS_CODE"],0,2) . ".png";
+			
+			if (!file_exists($image_name))
+				$image_name = substr($image_name,0,-3) . "jpg";
+			
+			echo "<img " . ($index!=0 ? "style=\"margin-top:0.7em;\"" : "") . " src=\"$image_name\" alt=\"$item\" class=\"img-thumbnail blackborder\">";
+		}
+		
+		echo "</div><br><br>";
+	}
+}
+
+
+/*foreach ($strings as $i=>$string) {
 	$arguments = [];
 
+	if ($string == "GS_STR_QUICKSTART_FORORGANIZERS") {
+		echo "
+		<a name=\"organizers\"></a>
+		<br>
+		<hr>
+		<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang("GS_STR_QUICKSTART_FORORGANIZERS").":</h2>
+		<br>
+		";
+	}
+	
 	if ($string == "GS_STR_QUICKSTART_FORPLAYERS_START") {
 		echo "
 		<a name=\"players\"></a>
-		<br><br><br><br>
+		<br>
 		<hr>
 		<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang("GS_STR_QUICKSTART_FORPLAYERS")."</h2>
 		<br>
@@ -163,7 +241,7 @@ foreach ($strings as $i=>$string) {
 			
 		echo "</div><a name=\"paragraph".($i+1)."\"></a><br><br>";
 	}
-}
+}*/
 ?>
 
 			
