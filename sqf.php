@@ -78,24 +78,137 @@ switch($input["language"]) {
 }
 
 switch($input_mode) {
-	case "schedule_v2_last_modified" : 
+	case "schedule_v2_last_modified" : {
 		break;
-		
-	case "schedule_v2" :
+	}
+	
+	// Return server information
+	case "schedule_v2" : {
 		$servers = GS_list_servers($input["server"], $input["password"], GS_REQTYPE_GAME, GS_fwatch_date_to_timestamp(GS_FWATCH_LAST_UPDATE), $input["language"], NULL, $input["timeoffset"]);
 		$mods    = GS_list_mods($servers["mods"], array_keys($input["modver"]), $input["modver"], $input["password"], GS_REQTYPE_GAME, $servers["lastmodified"]);
-		
 		$database          = new igsedb();
 		$mods_simple_array = "";
 		
 		// Prepare server data
 		foreach($servers["info"] as $id=>$server) {
-			$server_info = "{$server["sqf"]}_server_game_times=[";
+			$server_info = "";
+			
+			// Format server properties
+			foreach($server as $key=>$value) {
+				$new_value = $value;
+				$add_value = $value != "";
+
+				switch ($key) {
+					case "uniqueid" : 
+					case "website"  :
+					case "message"  : 
+					case "location" : 
+					case "name"     : {
+						$new_value = "\"".GS_convert_utf8_to_windows($value, $language)."\""; 
+						break;
+					}
+					
+					case "equalmodreq" : $new_value=$value=="1" ? "true" : "false"; break;
+					case "version"     : $new_value="$value"; break;
+					case "logo"        : $new_value="\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$value}\""; break;
+					case "logohash"    : $new_value="\"{$value}\""; break;
+					
+					case "maxcustomfilesize" : {
+						if ($add_value)
+							$server_info .= "_server_maxcustombytes=\"$value\";";
+						$new_value = GS_convert_size_in_bytes($value, "game");
+						break;
+					}
+					
+					case "ip" : {
+						$ip       = $value;
+						$ip_parts = explode(":", $value);
+						if (count($ip_parts) >= 2) {
+							$ip = $ip_parts[0];
+							$server_info .= "_server_port=\"".GS_encrypt($ip_parts[1], GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\";";
+						}
+						$new_value = "\"".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\""; 
+						break;
+					}
+					
+					case "password" : {
+						$new_value = "\"".GS_encrypt($value, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\""; 
+						break;
+					}
+					
+					case "voice" : {
+						$add_value = false;
+						$index = 0;
+						foreach(GS_VOICE as $program_name=>$program_info) {
+							if (substr($value,0,strlen($program_info["url"])) == $program_info["url"]) {
+								$new_value = "[$index,\"{$program_info["url"]}";
+								
+								switch ($program_name) {
+									case "TeamSpeak3" : {
+										$parts = [];
+										parse_str(parse_url($value, PHP_URL_QUERY), $parts);
+										
+										if (isset($parts["password"]))
+											$parts["password"] = GS_encrypt($parts["password"], GS_ENCRYPT_KEY, GS_MODULUS_KEY);
+										
+										if (isset($parts["channelpassword"]))
+											$parts["channelpassword"] = GS_encrypt($parts["channelpassword"], GS_ENCRYPT_KEY, GS_MODULUS_KEY);
+										
+										$new_value .= GS_encrypt(substr(strtok($value,"?"),strlen($program_info["url"])),GS_ENCRYPT_KEY,GS_MODULUS_KEY) . "?" . http_build_query($parts);
+										break;
+									}
+									
+									default : $new_value.=GS_encrypt(substr($value,strlen($program_info["url"])), GS_ENCRYPT_KEY, GS_MODULUS_KEY);
+								}
+
+								$new_value .= "\"]";;
+								$add_value = true;
+								break;
+							}
+							
+							$index++;
+						}
+						break;
+					}
+					
+					case "languages" : {
+						$temp_array = explode(", ", $row["languages"]);
+						$new_value  = "[";
+						
+						foreach($temp_array as $item)
+							$new_value .= "]+[\"".trim($item)."\"";
+							
+						$new_value .= "]";
+						break;
+					}
+					
+					default : $add_value=false;
+				}
+					
+				if ($add_value)
+					$server_info .= "_server_{$key}={$new_value};";
+			}
+
+			if (GS_ENCRYPT_KEY==0 ||  GS_MODULUS_KEY==0)
+				$server_info .= "_server_encrypted=false;";
+					
+			// Add server events
+			$server_info .= "_server_game_times=[";
 
 			foreach($server["events"] as $gametime)
 				$server_info .= "]+[{$gametime["date_formatted"]}";
+				
+			$server_info .= "];";
 
-			$server_info .= "];_server_modfolders=[";
+			// Include today game time
+			if (!in_array($id,$servers["listbox"]["now"]) && in_array($id,$servers["listbox"]["today"])) {
+				$time_zone    = new DateTimeZone($server["events"][0]["timezone"]);
+				$offset       = $time_zone->getOffset($server["events"][0]["date"]) / 60;
+				$server_info .= "_today_game_time=" . $server["events"][0]["date"]->format("[Y,n,j,w,H,i,s") . ",0,$offset,false];";
+			}
+					
+			// Add server mods
+			$server_info .= "_server_modfolders=[";
 
 			foreach($server["mods"] as $mod_key) {
 				$mod                = $mods["info"][$mod_key];
@@ -154,10 +267,10 @@ switch($input_mode) {
 				
 				$server_info .= ",\"" . str_replace("\"", "", $players) . "\"]";
 			}
-
+			
 			$database->add($server["uniqueid"], $server_info);
 		}
-		
+
 		// Prepare server listbox data
 		$servers_listbox                   = "";
 		$servers_id_sorted_by_playing_time = "";
@@ -165,15 +278,15 @@ switch($input_mode) {
 		
 		foreach($servers["listbox"] as $category_name=>$list) {
 			$servers_id_sorted_by_playing_time .= "GS_PLAYING_$category_name=[";
-			
+
 			if (!empty($list)) {
 				$servers_listbox .= "]+[[\"$category_name\"]";
-				
+
 				foreach($list as $id) {
-					$server = $servers["info"][$id];
-					$name   = isset($servers["info"][$id]["playercount"]) ? "({$server["playercount"]}) {$server["name"]}" : $server["name"];
+					$server      = $servers["info"][$id];
+					$listbox_row = isset($servers["info"][$id]["playercount"]) ? "({$server["playercount"]}) {$server["name"]}" : $server["name"];
 					
-					$servers_listbox                   .= "]+[[\"$name\",\"{$server["uniqueid"]}\"]";
+					$servers_listbox                   .= "]+[[\"$listbox_row\",\"{$server["uniqueid"]}\"]";
 					$servers_id_sorted_by_playing_time .= "]+[\"{$server["uniqueid"]}\"";
 					
 					if (isset($servers["info"][$id]["playercount"]))
@@ -184,16 +297,20 @@ switch($input_mode) {
 			$servers_id_sorted_by_playing_time .= "];";
 		}
 
-		$database->add("listbox", "GS_SERVERS=[$servers_listbox];$servers_id_sorted_by_playing_time;");
+		$database->add("listbox", "GS_SERVERS=[$servers_listbox];$servers_id_sorted_by_playing_time");
 		$database->add("playercount", "_player_count=$player_count;");
 		$output .= $database->generate($mods["lastmodified"], $mods_simple_array);
 		break;
+	}
 		
-	case "mods_v2_last_modified" : 
+	// Return last modification date for mods database
+	case "mods_v2_last_modified" : {
 		$output .= "GS_FWATCH_LAST_UPDATE=" . GS_FWATCH_LAST_UPDATE . ";GS_VERSION=" . GS_VERSION . ";GS_LAST_MODIFIED=\"".file_get_contents("mods_timestamp.txt")."\";true";
 		break;
+	}
 		
-	case "mods_v2" : 
+	// Return mod information
+	case "mods_v2" : {
 		$mods     = GS_list_mods([], ["all"], $input["modver"], $input["password_mods"], GS_REQTYPE_GAME, 0);
 		$database = new igsedb();
 		
@@ -210,7 +327,6 @@ switch($input_mode) {
 		$mods_that_user_can_update  = "";
 		$mods_that_user_doesnt_have = "";
 		$mods_update_count          = 0;
-		$mod_properties             = ["name", "type", "version", "forcename", "size", "sizearray", "is_mp", "addedby", "description", "website", "logo", "logohash"];
 		
 		foreach($mods["info"] as $id=>$mod) {
 			$mods_simple_array .= "]+[[\"{$mod["uniqueid"]}\",\"{$mod["name"]}\",{$mod["forcename"]}]";
@@ -231,7 +347,7 @@ switch($input_mode) {
 			
 			$mod_info = "";
 			
-			foreach($mod_properties as $property) {
+			foreach(["name","type","version","forcename","size","sizearray","is_mp","addedby","description","website","logo","logohash"] as $property) {
 				$property_name  = $property;
 				$property_value = $mod[$property];
 				
@@ -255,9 +371,10 @@ switch($input_mode) {
 		$database->add("modupdatecount", "_mod_update_count=$mods_update_count;");
 		$output .= $database->generate($mods["lastmodified"], $mods_simple_array);
 		break;
+	}
 
 	// Return mod installation script
-	case "install" : 
+	case "install" : {
 		$mods    = GS_list_mods([], array_keys($input["modver"]), $input["modver"], $input["password_mods"], GS_REQTYPE_INSTALL_SCRIPT, 0);
 		$output .= !empty($mods["info"]) ? "install_version ".GS_VERSION : "";
 		
@@ -291,6 +408,7 @@ switch($input_mode) {
 			}
 		}
 		break;
+	}
 	
 	// Legacy
 	case "mods" : 		

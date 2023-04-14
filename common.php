@@ -137,6 +137,13 @@ define("GS_REQTYPE_INSTALL_SCRIPT", 3);
 // Available languages on the website
 define("GS_LANGUAGES", ["game"=>["English","Russian","Polish"], "file"=>["en-US","ru-RU","pl-PL"]]);
 
+// Categories that servers are sorted into based on the game times; number indicates priority
+define("GS_SERVER_CATEGORIES", ["now", "today", "future", "persistent"]);
+define("GS_SERVER_NOW"       , 0);
+define("GS_SERVER_TODAY"     , 1);
+define("GS_SERVER_FUTURE"    , 2);
+define("GS_SERVER_PERSISTENT", 3);
+
 
 
 // Functions
@@ -1070,97 +1077,9 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				$output["info"][$id]["uniqueid"]   = $row["uniqueid"];
 				$output["id"][$id]                 = $row["uniqueid"];
 				
-				if ($request_type == GS_REQTYPE_GAME) {
-					$output["info"][$id]["status"]         = $row["status"];
-					$output["info"][$id]["status_expires"] = $row["status_expires"];
-					$output["info"][$id]["ip"]             = $row["ip"];
-									
-					foreach ($row as $key=>$value) {
-						$value     = html_entity_decode($value, ENT_QUOTES);
-						$new_value = $value;
-						$add_value = $value != "";
-
-						switch ($key) {
-							case "uniqueid"          : 
-							case "website"           :
-							case "message"           : 
-							case "location"          : 
-							case "name"              : $new_value="\"".GS_convert_utf8_to_windows($value, $language)."\""; if ($key=="name") $output["info"][$id]["name"]=GS_convert_utf8_to_windows($value, $language); break;
-							case "equalmodreq"       : $new_value=$value=="1" ? "true" : "false"; break;
-							case "version"           : $new_value="$value"; break;
-							case "logo"              : $new_value="\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$value}\""; break;
-							case "logohash"          : $new_value="\"{$value}\""; break;
-							case "maxcustomfilesize" : {
-								if ($add_value)
-									$output["info"][$id]["sqf"] .= "_server_maxcustombytes=\"$value\";";
-								$new_value = GS_convert_size_in_bytes($value, "game");
-							} break;
-							
-							case "ip" : {
-								$ip       = $value;
-								$ip_parts = explode(":", $value);
-								if (count($ip_parts) >= 2) {
-									$ip = $ip_parts[0];
-									$output["info"][$id]["sqf"] .= "_server_port=\"".GS_encrypt($ip_parts[1], GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\";";
-								}
-								$new_value = "\"".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\""; break;
-							} break;
-							
-							case "password" : $new_value="\"".GS_encrypt($value, GS_ENCRYPT_KEY, GS_MODULUS_KEY)."\""; break;
-							
-							case "voice" : {
-								$add_value = false;
-								$index = 0;
-								foreach(GS_VOICE as $program_name=>$program_info) {
-									if (substr($value,0,strlen($program_info["url"])) == $program_info["url"]) {
-										$new_value = "[$index,\"{$program_info["url"]}";
-										
-										switch ($program_name) {
-											case "TeamSpeak3" : {
-												$parts = [];
-												parse_str(parse_url($value, PHP_URL_QUERY), $parts);
-												
-												if (isset($parts["password"]))
-													$parts["password"] = GS_encrypt($parts["password"], GS_ENCRYPT_KEY, GS_MODULUS_KEY);
-												
-												if (isset($parts["channelpassword"]))
-													$parts["channelpassword"] = GS_encrypt($parts["channelpassword"], GS_ENCRYPT_KEY, GS_MODULUS_KEY);
-												
-												$new_value .= GS_encrypt(substr(strtok($value,"?"),strlen($program_info["url"])),GS_ENCRYPT_KEY,GS_MODULUS_KEY) . "?" . http_build_query($parts);
-											} break;
-											
-											default : $new_value.=GS_encrypt(substr($value,strlen($program_info["url"])), GS_ENCRYPT_KEY, GS_MODULUS_KEY); break;
-										}
-
-										$new_value .= "\"]";;
-										$add_value = true;
-										break;
-									}
-									
-									$index++;
-								}
-							} break;
-							
-							case "languages" : {
-								$temp_array = explode(", ", $row["languages"]);
-								$new_value  = "[";
-								
-								foreach($temp_array as $item)
-									$new_value .= "]+[\"".trim($item)."\"";
-									
-								$new_value .= "]";
-							} break;
-							
-							default : $add_value=false; break;
-						}
-							
-						if ($add_value)
-							$output["info"][$id]["sqf"] .= "_server_{$key}={$new_value};";
-					}
-					
-					if (GS_ENCRYPT_KEY==0 ||  GS_MODULUS_KEY==0)
-						$output["info"][$id]["sqf"] .= "_server_encrypted=false;";
-				}
+				if ($request_type == GS_REQTYPE_GAME)
+					foreach(["status","status_expires","ip","uniqueid","website","message","location","name","equalmodreq","version","logo","logohash","maxcustomfilesize","password","voice","languages"] as $column)
+						$output["info"][$id][$column] = GS_convert_utf8_to_windows(html_entity_decode($row[$column], ENT_QUOTES), $language);
 					
 				if ($request_type == GS_REQTYPE_WEBSITE)
 					$output["info"][$id] = $row;
@@ -1177,11 +1096,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 		}
 		
 		// Sort game times
-		$playing_now    = [];
-		$playing_today  = [];
-		$playing_future = [];
-		$server_added   = [];
-		$persistent     = [];
+		$all_servers = [];
 		
 		foreach($output["info"] as $id=>&$server) {
 			// Filter out outdated events
@@ -1278,20 +1193,18 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 					$event["date"]           = $start_date;
 					$event["date_formatted"] = $playtime;
 				
-					$array_reference = &$playing_now;
+					$event_category = GS_SERVER_NOW;
 					
 					// If the event has not started
 					if ($start_date > $now) {
 						if (date_diff($now, $start_date)->format("%a") == 0)
-							$array_reference = &$playing_today;
+							$event_category = GS_SERVER_TODAY;
 						else
-							$array_reference = &$playing_future;
+							$event_category = GS_SERVER_FUTURE;
 					}
-					
-					if (!in_array($id,$server_added)) {
-						$server_added[]    = $id;
-						$array_reference[] = $id;
-					}
+
+					if (!isset($all_servers[$id]) || (isset($all_servers[$id]) && $event_category < $all_servers[$id]))
+						$all_servers[$id] = $event_category;
 				} else {
 					unset($server["events"][$key]);
 				}
@@ -1301,45 +1214,40 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				if (count($server["events"]) > 0 || !$ignore_outdated) {
 					// Sort events
 					uasort($server["events"], function ($a, $b) {return $a["date"] <=> $b["date"];});
-
-					// Include today game time
-					if (in_array($id,$playing_today)) {
-						$time_zone = new DateTimeZone($server["events"][0]["timezone"]);
-						$offset    = $time_zone->getOffset($server["events"][0]["date"]) / 60;
-						$output["info"][$id]["sqf"] .= "_today_game_time=" . $server["events"][0]["date"]->format("[Y,n,j,w,H,i,s") . ",0,$offset,false];";
-					}
+					$server["events"] = array_values($server["events"]);
 				} else {
 					unset($output["info"][$id]);
 					unset($output["id"][$id]);
 				}
 			} else {
-				$persistent[]   = $id;
-				$server_added[] = $id;
+				$all_servers[$id] = GS_SERVER_PERSISTENT;
 			}
 		}
 		
-		if ($request_type == GS_REQTYPE_GAME)
-			$output["listbox"] = [
-				"now"        => $playing_now, 
-				"today"      => $playing_today, 
-				"future"     => $playing_future, 
-				"persistent" => $persistent
-			];
-		
-		// Update server status
-		foreach($server_added as $id) {
-			if (strtotime("now") > strtotime($output["info"][$id]["status_expires"])) {
-				$ip = $output["info"][$id]["ip"];
-				
-				if (strpos($ip,":") === FALSE)
-					$ip .= ":2302";
-				
-				$output["info"][$id]["status"] = GS_url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}?timeout=0.5", 1);
+		if ($request_type == GS_REQTYPE_GAME) {
+			$output["listbox"] = [];
+			
+			foreach(GS_SERVER_CATEGORIES as $category_name)
+				$output["listbox"][$category_name] = [];
+			
+			// Sort servers into arrays based on the closest event
+			foreach($all_servers as $id=>$event_category) {
+				$output["listbox"][GS_SERVER_CATEGORIES[$event_category]][] = $id;
 
-				$db->update("gs_serv", $id, [
-					"status"         => $output["info"][$id]["status"], 
-					"status_expires" => date('Y-m-d H:i:s', strtotime("+1 minute"))
-				]);
+				// Update server status
+				if (strtotime("now") > strtotime($output["info"][$id]["status_expires"])) {
+					$ip = $output["info"][$id]["ip"];
+					
+					if (strpos($ip,":") === FALSE)
+						$ip .= ":2302";
+					
+					$output["info"][$id]["status"] = GS_url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}?timeout=0.5", 1);
+
+					$db->update("gs_serv", $id, [
+						"status"         => $output["info"][$id]["status"], 
+						"status_expires" => date('Y-m-d H:i:s', strtotime("+1 minute"))
+					]);
+				}
 			}
 		}
 	}
@@ -2069,7 +1977,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		$js_type[]      = $current_type;
 		$js_started[]   = $current_started;
 		$js_serv_id[]   = $uniqueid;
-		$js_expired[]   = strtotime("now") > strtotime($server["expires"]);
+		$js_expired[]   = strtotime("now") > strtotime($server["status_expires"]);
 		
 		// Add server status
 		$server_status_name    = $server_status_list[0];
