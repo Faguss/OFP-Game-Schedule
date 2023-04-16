@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,4,8,6,14,39,2,706,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,4,16,0,23,53,43,81,120,FALSE]");
 define("GS_VERSION", 0.6);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1364,7 +1364,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				gs_mods_links.alwaysnewest,
 				scripts2.id       AS scriptid2,
 				scripts2.size     AS size2,
-				".($request_type==GS_REQTYPE_GAME ? "' '" : "scripts2.script")." AS scripts2,
+				".($request_type==GS_REQTYPE_GAME ? "' '" : "scripts2.script")." AS script2,
 				scripts2.modified AS modified4,
                 gs_mods_admins.userid AS admin,
 				gs_mods_admins.modified AS adminsince
