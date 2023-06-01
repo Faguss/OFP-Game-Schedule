@@ -219,7 +219,7 @@ switch($input_mode) {
 			$server_info .= "];";
 			
 			// Format server status
-			if (!empty($server["status"]) && substr($server["status"],0,9) != "{\"error\":") {
+			if (!empty($server["status"]) && substr($server["status"],0,1) == "{" && substr($server["status"],0,9) != "{\"error\":") {
 				$to_find_list = ["\"gstate\":", "\"numplayers\":", "\"gametype\":", "\"mapname\":"];
 				$server_info .= "_server_status=[";
 				

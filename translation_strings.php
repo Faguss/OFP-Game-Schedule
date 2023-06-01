@@ -114,7 +114,10 @@ $mainmenu = [
 		105 => "[Add to Queue]",
 		106 => "Offline",
 		107 => "Right-click or space for status",
-		108 => "Persistent"
+		108 => "Persistent",
+		109 => "[Create Shortcut]",
+		110 => "Shortcut name",
+		111 => "Select mods for the shortcut",
 	],
 
 	"ru-RU" => [
@@ -226,7 +229,10 @@ $mainmenu = [
 		105 => "[Добавить в Очередь]",
 		106 => "Не в сети",
 		107 => "Правой кнопкой или пробел для статуса",
-		108 => "Постоянные"
+		108 => "Постоянные",
+		109 => "[Создать Ярлык]",
+		110 => "сокращенное имя",
+		111 => "выбрать моды для ярлыка",
 	],
 
 	"pl-PL" => [
@@ -338,7 +344,10 @@ $mainmenu = [
 		105 => "[Dodaj do kolejki]",
 		106 => "Brak połączenia",
 		107 => "Status pod prawym przyciskiem lub spacją",
-		108 => "Stałe"
+		108 => "Stałe",
+		109 => "[Utwórz Skrót]",
+		110 => "Nazwa skrótu",
+		111 => "Wybierz mody dla skrótu",
 	]
 ];
 
