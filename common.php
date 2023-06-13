@@ -1,6 +1,6 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,4,16,0,23,53,43,81,120,FALSE]");
-define("GS_VERSION", 0.6);
+define("GS_FWATCH_LAST_UPDATE","[2023,6,13,2,20,23,1,78,120,FALSE]");
+define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
 define("GS_DECRYPT_KEY", 0);

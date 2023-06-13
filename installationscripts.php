@@ -41,7 +41,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_AUTO_PAR9" => "When installer encounters a directory it will check its name and contents:",
 	"GS_IS_AUTO_PAR10" => "If its name matches the name of the mod that's being installed then it will be moved to the game directory. All remaining files and folders in this location (except for other mods) will be moved to the modfolder. If directory <code>addons</code> is present then it will be merged with <code>IslandCutscenes</code> in the modfolder.",
 	"GS_IS_AUTO_PAR11" => "Other modfolders will be ignored (exceptions: 1. <code>Res</code> folder 2. if the downloaded archive contains only a single folder then it won't be skipped).",
-	"GS_IS_AUTO_PAR12" => "If its name matches <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> or <code>IslandCutscenes</code> then it will be moved to the modfolder (contents will be merged). If <code>MPMissions</code> contains only a single folder then that folder will be moved instead. If <code>Missions</code> contains only a single folder that matches mod name then its contents will be merged with the mod missions. If it doesn't match then it will be moved as a separate folder.",
+	"GS_IS_AUTO_PAR12" => "If its name matches <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> or <code>IslandCutscenes</code> then it will be moved to the modfolder (contents will be merged). If <code>MPMissions</code> contains only a single folder then that folder will be moved instead. If <code>Missions</code> contains only a single folder that matches mod name then its contents will be merged with the mod missions. If it doesn't match then it will be moved as a separate folder.",
 	"GS_IS_AUTO_PAR13" => "If it contains <code>overview.html</code> then it will be moved to the <code>Missions</code> folder in the modfolder.",
 	"GS_IS_AUTO_PAR14" => "If its name ends with \"anim\", \"_anim\" or \"_anims\" then it will be moved to the <code>IslandCutscenes</code>. If any of the parent folders was named \"res\" or they have words \"res\" and \"addons\" in their names then the current directory will be moved to the <code>IslandCutscenes_Res</code> instead.",
 	"GS_IS_AUTO_PAR15" => "If it's a mission folder then the installer will detect its type and move it to the <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> or <code>SPTemplates</code> in the modfolder. If the folder name contains words \"demo\" or \"template\" or if any of the parent folders names had words \"user\" or \"mission\" and \"demo/editor/template\" then the current folder will be moved to the <code>MissionsUsers</code> or <code>MPMissionsUsers</code> instead.",
@@ -179,7 +179,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_ASK_GET_PAR1" => "Requests the user to manually download the selected file. Installation is paused until user decides to continue or abort.",
 
 	#Ask_run command
-	"GS_IS_ASK_RUN_PAR1" => "Requests the user to manually launch the selected file from the <span class=\"courier\">fwatch\\tmp\\</span> directory. Installation is paused until user decides to continue or abort.",
+	"GS_IS_ASK_RUN_PAR1" => "Requests the user to manually launch the selected file from the <span class=\"courier\">fwatch\\tmp\\</span> directory (will be opened in Windows Explorer). Installation is paused until user decides to continue or abort.",
 	"GS_IS_ASK_RUN_PAR2" => "Use this command for executables that cannot be extracted.",
 	"GS_IS_ASK_RUN_PAR3" => "If the file is in the modfolder then start the path with <code>%m1%</code>.",
 	"GS_IS_ASK_RUN_PAR4" => "If no argument was given then the last downloaded file will be selected.",
@@ -301,7 +301,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_AUTO_PAR9" => "Когда установщик встречает каталог, он проверяет его имя и содержимое:",
 "GS_IS_AUTO_PAR10" => "Если его имя совпадает с названием устанавливаемого мода, то он будет перемещен в папку с игрой. Все оставшиеся файлы и папки в этом месте (кроме других модов) будут перемещены в папку с модами. Если присутствует каталог <code>addons</code>, он будет объединен с <code>IslandCutscenes</code> в папке мода.",
 "GS_IS_AUTO_PAR11" => "Другие папки модов будут игнорироваться (исключения: 1. папка <code>Res</code> 2. если скачанный архив содержит только одну папку, то она не будет пропущена).",
-"GS_IS_AUTO_PAR12" => "Если его имя совпадает с <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, < code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> или <code>IslandCutscenes</code>, то он будет перемещен в папку модов (содержимое будет объединено). Если <code>MPMissions</code> содержит только одну папку, вместо нее будет перемещена эта папка. Если <code>Missions</code> содержит только одну папку с именем мода, то ее содержимое будет объединено с миссиями мода. Если он не совпадает, он будет перемещен как отдельная папка.",
+"GS_IS_AUTO_PAR12" => "Если его имя совпадает с <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, < code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> или <code>IslandCutscenes</code>, то он будет перемещен в папку модов (содержимое будет объединено). Если <code>MPMissions</code> содержит только одну папку, вместо нее будет перемещена эта папка. Если <code>Missions</code> содержит только одну папку с именем мода, то ее содержимое будет объединено с миссиями мода. Если он не совпадает, он будет перемещен как отдельная папка.",
 "GS_IS_AUTO_PAR13" => "Если он содержит <code>overview.html</code>, он будет перемещен в папку <code>Missions</code> в папке мода.",
 "GS_IS_AUTO_PAR14" => "Если его имя заканчивается на \"anim\", \"_anim\" или \"_anims\", то он будет перемещен в <code>IslandCutscenes</code>. Если какая-либо из родительских папок была названа \"res\" или в их именах есть слова \"res\" и \"addons\", то вместо этого текущий каталог будет перемещен в <code>IslandCutscenes_Res</code>.",
 "GS_IS_AUTO_PAR15" => "Если это папка с миссией, то установщик определит ее тип и переместит в папку <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> или <code>SPTemplates</code> в папке с модами. Если имя папки содержит слова \"demo\" или \"template\" или если какое-либо из имен родительских папок содержит слова \"user\" или \"mission\" и \"demo/editor/template\", то текущая папка будет перемещена в <code>MissionsUsers</code> или <code>MPMissionsUsers</code>.",
@@ -439,7 +439,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_ASK_GET_PAR1" => "Просит пользователя загрузить выбранный файл вручную. Установка приостановлена до тех пор, пока пользователь не решит продолжить или прервать ее.",
 
 	#Ask_run command
-"GS_IS_ASK_RUN_PAR1" => "Просит пользователя вручную запустить выбранный файл из каталога <span class=\"courier\">fwatch\\tmp\\</span>. Установка приостановлена до тех пор, пока пользователь не решит продолжить или прервать ее.",
+"GS_IS_ASK_RUN_PAR1" => "Просит пользователя вручную запустить выбранный файл из каталога <span class=\"courier\">fwatch\\tmp\\</span> (будет открыт в проводнике Windows). Установка приостановлена до тех пор, пока пользователь не решит продолжить или прервать ее.",
 "GS_IS_ASK_RUN_PAR2" => "Используйте эту команду для исполняемых файлов, которые нельзя извлечь.",
 "GS_IS_ASK_RUN_PAR3" => "Если файл находится в папке мода, начните путь с <code>%m1%</code>.",
 "GS_IS_ASK_RUN_PAR4" => "Если аргумент не указан, будет выбран последний загруженный файл.",
@@ -561,7 +561,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_AUTO_PAR9" => "Jeśli instalator napotka folder to sprawdzi jego nazwę i zawartość:",
 	"GS_IS_AUTO_PAR10" => "Jeśli jego nazwa jest taka sama jak nazwa instalowanego moda to przeniesie go do katalogu z grą. Wszystkie inne pliki znajdujące się w tej lokalizacji (oprócz innych modów) zostaną przeniesione do katalogu z modem. Jeśli występuje tu folder <code>addons</code> to zostanie on połączony z folderem <code>IslandCutscenes</code> w katalogu z modem.",
 	"GS_IS_AUTO_PAR11" => "Inne modfoldery zostaną pominięte (wyjątki: 1. folder <code>Res</code> 2. jeśli ściągnęte archiwum zawiera tylko pojedynczy katalog to instalator go nie pominie).",
-	"GS_IS_AUTO_PAR12" => "Jeśli jego nazwa to <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>worlds</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> lub <code>IslandCutscenes</code> to zostanie przeniesiony do katalogu z modem (połączy zawartość). Jeśli <code>MPMissions</code> zawiera tylko pojedynczy folder to wtedy zawartość tego podfolderu zostanie przeniesiona. Jeśli <code>Missions</code> zawiera tylko pojedynczy folder, którego nazwa jest taka sama jak nazwa modu to wtedy jego zawartość zostanie połączona z misjami moda. Jeśli nie jest taka sama to będzie przeniesiony jako oddzielny katalog.",
+	"GS_IS_AUTO_PAR12" => "Jeśli jego nazwa to <code>addons</code>, <code>bin</code>, <code>campaigns</code>, <code>dta</code>, <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code>, <code>SPTemplates</code>, <code>MissionsUsers</code>, <code>MPMissionsUsers</code> lub <code>IslandCutscenes</code> to zostanie przeniesiony do katalogu z modem (połączy zawartość). Jeśli <code>MPMissions</code> zawiera tylko pojedynczy folder to wtedy zawartość tego podfolderu zostanie przeniesiona. Jeśli <code>Missions</code> zawiera tylko pojedynczy folder, którego nazwa jest taka sama jak nazwa modu to wtedy jego zawartość zostanie połączona z misjami moda. Jeśli nie jest taka sama to będzie przeniesiony jako oddzielny katalog.",
 	"GS_IS_AUTO_PAR13" => "Jeśli zawiera <code>overview.html</code> to wtedy zostanie przeniesiony do <code>Missions</code> w katalogu z modem.",
 	"GS_IS_AUTO_PAR14" => "Jeśli jego nazwa kończy się na \"anim\", \"_anim\" lub \"_anims\" to zostanie przeniesiony on do <code>IslandCutscenes</code>. Jeśli jakikolwiek nadrzędny katalog nazywa się \"res\" albo miał słowa \"res\" i \"addons\" w nazwie to obecny folder będzie przeniesiony do <code>IslandCutscenes_Res</code>.",
 	"GS_IS_AUTO_PAR15" => "Jeśli jest to folder misji to instalator wykryje jej typ i przeniesie do  <code>Missions</code>, <code>MPMissions</code>, <code>Templates</code> lub <code>SPTemplates</code> w katalogu z modem. Jeśli folder ma słowa \"demo\" lub \"template\" w nazwie albo jakikolwiek poprzedni katalog miał w nazwie słowa \"user\" lub \"mission\" i \"demo/editor/template\" to obecny folder zostanie przeniesiony do <code>MissionsUsers</code> lub <code>MPMissionsUsers</code>.",
@@ -699,7 +699,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_ASK_GET_PAR1" => "Prosi użytkownika o ręczne ściągnięcie wybranego pliku. Instalacja jest zatrzymana do czasu aż użytkownik ją sam wznowi albo przerwie.",
 
 	#Ask_run command
-	"GS_IS_ASK_RUN_PAR1" => "Prosi użytkownika o ręczne uruchomienie wybranego pliku znajdującego się w katalogu <span class=\"courier\">fwatch\\tmp\\</span>. Instalacja jest zatrzymana do czasu aż użytkownik ją sam wznowi albo przerwie.",
+	"GS_IS_ASK_RUN_PAR1" => "Prosi użytkownika o ręczne uruchomienie wybranego pliku znajdującego się w katalogu <span class=\"courier\">fwatch\\tmp\\</span> (zostanie otwarty w eksploratorze Windows). Instalacja jest zatrzymana do czasu aż użytkownik ją sam wznowi albo przerwie.",
 	"GS_IS_ASK_RUN_PAR2" => "Używaj tej komendy w przypadku archiwów których nie da się rozpakować.",
 	"GS_IS_ASK_RUN_PAR3" => "Aby wybrać plik znajdujący się w katalogu z modem zacznij ścieżkę źródłową od <code>%m1%</code>.",
 	"GS_IS_ASK_RUN_PAR4" => "Jeśli argument nie został podany to wybrany zostanie ostatni ściągnięty plik.",
@@ -1681,8 +1681,18 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <div class="panel panel-default betweencommands">
 	<div class="panel-heading"><strong><?=lang("GS_IS_CHANGELOG")?></strong></div>
 	<div class="panel-body">
+<a name="changelog0.61"></a>
+<strong>0.61</strong> (13.06.2023)<br>
+<ul>
+<li><code>Ask_run</code> - opens directory in Windows Explorer</li>
+<li>Auto Install -  removed subfolder "worlds" from mod detection</li>
+</ul>	
+	
 <a name="changelog0.6"></a>
-<strong>0.6</strong> (29.04.21)<br>
+<br>
+<br>
+
+<strong>0.6</strong> (29.04.2021)<br>
 <ul>
 <li><code>Edit</code> -  added <code>/timestamp:</code> switch</li>
 <li><code>MakePBO</code> -  added <code>/timestamp:</code> switch</li>
@@ -1692,7 +1702,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.59</strong> (05.03.21)<br>
+<strong>0.59</strong> (05.03.2021)<br>
 <ul>
 <li>Auto Install -  If "Missions" contains only a single folder inside then that subfolder will be merged with "&lt;mod&gt;\Missions" only if its name matches the mod name. Otherwise it will be moved as a separate subfolder</li>
 </ul>
@@ -1701,7 +1711,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.58</strong> (25.02.21)<br>
+<strong>0.58</strong> (25.02.2021)<br>
 <ul>
 <li>Added <code>EXIT</code> command</li>
 <li><code>Move</code> – added switch <code>/match_dir_only</code></li>
@@ -1713,7 +1723,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.57</strong> (11.02.21)<br>
+<strong>0.57</strong> (11.02.2021)<br>
 <ul>
 <li>Added <code>FILEDATE</code> command</li>
 </ul>
@@ -1722,7 +1732,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.56</strong> (05.02.21)<br>
+<strong>0.56</strong> (05.02.2021)<br>
 <ul>
 <li>Auto Install - will try to extract .cab files</li>
 <li>Auto Install - will detect if mission is a wizard template and move it to the "Templates" or "SPTemplates"</li>
@@ -1745,7 +1755,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.55</strong> (12.01.21)<br>
+<strong>0.55</strong> (12.01.2021)<br>
 <ul>
 <li>Removed <code>/mirror</code> switch. Instead there are now url blocks indicated by curly brackets</li>
 <li><code>Move</code> – curly brackets are now used (instead of a vertical bar) to separate url arguments from move arguments</li>
@@ -1755,7 +1765,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.53</strong> (01.03.20)<br>
+<strong>0.53</strong> (01.03.2020)<br>
 <ul>
 <li><code>Alias</code> – effect now lasts until the end of the script (instead of throughout the entire installation)</li>
 <li>Added shorter name <code>UnPBO</code> for the command <code>UnpackPBO</code></li>
@@ -1765,7 +1775,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.52</strong> (16.02.20)<br>
+<strong>0.52</strong> (16.02.2020)<br>
 <ul>
 <li>Command arguments can now be escaped with custom delimiters (relevant for the <code>Edit</code> command)</li>
 </ul>
@@ -1774,7 +1784,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.51</strong> (14.02.20)<br>
+<strong>0.51</strong> (14.02.2020)<br>
 <ul>
 <li>Added command: <code>Alias</code></li>
 <li>Auto installation - reverted change from 0.31: file name irrelevant for auto installation again (use command Alias instead)</li>
@@ -1787,7 +1797,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.4</strong> (15.07.19)<br>
+<strong>0.4</strong> (15.07.2019)<br>
 <ul>
 <li><code>Edit</code> – added <code>/newfile</code> switch</li>
 <li><code>Edit</code> – switch <code>/insert</code> can now be used to append text at the end</li>
@@ -1797,7 +1807,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.31</strong> (06.04.19)<br>
+<strong>0.31</strong> (06.04.2019)<br>
 <ul>
 <li>Auto installation - doesn't ignore modfolders if their name is contained in downloaded filename</li>
 </ul>
@@ -1806,7 +1816,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.3</strong> (02.04.19)<br>
+<strong>0.3</strong> (02.04.2019)<br>
 <ul>
 <li>Download links can now be followed with <code>/mirror</code> switch</li>
 <li>Download links can now be followed with extra arguments for multi-step downloading</li>
@@ -1831,7 +1841,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.2</strong> (11.03.19)<br>
+<strong>0.2</strong> (11.03.2019)<br>
 <ul>
 <li>added commands: <code>Ask_Download</code>, <code>Delete</code>, <code>Rename</code>, <code>If_version</code>, <code>else</code>, <code>endif</code>, <code>Makepbo</code>, <code>UnpackPBO</code>, <code>Edit</code></li>
 <li>renamed command <code>Execute</code> to <code>Ask_Execute</code></li>
@@ -1865,7 +1875,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <br>
 <br>
 
-<strong>0.1</strong> (03.03.17)<br>
+<strong>0.1</strong> (03.03.2017)<br>
 First release.<br>
 	</div>
 </div>
