@@ -64,6 +64,13 @@ class igsedb {
 	}
 }
 
+function packString(...$strings) {
+	$output = "";
+	foreach ($strings as $string)
+		$output .= pack("V",strlen($string)) . $string;
+	return $output;
+}
+
 $input      = GS_get_common_input();
 $input_mode = isset($_GET['mode']) ? $_GET['mode'] : "schedule";
 $db         = DB::getInstance();
@@ -196,8 +203,13 @@ switch($input_mode) {
 			$server_info .= "_server_game_times=[";
 
 			foreach($server["events"] as $gametime)
-				$server_info .= "]+[{$gametime["date_formatted"]}";
+				$server_info .= "]+[{$gametime["description"]}";
 				
+			$server_info .= "];";
+			
+			$server_info .= "_server_game_times2=[";
+			foreach($server["events"] as $gametime)
+				$server_info .= "]+[[{$gametime["description"]},\"{$gametime["eventid"]}\",{$gametime["date_sqf"]}]";
 			$server_info .= "];";
 
 			// Include today game time
@@ -219,53 +231,34 @@ switch($input_mode) {
 			$server_info .= "];";
 			
 			// Format server status
-			if (!empty($server["status"]) && substr($server["status"],0,1) == "{" && substr($server["status"],0,9) != "{\"error\":") {
-				$to_find_list = ["\"gstate\":", "\"numplayers\":", "\"gametype\":", "\"mapname\":"];
+			$status = json_decode($server["status"]);
+			if (!empty($status) && !isset($status->error)) {
+				$to_find_list = ["gstate", "numplayers", "gametype", "mapname"];
 				$server_info .= "_server_status=[";
 				
-				foreach($to_find_list as $i=>$to_find) {
-					$found_value = "";
-					$start       = strpos($server["status"], $to_find);
-					
-					if ($start !== FALSE) {
-						$start += strlen($to_find);
-						$end    = strpos($server["status"], ",", $start);
-						
-						if ($end !== FALSE)
-							$found_value = substr($server["status"], $start, $end-$start);
-					}
-					
+				foreach($to_find_list as $i=>$attribute) {
 					if ($i != 0)
 						$server_info .= ",";
 					
-					if ($i==0 || $i==1)
-						$found_value = str_replace("\"", "", $found_value);
+					if ($i <= 1)
+						$server_info .= $status->$attribute;
+                    else
+						$server_info .= "\"" . $status->$attribute . "\"";
 					
 					if ($i == 1)
-						$servers["info"][$id]["playercount"] = $found_value;
-						
-					$server_info .= $found_value;
+						$servers["info"][$id]["playercount"] = $status->$attribute;
 				}
 				
-				$to_find = "\"player\":";
-				$players = "";
-				$start   = strpos($server["status"], $to_find);
+				$server_info .= ",\"";
 				
-				while($start !== FALSE) {
-					$start += strlen($to_find);
-					$end    = strpos($server["status"], ",", $start);
-						
-					if ($end !== FALSE) {				
-						if (!empty($players))
-							$players .= "\\n";
-							
-						$players .= substr($server["status"], $start, $end-$start);
-					}
+				foreach($status->players as $i=>$player) {
+					if ($i != 0)
+						$server_info .= "\\n";
 					
-					$start = strpos($server["status"], $to_find, $start+1);
+					$server_info .= $player->player;
 				}
 				
-				$server_info .= ",\"" . str_replace("\"", "", $players) . "\"]";
+				$server_info .= "\"]";
 			}
 			
 			$database->add($server["uniqueid"], $server_info);
@@ -407,6 +400,152 @@ switch($input_mode) {
 				$db->query("UPDATE gs_mods SET $column_name=$column_name+1 WHERE id=$id");
 			}
 		}
+		
+		break;
+	}
+	
+	// Return server and event information for use by scheduled gameRestart.exe launch
+	case "gamerestart" : {
+		define("GR_OK", 0);
+		define("GR_INCORRECT_PARAM", 1);
+		define("GR_SERVER_GONE", 2);
+		define("GR_EVENT_GONE", 3);
+		
+		define("GR_TAG_STATUS", 1);
+		define("GR_TAG_SERVER_VERSION", 2);
+		define("GR_TAG_EVENT_DATE_START", 3);
+		define("GR_TAG_EVENT_DATE_END", 4);
+		define("GR_TAG_EVENT_TYPE", 5);
+		define("GR_TAG_FWATCH_DATE", 6);
+		define("GR_TAG_EXE_ARGUMENTS", 7);
+		define("GR_TAG_MOD_INFO", 8);
+		define("GR_TAG_EVENT_VACATION", 9);
+		
+		$output .= 
+			"OFPGS" . pack("xxx") .
+			pack("V", GR_TAG_FWATCH_DATE) . packString(GS_FWATCH_LAST_UPDATE) .
+			pack("V", GR_TAG_STATUS);
+		
+		if (!isset($_GET["server"]) || !isset($_GET["eventid"])) {
+			$output .= pack("l", GR_INCORRECT_PARAM);
+			break;
+		}
+		
+		$servers = GS_list_servers($input["server"], $input["password"], GS_REQTYPE_GAME, GS_fwatch_date_to_timestamp(GS_FWATCH_LAST_UPDATE), $input["language"], NULL, $input["timeoffset"]);
+		$mods    = GS_list_mods($servers["mods"], array_keys($input["modver"]), $input["modver"], $input["password"], GS_REQTYPE_GAME, $servers["lastmodified"]);
+
+		if (empty($servers["info"])) {
+			$output .= pack("l", GR_SERVER_GONE);
+			break;
+		}
+		
+		$server = $servers["info"][array_keys($servers["info"])[0]];
+		$event  = null;
+		foreach($server["events"] as $key=>$current_event) {
+			if ($current_event["eventid"] == $_GET["eventid"]) {
+				$event = $current_event;
+				break;
+			}
+		}
+		
+		if (!isset($event)) {
+			$output .= pack("l", GR_EVENT_GONE);
+			break;
+		}
+		
+		// Get exe arguments to connect to the server
+		$argline  = " -serveruniqueid={$server["uniqueid"]} ";
+		$modifier = GS_ENCRYPT_KEY==0 || GS_MODULUS_KEY==0 ? "" : "e";
+		$ip       = $server["ip"];
+		$ip_parts = explode(":", $ip);
+		
+		if (count($ip_parts) >= 2) {
+			$ip = $ip_parts[0];
+			$argline .= "-".$modifier."port=".GS_encrypt($ip_parts[1], GS_ENCRYPT_KEY, GS_MODULUS_KEY)." ";
+		}
+		
+		$argline .= "-".$modifier."connect=".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)." ";
+		
+		if (!empty($server["password"]))
+			$argline .= "-".$modifier."password=".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)." ";
+		
+		if (!empty($server["equalmodreq"]))
+			$argline .= "-serverequalmodreq=true ";
+		
+		if (isset($server["maxcustomfilesize"]))
+			$argline .= "-maxcustom={$server["maxcustomfilesize"]} ";
+
+		if (!empty($server["voice"])) {
+			$index = 0;
+			foreach(GS_VOICE as $program_name=>$program_info) {
+				if (substr($server["voice"],0,strlen($program_info["url"])) == $program_info["url"]) {
+					$voice_url = $program_info["url"];
+					
+					switch ($program_name) {
+						case "TeamSpeak3" : {
+							$parts = [];
+							parse_str(parse_url($server["voice"], PHP_URL_QUERY), $parts);
+							
+							if (isset($parts["password"]))
+								$parts["password"] = GS_encrypt($parts["password"], GS_ENCRYPT_KEY, GS_MODULUS_KEY);
+							
+							if (isset($parts["channelpassword"]))
+								$parts["channelpassword"] = GS_encrypt($parts["channelpassword"], GS_ENCRYPT_KEY, GS_MODULUS_KEY);
+
+							$voice_url .= GS_encrypt(substr(strtok($server["voice"],"?"),strlen($program_info["url"])),GS_ENCRYPT_KEY,GS_MODULUS_KEY) . "?" . http_build_query($parts);
+							break;
+						}
+						
+						default : $voice_url.=GS_encrypt(substr($server["voice"],strlen($program_info["url"])), GS_ENCRYPT_KEY, GS_MODULUS_KEY);
+					}
+
+					$argline .= "-".$modifier."voice=$voice_url ";
+				}
+				
+				$index++;
+			}
+		}
+		
+		$arg_mod = "";
+		foreach($mods["info"] as $mod)
+			$arg_mod .= "{$mod["uniqueid"]};";
+		
+		if (!empty($arg_mod))
+			$argline .= "-modid=$arg_mod ";
+			
+		$output .= 
+			pack("l", GR_OK) .
+			pack("Vl", GR_TAG_SERVER_VERSION, array_search($server["version"], [1=>"1.96", 2=>"1.99", 3=>"2.01"])) . 
+			pack("Vvvvvvvvv", GR_TAG_EVENT_DATE_START,
+				$event["date"]->format("Y"),
+				$event["date"]->format("n"),
+				$event["date"]->format("w"),
+				$event["date"]->format("j"),
+				$event["date"]->format("H"),
+				$event["date"]->format("i"),
+				$event["date"]->format("s"),
+				0
+			) .
+			pack("Vvvvvvvvv", GR_TAG_EVENT_DATE_END,
+				$event["date_end"]->format("Y"),
+				$event["date_end"]->format("n"),
+				$event["date_end"]->format("w"),
+				$event["date_end"]->format("j"),
+				$event["date_end"]->format("H"),
+				$event["date_end"]->format("i"),
+				$event["date_end"]->format("s"),
+				0
+			) .
+			pack("Vl", GR_TAG_EVENT_TYPE, $event["type"]) .
+			pack("Vc", GR_TAG_EVENT_VACATION, intval($event["vacation"])) .
+			pack("V" , GR_TAG_EXE_ARGUMENTS) . packString($argline) . 
+			pack("VV", GR_TAG_MOD_INFO, count($mods["info"]));
+		
+		foreach($mods["info"] as $mod)
+			$output .= 
+				packString($mod["name"], $mod["uniqueid"], $mod["version"]) . 
+				pack("c", intval($mod["forcename"]));
+
 		break;
 	}
 	

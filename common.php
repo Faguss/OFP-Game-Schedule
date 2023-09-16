@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,6,13,2,20,23,1,78,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,9,16,6,18,9,48,303,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -143,6 +143,11 @@ define("GS_SERVER_NOW"       , 0);
 define("GS_SERVER_TODAY"     , 1);
 define("GS_SERVER_FUTURE"    , 2);
 define("GS_SERVER_PERSISTENT", 3);
+
+// Event recurrence types
+define("GS_EVENT_SINGLE", 0);
+define("GS_EVENT_DAILY", 1);
+define("GS_EVENT_WEEKLY", 2);
 
 
 
@@ -973,10 +978,13 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			gs_serv.modified AS modified1,
 			gs_serv.status,
 			gs_serv.status_expires,
+			gs_serv_times.uniqueid AS eventid,
 			gs_serv_times.type, 
 			gs_serv_times.starttime, 
 			gs_serv_times.timezone, 
 			gs_serv_times.duration,
+			gs_serv_times.breakstart,
+			gs_serv_times.breakend,
 			gs_serv_times.modified AS modified2,
 			gs_serv_admins.userid AS admin,
 			gs_serv_admins.modified AS adminsince
@@ -1088,10 +1096,13 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			// Add game time to the list
 			if (!$row["persistent"] && isset($row["starttime"]))
 				$output["info"][$id]["events"][] = [
-					"timezone"  => $row["timezone"], 
-					"starttime" => $row["starttime"], 
-					"type"      => $row["type"], 
-					"duration"  => $row["duration"]
+					"eventid"    => $row["eventid"],
+					"timezone"   => $row["timezone"], 
+					"starttime"  => $row["starttime"], 
+					"type"       => intval($row["type"]), 
+					"duration"   => $row["duration"],
+					"breakstart" => $row["breakstart"],
+					"breakend"   => $row["breakend"]
 				];
 		}
 		
@@ -1104,14 +1115,16 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				$time_zone       = new DateTimeZone($event["timezone"]);				// time zone object
 				$start_date      = new DateTime($event["starttime"], $time_zone);		// when does the game start
 				$start_date_orig = clone $start_date;
+				$vacation_start  = new DateTime($event["breakstart"], $time_zone);
+				$vacation_end    = new DateTime($event["breakend"]. " 23:59:59", $time_zone);
 				$type            = ["single", "weekly", "daily"][$event["type"]];		// recurrence
 				$now             = new DateTime("now", $time_zone);		
 				
-				// if it's a recurrent event then I need to update it to the current time because of DST
-				if ($start_date < $now  &&  $type!="single") {
+				// If it's a recurrent event then I need to update it to the current time because of DST
+				if ($start_date < $now  &&  $event["type"]!=GS_EVENT_SINGLE) {
 					$offset = 0;
 					
-					if ($type=="weekly"  &&  $now->format('w')!=$start_date->format('w')) {
+					if ($event["type"]==GS_EVENT_WEEKLY  &&  $now->format('w')!=$start_date->format('w')) {
 						$now_day   = intval($now->format('w'));
 						$start_day = intval($start_date->format('w'));
 
@@ -1124,14 +1137,34 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 					$start_date->setDate($now->format('Y'), $now->format('m'), $now->format('d'));
 					$start_date->modify("+".$offset." day");
 				}
-				
+								
 				$end_date = clone $start_date;
 				$end_date->modify("+".$event["duration"]."minutes");
 				
+				// If it's a recurrent event and it ended today then move to the next date
+				if ($end_date < $now && $event["type"]!=GS_EVENT_SINGLE) {
+					if ($event["type"] == GS_EVENT_WEEKLY) {
+						$start_date->modify("+7 day");
+						$end_date->modify("+7 day");
+					};
+					
+					if ($event["type"] == GS_EVENT_DAILY) {
+						$start_date->modify("+1 day");
+						$end_date->modify("+1 day");
+					}
+				}
+				
+				// Compensate for vacation
+				$event["vacation"] = false;
+				while($event["type"]!=GS_EVENT_SINGLE && $start_date > $vacation_date && $start_date < $vacation_end) {
+					$offset = $event["type"]==GS_EVENT_WEEKLY ? 7 : 1;
+					$start_date->modify("+$offset day");
+					$end_date->modify("+$offset day");
+					$event["vacation"] = true;
+				}
+				
 				// If the event has not ended
 				if ($end_date > $now) {
-					$playtime = null;
-					
 					if ($request_type == GS_REQTYPE_GAME) {
 						// Localize date time for the user
 						$utc_start = clone $start_date;
@@ -1145,21 +1178,35 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 						if ($language == "Russian") $locale="ru_RU";
 						
 						$formatter = new IntlDateFormatter($locale, IntlDateFormatter::FULL, IntlDateFormatter::FULL, "UTC", IntlDateFormatter::GREGORIAN);
-						$playtime = "\"";
+						$event["description"] = "\"";
 						
-						if ($type=="single" || (($type=="weekly" || $type=="daily") && $start_date_orig > $now)) {
+						if ($event["type"]==GS_EVENT_SINGLE || (($event["type"]==GS_EVENT_WEEKLY || $event["type"]==GS_EVENT_DAILY) && $start_date_orig > $now)) {
 							$formatter->setPattern('d MMMM ');
-							$playtime .= $formatter->format($utc_start);
+							$event["description"] .= $formatter->format($utc_start);
 						}
 						
-						if ($type == "daily")
-							$playtime .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"), $language) . " ";
+						if ($event["type"] == GS_EVENT_DAILY)
+							$event["description"] .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"), $language) . " ";
 						
-						if ($type == "weekly")
-							$playtime .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$utc_start->format("w")), $language) . " ";
+						if ($event["type"] == GS_EVENT_WEEKLY)
+							$event["description"] .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$utc_start->format("w")), $language) . " ";
 						
 						$formatter->setPattern('HH:mm');
-						$playtime .= $formatter->format($utc_start) . " - " . $formatter->format($utc_end) . "\"";
+						$event["description"] .= $formatter->format($utc_start) . " - " . $formatter->format($utc_end) . "\"";
+						
+						$event["date"]     = $start_date;
+						$event["date_end"] = $end_date;
+						$event["date_sqf"] = 
+								"[{$event["type"]},[".
+								$start_date->format("Y").",".
+								$start_date->format("n").",".
+								$start_date->format("j").",".
+								$start_date->format("w").",".
+								$start_date->format("H").",".
+								$start_date->format("i").",".
+								$start_date->format("s").",0,".
+								($time_zone -> getOffset($start_date) / 60).
+								",false],{$event["duration"]}]";
 					}
 					
 					if ($request_type == GS_REQTYPE_WEBSITE) {
@@ -1167,31 +1214,21 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 						$start_date->setTimezone(new DateTimeZone("UTC"));
 						
 						// Describe event
-						$playtime_text   = "";
-						$playtime_format = "Y jS F H:i";
+						$event["description"] = "";
+						$playtime_format      = "Y jS F H:i";
 						
-						if (($type!="single") && $now < $start_date_orig)
-							$playtime_text .= $start_date_orig->format("Y jS F. ");
+						if (($event["type"]!=GS_EVENT_SINGLE) && $now < $start_date_orig)
+							$event["description"] .= $start_date_orig->format("Y jS F. ");
 						
-						switch($type) {
-							case "weekly" : $playtime_text.=lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$start_date->format("w"))." "; $playtime_format="H:i"; break;
-							case "daily"  : $playtime_text.=lang("GS_STR_SERVER_EVENT_REPEAT_DAILY_DESC")." "; $playtime_format="H:i"; break;
+						switch($event["type"]) {
+							case GS_EVENT_WEEKLY : $event["description"].=lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$start_date->format("w"))." "; $playtime_format="H:i"; break;
+							case GS_EVENT_DAILY  : $event["description"].=lang("GS_STR_SERVER_EVENT_REPEAT_DAILY_DESC")." "; $playtime_format="H:i"; break;
 						}
 						
-						$playtime_text .= $start_date->format($playtime_format) . $end_date->format(" - H:i T P");
-						
-						$playtime = [
-							"type"        => intval($row["type"]), 
-							"date"        => $start_date->getTimestamp(),
-							"starttime"   => $start_date->format('c'),
-							"duration"    => intval($row["duration"]),
-							"description" => $playtime_text,
-							"started"     => $now > $start_date_orig
-						];
+						$event["description"] .= $start_date->format($playtime_format) . $end_date->format(" - H:i T P");
+						$event["iso8601"]      = $start_date->format('c');
+						$event["started"]      = $now > $start_date_orig && !$event["vacation"];
 					}
-					
-					$event["date"]           = $start_date;
-					$event["date_formatted"] = $playtime;
 				
 					$event_category = GS_SERVER_NOW;
 					
@@ -1738,7 +1775,6 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 	return $output;
 }
 
-
 // Handle url query string
 function GS_get_common_input() {
 	$input      = ["modver"=>[]];
@@ -1791,10 +1827,7 @@ function GS_get_current_url($add_https=true, $add_path=true) {
 // Read array with servers and output html
 function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTIONS, $server_order=[]) {
 	$html                 = "";
-	$js_starttime         = [];
-	$js_duration          = [];
-	$js_type              = [];
-	$js_started           = [];
+	$js_event_data        = [];
 	$user_list            = [];
 	$js_addedon           = [];
 	$js_serv_id           = [];
@@ -1858,6 +1891,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 
 		$server            = $servers["info"][$id];
 		$server_name       = empty($server["name"]) ? $server["uniqueid"] : $server["name"];
+		$current_event_data = [];
 		$current_starttime = [];
 		$current_duration  = [];
 		$current_type      = [];
@@ -1952,10 +1986,12 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 					$dd_class = "servergametime";
 					foreach ($server["events"] as $event) {
 						$value .= (empty($value) ? "" : "<br>") . $event["description"];
-						$current_starttime[] = $event["starttime"];
-						$current_duration[]  = $event["duration"];
-						$current_type[]      = $event["type"];
-						$current_started[]   = $event["started"];
+						$current_event_data[] = [
+							"starttime" => $event["iso8601"],
+							"duration"  => $event["duration"],
+							"type"      => $event["type"],
+							"started"   => $event["started"]
+						];
 					}
 				} break;
 				
@@ -1972,12 +2008,9 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 				$html .= "<dt>{$name}:</dt><dd".($dd_class!="" ? " class=\"$dd_class\"" : "").">{$value}</dd>";
 		}
 		
-		$js_starttime[] = $current_starttime;
-		$js_duration[]  = $current_duration;
-		$js_type[]      = $current_type;
-		$js_started[]   = $current_started;
-		$js_serv_id[]   = $uniqueid;
-		$js_expired[]   = strtotime("now") > strtotime($server["status_expires"]);
+		$js_event_data[] = $current_event_data;
+		$js_serv_id[]    = $uniqueid;
+		$js_expired[]    = strtotime("now") > strtotime($server["status_expires"]);
 		
 		// Add server status
 		$server_status_name    = $server_status_list[0];
@@ -2060,7 +2093,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 	<script type=\"text/javascript\" src=\"usersc/js/moment.js\"></script>
 	<script type=\"text/javascript\" src=\"usersc/js/{$locale_file}.js\"></script>
 	<script type=\"text/javascript\">
-		GS_convert_server_events(".json_encode($js_starttime).",".json_encode($js_duration).",".json_encode($js_type).",".json_encode($js_started).",".json_encode($localized_strings).");
+		GS_convert_server_events(".json_encode($js_event_data).",".json_encode($localized_strings).",".json_encode(["GS_EVENT_SINGLE"=>GS_EVENT_SINGLE,"GS_EVENT_WEEKLY"=>GS_EVENT_WEEKLY,"GS_EVENT_DAILY"=>GS_EVENT_DAILY]).");
 		GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");";
 		
 	// Show server status

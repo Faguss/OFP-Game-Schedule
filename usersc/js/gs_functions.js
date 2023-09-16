@@ -25,7 +25,7 @@ function GS_sort_by_date_asc(item1, item2) {
 }
 
 // Describes date in a readable format for each event associated with a server
-function GS_format_event_list(data, list_id, stringtable) {
+function GS_format_event_list(data, list_id, stringtable, event_types) {
 	var now    = moment();
 	var output = [];
 	
@@ -34,18 +34,20 @@ function GS_format_event_list(data, list_id, stringtable) {
 		var starttime = data[i]["starttime"];
 		var duration  = data[i]["duration"];
 
-		var start     = moment(starttime);
-		var end       = moment(starttime).add(duration, "minutes");
-		var day       = start.day();
-		var hour      = start.hour();
-		var minute    = start.minute();
+		var start      = moment(starttime);
+		var end        = moment(starttime).add(duration, "minutes");
+		var day        = start.day();
+		var hour       = start.hour();
+		var minute     = start.minute();
+		var breakstart = moment(data[i]["breakstart"]);
+		var breakend   = moment(data[i]["breakend"]).set({'hour':23, 'minute':59, 'second':59});
 
 		// If this is a recurring event then adjust date
-		if (type!=0  &&  now.isAfter(end)) {
+		if (type!=event_types["GS_EVENT_SINGLE"]  &&  now.isAfter(end)) {
 			start = now.clone();	// Set to today
 			start.set({'hour':hour, 'minute':minute, 'second':0, 'milisecond':0});
 			
-			if (type == 1)	// Set to this week
+			if (type == event_types["GS_EVENT_WEEKLY"])	// Set to this week
 				start.day(day);
 				
 			end = start.clone();
@@ -53,10 +55,19 @@ function GS_format_event_list(data, list_id, stringtable) {
 			
 			// If the event has ended then set it to future
 			if (now.isAfter(end)) {
-				start.add( (type==1 ? 7 : 1) , "days");
+				start.add( (type==event_types["GS_EVENT_WEEKLY"] ? 7 : 1) , "days");
 				end = start.clone();
 				end.add(duration, "minutes");
 			}
+		}
+		
+		// Compensate for vacation
+		if (type != event_types["GS_EVENT_SINGLE"]) {
+			while(start.isAfter(breakstart) && start.isBefore(breakend)) {
+				start.add( (type==event_types["GS_EVENT_WEEKLY"] ? 7 : 1) , "days");
+			}
+			end = start.clone();
+			end.add(duration, "minutes");
 		}
 			
 		var description = "";
@@ -79,7 +90,9 @@ function GS_format_event_list(data, list_id, stringtable) {
 			"uniqueid"   : data[i]["uniqueid"], 
 			"user"       : data[i]["user"], 
 			"timezone"   : data[i]["timezone"], 
-			"duration"   : duration
+			"duration"   : duration,
+			"breakstart" : breakstart,
+			"breakend"   : breakend
 		});
 	}
 		
@@ -132,6 +145,8 @@ function GS_make_event_editable(list, data, form_inputs, edit_button_id, languag
 							case 1: new_value=data[j]["timezone"]; break;
 							case 2: new_value=data[j]["type"]; break;
 							case 3: new_value=data[j]["duration"]; break;
+							case 4: new_value=data[j]["breakstart"].format("Do MMMM [(]dddd[)] YYYY"); break;
+							case 5: new_value=data[j]["breakend"].format("Do MMMM [(]dddd[)] YYYY"); break;
 						}
 
 						form_input.value = new_value;
@@ -144,6 +159,17 @@ function GS_make_event_editable(list, data, form_inputs, edit_button_id, languag
 					edit_button.style.display = "inline-block";
 					return;
 				}
+}
+
+// Show/hide vacation start and end date controls if the event is recurring
+function GS_show_vacation_controls(select_name, vacation_controls) {
+	var select_control = document.getElementById(select_name);
+	var show           = select_control.options[select_control.selectedIndex].value!='0' ? 'block' : 'none';
+	
+	for(var i=0; i<vacation_controls.length; i++) {
+		var vacation_control = document.getElementById(vacation_controls[i]);
+		vacation_control.style.display = show;
+	}
 }
 
 // Show/hide mod tables based on current category selection
@@ -1254,56 +1280,60 @@ function GS_confirm_transfer_ownership(checkboxes_name, message) {
 /* index.php */
 
 // Localize event dates when displaying server info
-function GS_convert_server_events(starttime, duration, types, started, stringtable) {
+function GS_convert_server_events(event_data, stringtable, event_types) {
 	var now      = moment();
 	var all_tags = document.getElementsByClassName("servergametime");
 
 	for (var i=0; i<all_tags.length; i++) {
 		var new_text = "";
 
-		for (var j=0; j<starttime[i].length; j++) {
-			var type   = types[i][j];
-			var start  = moment(starttime[i][j]);
-			var start2 = moment(starttime[i][j]);
-			var end    = moment(starttime[i][j]).add(duration[i][j], "minutes");
+		for (var j=0; j<event_data[i].length; j++) {
+			var starttime = event_data[i][j]["starttime"];
+			var duration  = event_data[i][j]["duration"];
+			var type      = event_data[i][j]["type"];
+			var started   = event_data[i][j]["started"];
+			
+			var start  = moment(starttime);
+			var start2 = moment(starttime);
+			var end    = moment(starttime).add(duration, "minutes");
 			var day    = start.day();
 			var hour   = start.hour();
 			var minute = start.minute();
 
 			// If this is a recurring event then adjust date
-			if (type!=0  &&  now.isAfter(end)) {
+			if (type!=event_types["GS_EVENT_SINGLE"]  &&  now.isAfter(end)) {
 				start = now.clone();	// Set to today
 				start.set({'hour':hour, 'minute':minute, 'second':0, 'milisecond':0});
 				
-				if (type == 1)	// Set to this week
+				if (type == event_types["GS_EVENT_WEEKLY"])	// Set to this week
 					start.day(day);
 					
 				end = start.clone();
-				end.add(duration[i][j], "minutes");
+				end.add(duration, "minutes");
 				
 				// If the event has ended then set it to future
 				if (now.isAfter(end)) {
-					start.add( (type==1 ? 7 : 1) , "days");
+					start.add( (type==event_types["GS_EVENT_WEEKLY"] ? 7 : 1) , "days");
 					end = start.clone();
-					end.add(duration[i][j], "minutes");
+					end.add(duration, "minutes");
 				}
 			}			
 			
 			var description = "";
 			
 			switch(type) {
-				case 0 : 
+				case event_types["GS_EVENT_SINGLE"] : 
 					description += start.format("Do MMMM [(]dddd[)]"); 
 					break;
 				
-				case 1 : 
-					if (!started[i][j])
+				case event_types["GS_EVENT_WEEKLY"] : 
+					if (!started)
 						description += start2.format("Do MMMM[. ] ");
 					description += stringtable[start.format("d")]; 
 					break;
 					
-				case 2 : 
-					if (!started[i][j])
+				case event_types["GS_EVENT_DAILY"] : 
+					if (!started)
 						description += start2.format("MMMM Do YYYY, ");
 					description += stringtable["Daily"]; 
 					break;

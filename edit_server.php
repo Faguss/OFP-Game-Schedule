@@ -185,6 +185,8 @@ if ($form->hidden["display_form"] == "Schedule")
 			gs_serv_times.starttime, 
 			gs_serv_times.timezone, 
 			gs_serv_times.duration, 
+			gs_serv_times.breakstart,
+			gs_serv_times.breakend,
 			users.username 
 			
 		FROM 
@@ -242,14 +244,19 @@ if ($form->hidden["display_form"] == "Schedule")
 
 	$form->add_datetime("starttime" , lang("GS_STR_SERVER_EVENT_DATE"));
 	$form->add_select("timezone"    , lang("GS_STR_SERVER_EVENT_TIMEZONE"), "", $timezone_select_list, $user_time_zone);
-	$form->add_select("type"        , lang("GS_STR_SERVER_EVENT_REPEAT")  , "", [[lang("GS_STR_SERVER_EVENT_REPEAT_SINGLE"),0], [lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY"),1], [lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"),2]], 0);
+	$form->add_select("type"        , lang("GS_STR_SERVER_EVENT_REPEAT")  , "", [[lang("GS_STR_SERVER_EVENT_REPEAT_SINGLE"),GS_EVENT_SINGLE], [lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY"),GS_EVENT_WEEKLY], [lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"),GS_EVENT_DAILY]], 0);
 	$form->add_text("duration"      , lang("GS_STR_SERVER_EVENT_LENGTH")  , lang("GS_STR_SERVER_EVENT_MINUTES"), "60", 60);
+	$form->add_datetime("breakstart", lang("GS_STR_SERVER_EVENT_BREAKSTART"), date('Y-m-d',strtotime("-1 days")), "jS F (l) Y", "Y-m-d");
+	$form->add_datetime("breakend"  , lang("GS_STR_SERVER_EVENT_BREAKEND"), date('Y-m-d',strtotime("-1 days")), "jS F (l) Y", "Y-m-d");	
 	$form->add_button("action"      , $form->hidden["display_form"]       , lang("GS_STR_SERVER_EVENT_SUBMIT"), "btn-primary",  "SubmitButton");
 	$form->add_button("action"      , "Edit"                              , lang("GS_STR_SERVER_EVENT_EDIT"), "btn-info", "EditButton", "STYLE=\"display:none\"");
 	$form->add_space();
 	$form->add_select("schedulelist", lang("GS_STR_SERVER_EVENT_CURRENT") , "", [], "", GS_PERMISSION_MAX_SERV_SCHEDULE[$gs_my_permission_level]);
 	
 	$form->change_control(["ID"=>["SubmitButton","EditButton"]], ["Inline"=>3]);
+	$form->change_control("breakstart", ["Group"=>"id=\"breakstart_group\""]);
+	$form->change_control("breakend", ["Group"=>"id=\"breakend_group\""]);
+	$form->change_control("type", ["Property"=>"onChange=\"GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])\""]);
 
 	
 	
@@ -276,6 +283,8 @@ if ($form->hidden["display_form"] == "Schedule")
 					"userid"     => $uid,
 					"type"       => $data["type"],
 					"starttime"  => $data["starttime"],
+					"breakstart" => $data["breakstart"],
+					"breakend"   => $data["breakend"],
 					"timezone"   => $data["timezone"],
 					"duration"   => $data["duration"],
 					"modified"   => date("Y-m-d H:i:s"),
@@ -377,25 +386,33 @@ if ($form->hidden["display_form"] == "Schedule")
 			$user_info         = lang("GS_STR_ADDED_BY")." {$item["username"]}";
 			
 			$js_curr_schedule["data"][] = [
-				"type"      => $item["type"], 
-				"typename"  => $typename,
-				"starttime" => $iso8601, 
-				"duration"  => $item["duration"], 
-				"uniqueid"  => $item["uniqueid"],
-				"timezone"  => $item["timezone"], 
-				"user"      => $user_info
+				"type"       => $item["type"], 
+				"typename"   => $typename,
+				"starttime"  => $iso8601, 
+				"duration"   => $item["duration"], 
+				"uniqueid"   => $item["uniqueid"],
+				"timezone"   => $item["timezone"], 
+				"user"       => $user_info,
+				"breakstart" => $item["breakstart"],
+				"breakend"   => $item["breakend"]
 			];
 		}
 
 		
-		$form->change_control("schedulelist", ["Options"=>$schedule_select, "Property"=>"onChange=\"GS_display_info_when_selected(this,'{$form->hidden["display_form"]}',$js_new_array,'$description_field'); GS_make_event_editable(this,$js_new_array,['starttime_input','timezone','type','duration'],'EditButton')\""]);
+		$form->change_control("schedulelist", [
+			"Options"=>$schedule_select, 
+			"Property"=>"onChange=\"
+				GS_display_info_when_selected(this,'{$form->hidden["display_form"]}',$js_new_array,'$description_field'); 
+				GS_make_event_editable(this,$js_new_array,['starttime_input','timezone','type','duration','breakstart_input','breakend_input'],'EditButton')
+				GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])\""
+		]);
 		$form->add_button("action", "Cancel", lang("GS_STR_SERVER_EVENT_REMOVE"), "btn-warning");
 		$form->add_emptyspan($description_field);
 		$form->include_file("usersc/js/ru.js");
 		$form->add_html("
 			<SCRIPT TYPE=\"text/javascript\">
 				var {$js_curr_schedule["name"]} = ".json_encode($js_curr_schedule["data"])."
-				var $js_new_array = GS_format_event_list({$js_curr_schedule["name"]},'schedulelist',".json_encode($localized_strings).");
+				var $js_new_array = GS_format_event_list({$js_curr_schedule["name"]},'schedulelist',".json_encode($localized_strings).",".json_encode(["GS_EVENT_SINGLE"=>GS_EVENT_SINGLE,"GS_EVENT_WEEKLY"=>GS_EVENT_WEEKLY,"GS_EVENT_DAILY"=>GS_EVENT_DAILY]).");
 			</SCRIPT>");
 	} else
 		$form->remove_controls_until(["Name"=>"action"]);
