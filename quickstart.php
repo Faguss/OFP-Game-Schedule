@@ -33,7 +33,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Double-click on the server name to show available options. If you lack required mods then double-click on the \"Download\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Wait for the installer to finish. Playing the game or even quitting it won't affect the installation",
 	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Once it's done go to the server options again and double-click on the \"Connect\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "If the game starts later the same day then you can enable auto-join on time",
+	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "There's also an option to connect automatically to a scheduled game",
 	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Have fun playing!"
 	));
 }
@@ -59,7 +59,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Нажмите два раза на название сервера, чтобы просмотреть опции. Если Вам не хватает необходимых модов, нажмите два раза на \"Скачать\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Дождитесь завершения установки. Установка не прервётся во время или при закрытии игры",
 	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Как только установка закончится, перейдите к опциям сервера и нажмите два раза на \"Подключиться\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "Если игра начинается позже в этот же день, то есть опция автоматического подключения во время начала.",
+	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "Так же есть возможность автоматически подключиться к запланированной игре",
 	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Приятной игры!"
 	));
 }
@@ -85,7 +85,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Kliknij dwa razy na nazwie serwera żeby wyświetlić opcje. Jeśli nie masz wymaganych modów to kliknij dwa razy na \"Ściągnij\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Zaczekaj aż instalator skończy. Granie albo wyjście z gry nie ma wpływu na proces instalacji",
 	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Po instalacji przejdź ponownie do opcji serwera i kliknij podwójnie na \"Dołącz\"",
-	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "Jeśli rozgrywka zacznie się później tego samego dnia to możesz włączyć automatyczne podłączenie się o czasie",
+	"GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT" => "Masz również opcję automatycznego podłączenia się do zaplanowanej gry",
 	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Miłej zabawy!"
 	));
 }

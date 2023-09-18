@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,9,16,6,18,9,48,303,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,9,18,1,23,40,8,665,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1168,10 +1168,10 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 					if ($request_type == GS_REQTYPE_GAME) {
 						// Localize date time for the user
 						$utc_start = clone $start_date;
-						$utc_start->modify(($timeoffset>0?"+":"").$timeoffset." minutes");
+						$utc_start->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
 						
 						$utc_end = clone $end_date;
-						$utc_end->modify(($timeoffset>0?"+":"").$timeoffset." minutes");
+						$utc_end->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
 						
 						$locale = "en_GB";
 						if ($language == "Polish") $locale="pl_PL";

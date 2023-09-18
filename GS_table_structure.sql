@@ -142,16 +142,15 @@ INSERT INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
 -- --------------------------------------------------------
 
 -- phpMyAdmin SQL Dump
--- version 4.9.5
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 08, 2023 at 05:07 PM
+-- Generation Time: Sep 18, 2023 at 10:38 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 7.4.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -380,6 +379,8 @@ CREATE TABLE `gs_serv_times` (
   `starttime` timestamp NOT NULL DEFAULT current_timestamp(),
   `timezone` varchar(100) NOT NULL DEFAULT 'Europe/Warsaw',
   `duration` int(11) NOT NULL DEFAULT 60,
+  `breakstart` date NOT NULL DEFAULT '0000-00-00',
+  `breakend` date NOT NULL DEFAULT '0000-00-00',
   `uniqueid` varchar(10) NOT NULL,
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `createdby` int(11) NOT NULL DEFAULT 0,

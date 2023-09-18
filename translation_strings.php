@@ -1,7 +1,7 @@
 <?php
 $mainmenu_updated = [	
 	"en-US" => [],
-	"ru-RU" => [85,86,87,88,89,88,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108],
+	"ru-RU" => [85,86,87,88,89,88,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111],
 	"pl-PL" => [],
 ];
 $mainmenu = [
@@ -118,6 +118,7 @@ $mainmenu = [
 		109 => "[Create Shortcut]",
 		110 => "Shortcut name",
 		111 => "Select mods for the shortcut",
+		112 => "[Pause]",
 	],
 
 	"ru-RU" => [
@@ -233,6 +234,7 @@ $mainmenu = [
 		109 => "[Создать Ярлык]",
 		110 => "сокращенное имя",
 		111 => "выбрать моды для ярлыка",
+		112 => "[Пауза]",
 	],
 
 	"pl-PL" => [
@@ -348,6 +350,7 @@ $mainmenu = [
 		109 => "[Utwórz Skrót]",
 		110 => "Nazwa skrótu",
 		111 => "Wybierz mody dla skrótu",
+		112 => "[Wstrzymaj]",
 	]
 ];
 
@@ -424,7 +427,8 @@ $addoninstaller = [
 		"STR_PBO_UNPACK_ERROR" => "Failed to unpack PBO",
 		"STR_EDIT_READ_ERROR" => "Failed to read file",
 		"STR_EDIT_WRITE_ERROR" => "Failed to create file",
-		"STR_ACTION_READMISSIONSQM" => "Reading mission.sqm"
+		"STR_ACTION_READMISSIONSQM" => "Reading mission.sqm",
+		"STR_ASK_RETRYORABORT" => "Select 'Retry' or 'Abort'",
     ],
 
 	"ru-RU" => [
@@ -494,7 +498,8 @@ $addoninstaller = [
 		"STR_PBO_UNPACK_ERROR" => "Ошибка при извлечении из архива PBO",
 		"STR_EDIT_READ_ERROR" => "Ошибка при считывании",
 		"STR_EDIT_WRITE_ERROR" => "Ошибка при создании файла",
-		"STR_ACTION_READMISSIONSQM" => "Считывание mission.sqm"
+		"STR_ACTION_READMISSIONSQM" => "Считывание mission.sqm",
+		"STR_ASK_RETRYORABORT" => "Выберите 'Заново' или 'Отмена'",
     ],
 
     "pl-PL" => [
@@ -564,7 +569,8 @@ $addoninstaller = [
 		"STR_PBO_UNPACK_ERROR" => "Nie można rozpakować PBO",
 		"STR_EDIT_READ_ERROR" => "Nie można wczytać pliku",
 		"STR_EDIT_WRITE_ERROR" => "Nie można utworzyć pliku",
-		"STR_ACTION_READMISSIONSQM" => "Przetwarzanie mission.sqm"
+		"STR_ACTION_READMISSIONSQM" => "Przetwarzanie mission.sqm",
+		"STR_ASK_RETRYORABORT" => "Wybierz 'Kontynuuj' lub 'Przerwij'",
     ]
 ];
 ?>
