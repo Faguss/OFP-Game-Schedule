@@ -1202,6 +1202,757 @@ function GS_activate_convertlink_modal() {
 	}	
 }
 
+// https://locutus.io/php/strings/substr_replace/
+function GS_substr_replace(str, replace, start, length) {
+	if (start < 0) {
+		start = start + str.length;
+	}
+	length = length !== undefined ? length : str.length;
+	if (length < 0) {
+		length = length + str.length - start;
+	}
+	return [
+		str.slice(0, start),
+		replace.substr(0, length),
+		replace.slice(length),
+		str.slice(start + length)
+	].join('');
+}
+
+// Interpret expression typed by the user (for jumping between mod versions)
+function GS_parse_jump_rule(string, from_version, to_version) {
+	string = string.replace("&lt;", "<");
+	string = string.replace("&gt;", ">");
+	string = string.toLowerCase();
+	string = string.trim();
+	
+	var max        = string.length;
+	var lastType   = "";
+	var wordStart  = 0;
+	var triadStart = 0;
+	var i          = 0;
+	var triad      = [];
+	var comparison = ["==", "=", "!=", "<>", ">", "<", ">=", "<="];
+	var logical    = ["and", "or", "&&", "||"];
+	var macro      = ["v", "ver", "version"];
+	
+	if (max == 0)
+		return false;
+	
+	// For each letter
+	while (i <= max) {
+		var letter = string[i]!=null ? string[i] : "";
+		var type   = "";
+		
+			// Handle parentheses ------------------------------
+			if (letter == ")") 
+				return "parenthesis closed without being opened at "+i+": <SPAN STYLE=\"font-family:monospace;\">" + string.substr(0,i+1) + "</SPAN>";
+
+			if (letter == "(") {
+				level = 0;
+
+				for (var j=i;  j<max;  j++) {
+					if (string[j] == "(")
+						level++;
+
+					if (string[j] == ")")
+						level--;
+					
+					if (level == 0)
+						break;
+				}
+				
+				if (level == 0) {
+					parenthesis = string.substr(i+1, j-i-1);
+					result      = GS_parse_jump_rule(parenthesis, from_version, to_version);
+					
+					if (typeof result === 'string')
+						return result;
+					else
+						result = result ? "true" : "false";
+
+					triad      = [];
+					//string, replace, offset, length
+					string     = GS_substr_replace(string, result, i, j-i+1);
+					max        = string.length;
+					lastType   = "";
+					i          = 0;
+					wordStart  = 0;
+					triadStart = 0;
+					continue;
+				} else
+					return "parenthesis opened without being closed at " + i + ": <SPAN STYLE=\"font-family:monospace;\">" + string.substr(i) + "</SPAN>";
+			}
+			// -------------------------------------------------
+		
+		
+		// Find word type to be able to separate word from other words
+		if (letter.length > 0) {
+			if (letter.match(/[a-z]/i))
+				type = "letter";
+			
+			if (!isNaN(letter)  ||  [".","-"].includes(letter))
+				type = "number";
+			
+			if (["<",">","=","!","&","|"].includes(letter))
+				type = "operator";
+		}
+		
+		
+		// Extract word
+		if (lastType != type) {
+			word = string.substr(wordStart, i-wordStart);
+			word = word.trim();
+			const whitespace = /\s/
+
+			if (word.length>0  &&  !whitespace.test(word)) {
+				triad.push(word);
+				
+				if (lastType=="letter"  &&  !macro.some(e => e === word)  &&  !logical.some(e => e === word)  &&  !["true","false"].some(e => e === word))
+					return "invalid operand \""+word+"\" in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+			}
+
+			// When built a full expression
+			if (triad.length == 3) {
+				// Replace 'ver' with version number and bools with actual bools
+				for (z=0; z<3; z++) {
+					if (macro.some(e => e === triad[z]))
+						triad[z] = from_version;
+					
+					if (["true","false"].some(e => e === triad[z]))
+						triad[z] = triad[z]=="true" ? true : false;
+				}
+				
+				l  = triad[0];
+				op = triad[1];
+				r  = triad[2];
+				
+				// If logic operator doesn't have two boolean arguments then keep going
+				if (logical.includes(op)  &&  (!typeof l != "boolean" || !typeof r != "boolean")) {
+					if (typeof l != "boolean")
+						return "left operand must be boolean in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+					else {
+						i          = wordStart;
+						triadStart = wordStart;
+						lastType   = "";
+						triad      = [];
+						continue;
+					}
+				}
+				
+				// Verify numbers
+				if (comparison.includes(op)) {
+					if (isNaN(l) || isNaN(r))
+						return "operands must be numbers in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+					
+					if (l>to_version  ||  r>to_version)
+						return "number cannot be larger than " + to_version + " in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+					
+					if (op==">" && r==to_version  ||  op=="<" && l==to_version)
+						return "comparison going out of range in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+					
+					if ([l,r].includes(to_version)  &&  ["=","==","<=",">="].some(e => e === op))
+						return "number cannot be equal " + to_version + " in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+				}
+				
+				if (logical.includes(op)  &&  (typeof l != "boolean" || typeof r != "boolean"))
+					return "operands must be booleans in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+
+				result = "";
+		
+				// Evaluate expression
+				switch (op) {
+					case "=="  : 
+					case "="   : result=l == r; break;
+					case "!="  :
+					case "<>"  : result=l != r; break;
+					case ">"   : result=l > r; break;
+					case "<"   : result=l < r; break;
+					case ">="  : result=l >= r; break;
+					case "<="  : result=l <= r; break;
+					case "or"  : 
+					case "||"  : result=l || r; break;
+					case "and" : 
+					case "&&"  : result=l && r; break;
+					default    : return "invalid operator " + op + " in <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+				}
+				
+				// Insert result into string and reset parsing
+				result     = result ? "true" : "false";
+				string     = GS_substr_replace(string, result, triadStart, i-triadStart);
+				max        = string.length;
+				i          = 0;
+				wordStart  = 0;
+				triadStart = 0;
+				lastType   = "";
+				triad      = [];
+				continue;
+			} else
+				// Finished string - return result
+				if (i >= max) {
+					if (triad.length == 1) {
+						if (word == "true")
+							return true;
+						else
+							if (word == "false")
+								return false;
+					}
+							
+					return "incomplete expression <SPAN STYLE=\"font-family:monospace;\">" + string.substr(triadStart,i-triadStart) + "</SPAN>";
+				}
+
+			// Move on to the next word
+			lastType  = type;
+			wordStart = i;
+		}
+		
+		i++;
+	}
+}
+
+// Prepare complete installation data for preview
+function GS_prepare_installation_data(input_version) {
+	var output             = {updates:[], allversions:[], size:"", version:0};
+	var current_version    = input_version;
+	var temp_scripts_id    = [];
+	var download_size      = [0   , 0   , 0   ];
+	var download_size_unit = ["gb", "mb", "kb"];
+
+	// Go through every version of this mod
+	Update_List.forEach((update) => {
+		var toversion = update.version;
+		var script_id = update.uniqueid;
+		var changelog = update.changelog; /*nl2br(htmlspecialchars($update["changelog"]));*/
+		var date      = update.created;
+		
+		var script_record = Script_Contents.find((e) => e.uniqueid === script_id);
+		var size          = script_record.sizenumber;
+		var size_type     = script_record.sizetype;
+		var script        = script_record.script;
+
+		// Look for a valid jump between versions
+		for (var i=0; i<Links_List.length; i++) {
+			jump = Links_List[i];
+			
+			var destination_version = jump.version;
+			
+			if (destination_version == "-1")
+				destination_version = Update_List[Update_List.length - 1].version;
+			
+			var parse_result = GS_parse_jump_rule(jump.fromver, current_version, destination_version);
+
+			if (parse_result === true) {
+				toversion = destination_version;
+				script_id = jump.scriptUniqueID;
+				
+				script_record = Script_Contents.find((e) => e.uniqueid === script_id);
+				size          = script_record.sizenumber;
+				size_type     = script_record.sizetype;
+				script        = script_record.script;
+				
+				// Find date of the update that is being jumped to
+				var update_record = Script_Contents.find((e) => e.version === toversion);
+				if (update_record)
+					date = update_record.created;
+				
+				break;
+			}
+		}
+
+		// Add version details to the array
+		var update_index = false;
+
+		// If update is going sequentially then current version is smaller than update version - add info from the update
+		if (current_version < toversion) {
+			current_version = toversion;
+
+			// If script is not duplicated then add it
+			if (!temp_scripts_id.includes(script_id)) {
+				temp_scripts_id.push(script_id);
+				output.updates.push({
+					version:toversion,
+					date:date,
+					script:script,
+					//createdby:update.created_by,
+					note:[],
+					note_date:[],
+					note_version:[],
+					note_author:[]
+				});
+
+				/*if (!in_array($update["update_createdby"], $output["userlist"]))
+					$output["userlist"][] = $update["update_createdby"];*/
+
+				var size_index = download_size_unit.indexOf(size_type.toLowerCase());
+				if (size_index >= 0)
+					download_size[size_index] += Number(size);
+			} else {
+				// If script is duplicated then find update that uses this script and change its version number and date
+				update_index = temp_scripts_id.indexOf(script_id);
+				
+				for (var i=temp_scripts_id.length-1; i>=0 && script_id == temp_scripts_id[i]; i--) {
+					output.updates[i].version = current_version;
+					output.updates[i].date    = date;
+				}
+			}
+		} else {
+			// If a jump was made then current version is higher than the update version - add all info from the "smaller" updates to the last item in the array       
+			if (output.updates.length > 0)
+				update_index = output.updates.length - 1;
+		}
+
+		output.allversions.push(update.version);
+
+		// Add patch notes for every version above input mod version			
+		if (input_version==0 || toversion>input_version) {
+			// If there was a jump or script was duplicated then add to the existing array (and refresh date)
+			if (update_index !== false)
+				output.updates[update_index].date = date;
+			else
+				// otherwise add to the last array
+				update_index = output.updates.length>0 ? output.updates.length-1 : 0;
+		
+			output.updates[update_index].note.push(changelog);
+			output.updates[update_index].note_date.push(date);
+			output.updates[update_index].note_version.push(update.version);
+			//output.updates[update_index].note_author.push(update["update_createdby"]);
+		
+			/*if (!in_array($update["update_createdby"], $output["userlist"]))
+				$output["userlist"][] = $update["update_createdby"];*/
+		}
+	});
+	
+	output.size = "0 KB";
+	
+	if (download_size[2] > 1024) {
+		var full_megs     = download_size[2] / 1024;
+		download_size[1] += full_megs;
+		download_size[0] -= full_megs  * 1024;
+	}
+	
+	if (download_size[1] > 1024) {
+		var full_gigs     = download_size[1] / 1024;
+		download_size[0] += full_gigs;
+		download_size[1] -= full_gigs  * 1024;
+	}
+	
+	if (download_size[0] > 0) {
+		download_size[0] += download_size[1]/1024 + download_size[2]/1048576;
+		output.size       = download_size[0].toFixed(1) + " GB";
+	} else
+		if (download_size[1] > 0) {
+			download_size[1] += download_size[2] / 1024;
+			output.size       = download_size[1].toFixed(1) + " MB";
+		} else
+			if (download_size[2] > 0)
+				output.size = download_size[2].toFixed(1) + " KB";
+	
+	output.version = current_version;
+
+	return output;
+};
+
+// Code highlighting for addon installer scripting language
+function GS_scripting_highlighting(code) {
+	var all_commands = {
+		auto_install    : "auto_installation",
+		download        : "get",
+		get             : "get",
+		unpack          : "unpack",
+		extract         : "unpack",
+		move            : "move",
+		copy            : "move",
+		makedir         : "makedir",
+		newfolder       : "makedir",
+		ask_run         : "ask_run",
+		ask_execute     : "ask_run",
+		begin_mod       : "",
+		delete          : "delete",
+		remove          : "delete",
+		rename          : "rename",
+		ask_download    : "ask_get",
+		ask_get         : "ask_get",
+		if_version      : "if_version",
+		else            : "if_version",
+		endif           : "if_version",
+		makepbo         : "makepbo",
+		extractpbo      : "unpbo",
+		unpackpbo       : "unpbo",
+		unpbo           : "unpbo",
+		edit            : "edit",
+		begin_ver       : "",
+		alias           : "alias",
+		merge_with      : "alias",
+		filedate        : "filedate",
+		install_version : "",
+		exit            : "exit",
+		quit            : "exit"
+	};
+	var command_switches_names = [
+		"/password:",
+		"/no_overwrite",
+		"/match_dir",
+		"/keep_source",
+		"/insert",
+		"/newfile",
+		"/append",
+		"/match_dir_only"
+	];
+	var word_begin            = -1;
+	var word_count            = 1;
+	var arg_count             = 1;
+	var word_line_num         = 1;
+	var command_id            = null;
+	var last_command_line_num = -1;
+	var last_url_list_id      = -1;
+	var in_quote              = false;
+	var remove_quotes         = true;
+	var url_block             = false;
+	var url_line              = false;
+	var instruction_id        = [];
+	var instruction_line      = [];
+	var instruction_arg       = [];
+	var instruction_arg_id    = [];
+	var url_list              = [];
+	var url_list_id           = [];
+	var output                = "";
+	var is_url                = function (text) {return text.substr(0,7)=="http://" || text.substr(0,8)=="https://" || text.substr(0,6)=="ftp://" || text.substr(0,4)=="www.";};
+	const whitespace = /\s/;
+	
+	for(var i=0; i<=code.length; i++) {
+		var end_of_word = i==code.length || whitespace.test(code[i]);
+		
+		// When quote
+		if (code[i]=="\""  ||  code.substr(i,6)=="&quot;")
+			in_quote = !in_quote;
+		
+		// If beginning of an url block
+		if (code[i]=="{"  &&  word_begin<0) {
+			url_block = true;
+	
+			// if bracket is the first thing in the line then it's auto installation
+			if (word_count == 1) {
+				last_command_line_num = word_line_num;
+				instruction_id.push("auto_install");
+				instruction_line.push(word_line_num);
+			}
+			
+			output += "{";
+			continue;
+		}
+		
+		// If ending of an url block
+		if (code[i]=="}"  &&  url_block) {
+			end_of_word = true;
+			
+			// If there's space between last word and the closing bracket
+			if (word_begin == -1) {	
+				url_block = false;
+				url_line  = false;
+				word_count++;
+				output += "}";
+				continue;
+			}
+		}
+		
+		// Remember beginning of the word
+		if (!end_of_word  &&  word_begin<0) {
+			word_begin = i;
+			
+			// If custom delimeter - jump to the end of the argument
+			if (code.substr(i,2)==">>"  ||  code.substr(i,8)=="&gt;&gt;") {
+				offset        = code.substr(i,2) == ">>" ? 2 : 8;
+				separator     = code[i + offset];
+				end           = code.indexOf(separator, i+offset+1);
+				end_of_word   = true;
+				i             = end==-1 ? code.length-1 : end+1;
+				remove_quotes = false;
+			}
+		}
+
+		// When hit end of the word
+		if (end_of_word  &&  word_begin>=0  &&  !in_quote) {
+			word = code.substr(word_begin, i-word_begin);
+				
+			// If first word in the line
+			if (word_count==1  &&  !url_block) {
+				command_id = null;
+				arg_count  = 1;
+				
+				// Check if it's a valid command
+				if (is_url(word))
+					command_id = "auto_install";
+				else {
+					var getObjectKey = function (obj, value) {return Object.keys(obj).find(key => obj[key] === value);}
+					command_id = getObjectKey(all_commands, word.toLowerCase());
+				}
+
+				// If so then add it to database, otherwise skip this line
+				if (command_id != null) {
+					last_command_line_num = word_line_num;
+					instruction_id.push(command_id);
+					instruction_line.push(word_line_num);
+					
+					// If command is an URL then add it to the url database
+					if (is_url(word)) {
+						url_line         = true;
+						last_url_list_id = url_list_id.length;
+						url_list.push(word);
+						url_list_id.push(last_command_line_num);
+						output += "<a class=\"scripting_command_url\" href=\""+word+"\" target=\"_blank\">"+word+"</a>";
+					} else
+						output += "<a class=\"scripting_command\" href=\"install_scripts#"+all_commands[command_id]+"\" target=\"_blank\">"+word+"</a>";
+				} else {
+					end     = code.indexOf("\n", i);
+					i       = end==-1 ? code.length : end;
+					word    = code.substr(word_begin, i-word_begin);
+					output += "<span class=\"scripting_command_comment\">"+word+"</span>";
+				}
+			} else {
+				// Check if URL starts here
+				if (!url_line  &&  command_id!="ask_download")
+					url_line = is_url(word);
+				
+				// Check if it's a valid command switch
+				is_switch   = false;
+				colon       = word.lastIndexOf(":");
+				switch_name = colon>=0 ? word.substr(0,colon+1) : word;
+				
+				for (var j=0; j<command_switches_names.length && !is_switch; j++)
+					is_switch = switch_name.toLowerCase() == command_switches_names[j].toLowerCase();
+
+				// Add word to the URL database or the arguments database
+				if (!is_switch && url_line) {
+					if (last_url_list_id == -1) {
+						last_url_list_id = url_list_id.length;
+						url_list.push(word);
+						url_list_id.push(last_command_line_num);
+						output += "<a class=\"scripting_command_url\" href=\""+word+"\" target=\"_blank\">"+word+"</a>";
+					} else {
+						url_list[last_url_list_id] += " " + word;
+						output                     += word;
+					}
+				} else {
+					instruction_arg.push(word);
+					instruction_arg_id.push(last_command_line_num);
+					
+					if (is_switch)
+						output += "<span class=\"scripting_command_switch\">"+word+"</span>";
+					else
+						output += "<span class=\"scripting_command_arg"+(arg_count++)+"\">"+word+"</span>";
+				}
+			}
+			
+			// If ending of an url block
+			if (code[i]=="}"  &&  url_block) {
+				url_block = false;
+				url_line  = false;
+			}
+
+			word_begin = -1;
+			word_count++;
+		}
+
+		// When new line			
+		if (!in_quote  &&  code[i]=="\n") {
+			arg_count        = 1;
+			word_count       = 1;
+			url_line         = false;
+			last_url_list_id = -1;
+			word_line_num++;
+		}
+
+		if (i < code.length && word_begin==-1)
+			output += code[i];
+	}
+	
+	return output;
+}
+
+function GS_preview_installation(input_type) {
+	// Restore data from backup
+	if (Update_List.length != Update_List_Count)
+		Update_List = Update_List.slice(0, Update_List_Count);
+	
+	if (Script_Contents.length != Script_Contents_Count)
+		Script_Contents = Script_Contents.slice(0, Script_Contents_Count);
+	
+	if (Links_List.length != Links_List_Count)
+		Links_List = Links_List.slice(0, Links_List_Count);
+	
+	if (Update_List_Backup_Index != null) {
+		Update_List[Update_List_Backup_Index] = Update_List_Backup;
+		Update_List_Backup = null;
+		Update_List_Backup_Index = null;
+	}
+	
+	if (Script_Contents_Backup_Index != null) {
+		Script_Contents[Script_Contents_Backup_Index] = Script_Contents_Backup;
+		Script_Contents_Backup = null;
+		Script_Contents_Backup_Index = null;
+	}
+	
+	if (Links_List_Backup_Index != null) {
+		Links_List[Links_List_Backup_Index] = Links_List_Backup;
+		Links_List_Backup = null;
+		Links_List_Backup_Index = null;
+	}
+	
+	// Get form data
+	var version_select   = document.getElementById("version");
+	var selected_version = version_select.options[version_select.selectedIndex].value;
+	var new_version      = null;
+	var script_select    = document.getElementById("script");
+	var selected_script  = script_select.options[script_select.selectedIndex].value;
+	var new_script       = document.getElementById("scripttext").value;
+	var new_size         = document.getElementById("size").value;
+	var sizetype_select  = document.getElementById("sizetype");
+	var selected_size    = sizetype_select.options[sizetype_select.selectedIndex].value;
+	var new_changelog    = null;
+	var selected_jump    = null;
+	var new_jump_fromver = null;
+	
+	// Version section
+	if (input_type == 'Add') {
+		new_changelog = document.getElementById("changelog").value;
+		new_version   = document.getElementById("version_new").value;
+		
+		if (new_version < Update_List[Update_List.length-1].version) {
+			document.getElementById('preview_installation').innerHTML = "New version number is too smmall";
+			return;
+		}
+		
+		// Adding a new version
+		if (selected_version == -1) {
+			Update_List.push({
+				version: new_version,
+				uniqueid: selected_script,
+				changelog: new_changelog,
+				created: moment().format("YYYY-MM-DD kk:mm")
+			});
+		} else {
+			// Editing existing version	
+			var index                = Update_List.findIndex((e) => e.version === selected_version);
+			Update_List_Backup_Index = index;
+			Update_List_Backup       = { ...Update_List[index] };
+			
+			Update_List[index].uniqueid  = selected_script;
+			Update_List[index].changelog = new_changelog;
+		}
+	}
+	
+	// Jump section
+	if (input_type == 'Link') {
+		var jump_select  = document.getElementById("Link");
+		selected_jump    = jump_select.options[jump_select.selectedIndex].value;
+		new_jump_fromver = document.getElementById("fromver").value;
+		
+		// Adding a new jump
+		if (selected_jump == -1) {
+			Links_List.push({
+				uniqueid: selected_jump,
+				fromver: new_jump_fromver,
+				version: selected_version,
+				scriptUniqueID: selected_script
+			});
+		} else {
+			// Editing existing jump
+			var index               = Links_List.findIndex((e) => e.uniqueid === selected_jump);
+			Links_List_Backup_Index = index;
+			Links_List_Backup       = { ...Links_List[index] };
+			
+			Links_List[index].uniqueid       = selected_jump;
+			Links_List[index].fromver        = new_jump_fromver;
+			Links_List[index].version        = selected_version;
+			Links_List[index].scriptUniqueID = selected_script;
+		}
+	}
+	
+	// Adding a new script
+	if (selected_script == -1) {
+		Script_Contents.push({
+			uniqueid: selected_script, 
+			script: new_script, 
+			sizenumber: new_size, 
+			sizetype: selected_size
+		});
+	} else {
+		// Editing existing script
+		var index                    = Script_Contents.findIndex((e) => e.uniqueid === selected_script);
+		Script_Contents_Backup_Index = index;
+		Script_Contents_Backup       = { ...Script_Contents[index] };
+
+		Script_Contents[index].script   = new_script;
+		Script_Contents[index].size     = new_size;
+		Script_Contents[index].sizetype = selected_size;
+	}
+	
+	// Run installation simulation
+	var select_list   = document.getElementById("preview_installation_from_version");
+	var input_version = select_list.options[select_list.selectedIndex].value;
+	var mod           = GS_prepare_installation_data(input_version);
+	var new_preview   = "";
+	
+	// Display result
+	mod.updates.forEach((update) => {
+		// Version, date and author (if different from original owner)
+		new_preview += "<div class=\"panel panel-default\"><div class=\"panel-heading\"><strong>"+update.version+"<span style=\"font-size:10px;float:right;\">";
+		
+		/*if ($update["createdby"] != $mod["createdby"])		
+			echo lang("GS_STR_ADDED_BY_ON",[$user_list[$update["createdby"]],$update["date"]]);
+		else
+			echo $update["date"];*/
+		new_preview += update.date;
+		
+		new_preview += "</span></strong></div>";
+		
+		// Show script
+		new_preview += "<pre style=\"margin:0;border:0;\"><code>" + GS_scripting_highlighting(update.script) + "</code></pre>";
+		
+		// Show changelog
+		var number_of_notes = 0;
+		for (const note of update.note) {
+			if (note.length > 0) {
+				number_of_notes = update.note.length;
+				break;
+			}
+		}
+		
+		if (number_of_notes > 0  &&  (number_of_notes!=1 || update.note_version[0]!=Update_List[0].version)) {	// don't show patch notes field if there's only one note and it's the first version
+			new_preview +=  "<hr style=\"margin-top:0px;margin-bottom:0px\"><div class=\"panel-body\" style=\"background-color:#fdffe1;\">";
+			
+			for (var note_index=0; note_index<update.note.length; note_index++) {
+				var note = update.note[note_index];
+				
+				if (update.note_version[note_index] == Update_List[0].version)	// clear changelog for the first version of the mod
+					note = "";
+				
+				new_preview += "<p>";
+
+				if (number_of_notes > 1) {
+					new_preview += "<span style=\"font-size:10px;\">"+update.note_version[note_index]+"<span style=\"float:right;\">";
+					
+					/*if (update.note_author[$note_index] != $mod["createdby"])
+						new_preview +=  lang("GS_STR_ADDED_BY_ON",[$user_list[$update["note_author"][$note_index]],$update["note_date"][$note_index]]);
+					else
+						new_preview +=  $update["note_date"][$note_index];*/
+						
+					new_preview += "</span></span><br>";
+				}
+
+				//new_preview += $Parsedown->line(html_entity_decode($note, ENT_QUOTES))."</p>";
+				new_preview += marked.parse(note) + "</p>";
+			}
+			
+			new_preview += "</div>";
+		}
+		
+		new_preview += "</div>";
+	});
+	
+	document.getElementById('preview_installation').innerHTML = new_preview;
+	document.getElementById('preview_installation_size').innerHTML = mod.size;
+}
 
 
 

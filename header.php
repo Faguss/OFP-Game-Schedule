@@ -174,6 +174,4 @@ if (!$permission_to[$form->hidden["display_form"]]) {
 
 ?>
 
-<DIV ID="page-wrapper">
-<DIV CLASS="container">
 <?php if (isset($navigation_menu)) echo $navigation_menu->display(); ?>

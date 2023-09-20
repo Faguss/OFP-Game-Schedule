@@ -62,7 +62,7 @@ $js_modal = "
 
 <script type=\"text/javascript\">
 	document.getElementById('convertlink_field').innerHTML = '<a style=\"cursor:pointer; font-weight:bold; font-size:medium;\">".lang("GS_STR_MOD_CONVERTLINK")."</a>';
-	GS_activate_convertlink_modal()
+	GS_activate_convertlink_modal();
 </script>";
 
 $install_hint    = lang("GS_STR_MOD_INSTALLATION_HINT",["<a target=\"_blank\" href=\"install_scripts\">","</a>","<a target=\"_blank\" href=\"install_scripts#testing\">","</a>"]);
@@ -335,7 +335,15 @@ if ($form->hidden["display_form"] == "Update")
 		$form->change_control(-1, ["DivInline"=>"style=\"display:inline;position:absolute;bottom:0;\""]);
 	}
 	
-	$form->add_html("<br><a target=\"_blank\" href=\"show.php?mod={$form->hidden["uniqueid"]}\">".lang("GS_STR_MOD_PREVIEW_INST")."</a>");
+	$form->add_html("
+	<br>
+	<p>
+		<button type=\"button\" onclick=\"GS_preview_installation('{$form->hidden["display_subform"]}')\">".lang("GS_STR_MOD_PREVIEW_INST")."</button> 
+		&nbsp; &nbsp " . 
+		lang("GS_STR_MOD_LINK_FROM") . ": <select id='preview_installation_from_version'></select>
+	</p>
+	<p>".lang("GS_STR_MOD_DOWNLOADSIZE").": <strong id='preview_installation_size'><strong></p>
+	");
 	
 
 	// If user wants to update database
@@ -634,7 +642,8 @@ if ($form->hidden["display_form"] == "Update")
 		$js_update_list["data"][] = [
 			"version"    => $update["version"],
 			"uniqueid"   => $update["uniqueid"],
-			"changelog"  => $update["changelog"]
+			"changelog"  => $update["changelog"],
+			"created"    => $update["created"]
 		];
 
 		// Make a list of existing scripts
@@ -729,6 +738,8 @@ if ($form->hidden["display_form"] == "Update")
 		else
 			$script_list[$link["scriptUniqueID"]]   = ["$condition ".lang("GS_STR_MOD_TO")." {$link["version"]}"];
 	}
+	
+	$form->add_js_var($js_link_list);
 
 
 		
@@ -774,7 +785,6 @@ if ($form->hidden["display_form"] == "Update")
 	
 	// Default selection: "add a new jump"
 	if ($form->hidden["display_subform"] == "Link") {
-		$form->add_js_var($js_link_list);
 		$form->change_control("Link"  , ["Options"=>$links_select, "Property"=>"onChange=\"{$js_jump_select} {$js_script_select}\""]);	
 		$form->change_control("script", ["Default"=>""]);	
 		$scripts_select[0][] = "selected";
@@ -787,10 +797,43 @@ if ($form->hidden["display_form"] == "Update")
 	
 	// Include javascript
 	$form->include_file("usersc/js/gs_functions.js");
+	$form->include_file("usersc/js/moment.js");
+	$form->include_file("usersc/js/marked.min.js");
 	$form->add_html("
 		<script type=\"text/javascript\">
 			var {$js_script_list["name"]} = ".json_encode($js_script_list["data"]).";
 			{$js_version_select} {$js_script_select} {$js_jump_select}
+			
+			var Update_List_Count        = Update_List.length;
+			var Update_List_Backup       = null;
+			var Update_List_Backup_Index = null;
+			
+			var Script_Contents_Count        = Script_Contents.length;
+			var Script_Contents_Backup       = null;
+			var Script_Contents_Backup_Index = null;
+			
+			var Links_List_Count        = Links_List.length;
+			var Links_List_Backup       = null;
+			var Links_List_Backup_Index = null;
+			
+			var container   = document.getElementById('page-wrapper').children[0];
+			var div_preview = document.createElement('div');
+			div_preview.id  = 'preview_installation';
+			div_preview.classList.add('col-lg-12');
+			container.appendChild(div_preview);
+			
+			var preview_from_ver = document.getElementById('preview_installation_from_version');
+			var option           = document.createElement('option');
+			option.value         = '0';
+			option.text          = '0';
+			preview_from_ver.appendChild(option);
+
+			for (var i=0; i<Update_List.length; i++) {
+				var option = document.createElement('option');
+				option.value = Update_List[i].version;
+				option.text = Update_List[i].version;
+				preview_from_ver.appendChild(option);
+			}
 		</script>
 	");
 }

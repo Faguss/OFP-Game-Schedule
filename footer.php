@@ -6,8 +6,6 @@ $form->hidden["action"] = NULL;
 echo $form->display();
 ?>
 
-	</DIV> <!-- /.container -->
-</DIV> <!-- /.wrapper -->
 
 
 <!-- Place any per-page javascript here -->

@@ -10,8 +10,6 @@ require_once 'users/init.php';
 require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 
 ?>
-<div id="page-wrapper">
-	<div class="container">
 <?php
 require_once "common.php";
 $gs_my_permission_level = GS_get_permission_level($user);
@@ -308,9 +306,6 @@ echo "<br><br>";
 if (isset($user) && $user->isLoggedIn())
 	languageSwitcher();
 ?>
-
-	</div>
-</div>
 
 <!-- Place any per-page javascript here -->
 
