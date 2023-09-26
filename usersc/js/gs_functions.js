@@ -953,9 +953,10 @@ function GS_jump_select(link_list_id, submit_button_array, form_inputs, data) {
 	if (link_list.options[0].selected) {
 		submit_button.innerHTML     = submit_button_array[2];
 		delete_button.style.display = "none";
+		document.getElementById("DeleteLink_0_input").checked = false;
 	} else {
 		submit_button.innerHTML     = submit_button_array[3];
-		delete_button.style.display = "inline-block";
+		delete_button.style.display = "block";
 
 		for (var i=0; i<data.length; i++)
 			if (current_link == data[i]["uniqueid"])
@@ -1846,6 +1847,7 @@ function GS_preview_installation(input_type) {
 		var jump_select  = document.getElementById("Link");
 		selected_jump    = jump_select.options[jump_select.selectedIndex].value;
 		new_jump_fromver = document.getElementById("fromver").value;
+		var jump_delete  = document.getElementById("DeleteLink_0_input").checked;
 		
 		// Adding a new jump
 		if (selected_jump == -1) {
@@ -1862,7 +1864,7 @@ function GS_preview_installation(input_type) {
 			Links_List_Backup       = { ...Links_List[index] };
 			
 			Links_List[index].uniqueid       = selected_jump;
-			Links_List[index].fromver        = new_jump_fromver;
+			Links_List[index].fromver        = jump_delete ? "" : new_jump_fromver;
 			Links_List[index].version        = selected_version;
 			Links_List[index].scriptUniqueID = selected_script;
 		}

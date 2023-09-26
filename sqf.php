@@ -352,6 +352,8 @@ switch($input_mode) {
 					
 					case "addedby" : $property_value="\"{$user_list[$mod["createdby"]]} (".date("d.m.y",strtotime($mod["created"])).")\""; break;
 					case "logo"    : $property_name="logo"; $property_value="\"".(empty($property_value) ? "" : GS_get_current_url(false).GS_LOGO_FOLDER."/$property_value")."\""; break;
+					
+					case "description" : $property_value=GS_convert_utf8_to_windows($property_value, $input["language"]); break;
 				}
 				
 				$mod_info .= "_mod_$property_name=$property_value;";

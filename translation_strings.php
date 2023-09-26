@@ -119,6 +119,7 @@ $mainmenu = [
 		110 => "Shortcut name",
 		111 => "Select mods for the shortcut",
 		112 => "[Pause]",
+		113 => "Optionally type in extra game startup parameters",
 	],
 
 	"ru-RU" => [
@@ -235,6 +236,7 @@ $mainmenu = [
 		110 => "сокращенное имя",
 		111 => "выбрать моды для ярлыка",
 		112 => "[Пауза]",
+		113 => "Введите дополнительные параметры запуска",
 	],
 
 	"pl-PL" => [
@@ -351,6 +353,7 @@ $mainmenu = [
 		110 => "Nazwa skrótu",
 		111 => "Wybierz mody dla skrótu",
 		112 => "[Wstrzymaj]",
+		113 => "Opcjonalnie wpisz dodatkowe parametry uruchamiania gry",
 	]
 ];
 

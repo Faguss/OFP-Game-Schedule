@@ -95,7 +95,12 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 		$form->add_text("subtitle", lang("GS_STR_MOD_SUBTITLE"), lang("GS_STR_MOD_SUBTITLE_HINT"), "Sanctuary");
 	
 	$form->add_text("description", lang("GS_STR_MOD_DESCRIPTION")        , $description_hint                  , lang("GS_STR_MOD_DESCRIPTION_EXAMPLE"));
+	$form->add_text("website"    , lang("GS_STR_SERVER_WEBSITE")         , ""                                 , GS_get_current_url(true, false));
 	$form->add_select("type"     , lang("GS_STR_MOD_TYPE")               , ""                                 , $mod_type_select, "0");
+	
+	if ($form->hidden["display_form"] == "Edit")
+		$form->add_text("alias", lang("GS_STR_MOD_ALIAS"), lang("GS_STR_MOD_ALIAS_DESC",["<a target=\"_blank\" href=\"install_scripts#alias\">","</a>"]), "@ww4mod21 @ww4mod");
+	
 	$form->add_text("access"     , lang("GS_STR_MOD_ACCESS")             , lang("GS_STR_MOD_ACCESS_HINT"));
 	$form->add_select("forcename", lang("GS_STR_MOD_FORCENAME")          , lang("GS_STR_MOD_FORCENAME_HINT")  , [[lang("GS_STR_DISABLED"),"0"], [lang("GS_STR_ENABLED"),"1"]], "0", "radio");
 	
@@ -107,11 +112,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->add_text("size"       , lang("GS_STR_MOD_DOWNLOADSIZE")       , "", "128");
 	$form->add_select("sizetype" , ""                                    , "", GS_SIZE_TYPES, "MB");
 	
-	if ($form->hidden["display_form"] == "Edit")
-		$form->add_text("alias", lang("GS_STR_MOD_ALIAS"), lang("GS_STR_MOD_ALIAS_DESC",["<a target=\"_blank\" href=\"install_scripts#alias\">","</a>"]), "@ww4mod21 @ww4mod");
-	
 	$form->add_select("is_mp"    , lang("GS_STR_MOD_MPCOMP")             , lang("GS_STR_MOD_MPCOMP_HINT")     , [[lang("GS_STR_MOD_MPCOMP_YES"),"1"], [lang("GS_STR_MOD_MPCOMP_NO"),"0"]], "1", "radio");
-	$form->add_text("website"    , lang("GS_STR_SERVER_WEBSITE")         , ""                                 , GS_get_current_url(true, false));
 	$form->add_imagefile("logo"  , lang("GS_STR_SERVER_LOGO")            , lang("GS_STR_SERVER_LOGO_HINT")    , GS_LOGO_FOLDER, 10240*2.5);
 	
 	if ($form->hidden["display_form"] == "Add New") {
@@ -297,8 +298,10 @@ if ($form->hidden["display_form"] == "Update")
 	// Display controls for the current section	
 	if ($form->hidden["display_subform"] == "Link") {
 		$form->add_select("Link"   , lang("GS_STR_MOD_LINK")     , "", []);
+		$form->add_select("DeleteLink", "", "", [lang("GS_STR_MOD_LINK_REMOVE")], "", "checkbox");
 		$form->add_text("fromver"  , lang("GS_STR_MOD_LINK_FROM"), lang("GS_STR_MOD_LINK_FROM_HINT"), "version < 1.2");
 		$form->add_select("version", lang("GS_STR_MOD_LINK_TO")  , lang("GS_STR_MOD_LINK_TO_HINT")  , []);
+		$form->change_control(["DeleteLink"], ["Group"=>"ID=\"DeleteLinkGroup\""]);
 	} else {
 		$form->add_select("version"  , lang("GS_STR_MOD_SELECT_VER"), "", []);
 		$form->add_text("version_new", lang("GS_STR_MOD_NEW_NUM")   , lang("GS_STR_MOD_NEW_NUM_HINT"), "");
@@ -328,13 +331,6 @@ if ($form->hidden["display_form"] == "Update")
 	// Submit button
 	$form->add_button("action", $form->hidden["display_subform"], lang(GS_FORM_ACTIONS_MODUPDATE[$form->hidden["display_subform"]]."_SUBMIT"), "btn-mods btn-lg", "SubmitButton");
 		
-	// Button to remove the link between versions
-	if ($form->hidden["display_subform"] == "Link") {
-		$form->add_button("action", "DeleteLink", lang("GS_STR_MOD_LINK_REMOVE"), "btn-danger btn-sm", "SubmitButtonDelete", "style=\"display:none;\"");
-		$form->change_control([-1,-2], ["Inline"=>3]);
-		$form->change_control(-1, ["DivInline"=>"style=\"display:inline;position:absolute;bottom:0;\""]);
-	}
-	
 	$form->add_html("
 	<br>
 	<p>
@@ -347,7 +343,7 @@ if ($form->hidden["display_form"] == "Update")
 	
 
 	// If user wants to update database
-	if (array_search($form->hidden["action"], array_keys(GS_FORM_ACTIONS_MODUPDATE)) !== FALSE) {
+	if (array_search($form->hidden["action"], array_keys(GS_FORM_ACTIONS_MODUPDATE)) !== FALSE && !is_array(Input::get("DeleteLink"))) {
 		$data              = &$form->save_input();
 		$undefined_indexes = ["fromver", "script", "version_new", "version", "scripttext", "Link", "changelog"];
 		
@@ -574,7 +570,7 @@ if ($form->hidden["display_form"] == "Update")
 	}
 	
 	// If user wants to delete a jump
-	if ($form->hidden["action"] == "DeleteLink") {
+	if (array_search($form->hidden["action"], array_keys(GS_FORM_ACTIONS_MODUPDATE)) !== FALSE && is_array(Input::get("DeleteLink"))) {
 		$data = &$form->save_input();
 		if ($data["Link"] != "-1") {
 			$recordID = $db->cell("gs_mods_links.id",["uniqueid","LIKE",$data["Link"]]);
@@ -755,7 +751,7 @@ if ($form->hidden["display_form"] == "Update")
 	if ($form->hidden["display_subform"] != "Link")
 		$js_version_select = "GS_version_select('version', 'script', 'changelog', 'changelogtextinput', 'version_new_group', ['SubmitButton','".lang("GS_STR_MOD_SECTION_VERSION_SUBMIT")."','".lang("GS_STR_MOD_SECTION_VERSION_EDIT_SUBMIT")."'], {$js_update_list["name"]});";
 	else
-		$js_jump_select = "GS_jump_select('Link', ['SubmitButton','SubmitButtonDelete','".lang("GS_STR_MOD_SECTION_JUMP_SUBMIT")."','".lang("GS_STR_MOD_SECTION_JUMP_EDIT_SUBMIT")."'], ['fromver','version','script'], {$js_link_list["name"]});";
+		$js_jump_select = "GS_jump_select('Link', ['SubmitButton','DeleteLinkGroup','".lang("GS_STR_MOD_SECTION_JUMP_SUBMIT")."','".lang("GS_STR_MOD_SECTION_JUMP_EDIT_SUBMIT")."'], ['fromver','version','script'], {$js_link_list["name"]});";
 
 	// If adding a new version then suggest version number higher than the current one
 	if ($form->hidden["display_subform"] != "Link") {

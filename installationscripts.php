@@ -61,7 +61,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_URL_PAR7" => "Find URL containing phrase <span class=\"courier\">/downloads/mirror/</span> and download its contents as ww4mod25rel.rar",
 	"GS_IS_URL_PAR8" => "On the mod update page, below the script input field you'll find a tool that automatically writes intermediate links (for a few selected sites). More information on how to find such links yourself you'll find <a href=\"#testing\">below</a>.",
 	"GS_IS_URL_PAR9" => "3. If you have <b>backup links</b> then place all of them between a pair of curly brackets. Example:",
-	"GS_IS_URL_PAR10" => "If the first one fails then the installer will try the second one and so on.",
+	"GS_IS_URL_PAR10" => "If the first one fails then the installer will try the second one and so on. The files have to be identical because interrupted downloads will be continued from the last position.",
 	"GS_IS_URL_PAR11" => "4. To save disk space downloaded file is deleted as soon as the next download starts. To keep the files use <a href=\"#get\">GET</a> command.",
 	
 	#Manual installation
@@ -321,7 +321,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_URL_PAR7" => "Найдите URL-адрес, содержащий фразу <span class=\"courier\">/downloads/mirror/</span>, и загрузите его содержимое как ww4mod25rel.rar.",
 "GS_IS_URL_PAR8" => "На странице обновления мода под полем ввода скрипта вы найдете инструмент, который автоматически записывает промежуточные ссылки (для нескольких выбранных сайтов). Дополнительную информацию о том, как самостоятельно найти такие ссылки, вы найдете <a href=\"#testing\">ниже</a>.",
 "GS_IS_URL_PAR9" => "3. Если у вас есть <b>резервные ссылки</b>, поместите их все между парой фигурных скобок. Пример:",
-"GS_IS_URL_PAR10" => "Если с первым не получится, установщик попытается установить второй и так далее.",
+"GS_IS_URL_PAR10" => "Если с первым не получится, установщик попытается установить второй и так далее. Файлы должны быть идентичными, поскольку прерванная загрузка будет продолжена с последней позиции.",
 "GS_IS_URL_PAR11" => "4. Для экономии места на диске загруженный файл удаляется, как только начинается следующая загрузка. Чтобы сохранить файлы, используйте команду <a href=\"#get\">GET</a>.",
 	
 	#Manual installation
@@ -581,7 +581,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_URL_PAR7" => "Znajdzie URL zawierający wyrażenie <span class=\"courier\">/downloads/mirror/</span> i ściągnie jego zawartość pod nazwą ww4mod25rel.rar",
 	"GS_IS_URL_PAR8" => "Na stronie edycji instalacji modu, pod polem do wpisywaniu skryptu znajdziesz narzędzie, które automatycznie doda pośrednie linki (do kilku wybranych stron). Więcej informacji jak samemu szukać takowych odsyłaczy znajdziesz <a href=\"#testing\">poniżej</a>.",
 	"GS_IS_URL_PAR9" => "3. Jeśli masz <b>zapasowe linki</b> to umieść je wszystkie w nawiasie klamrowym. Na przykład:",
-	"GS_IS_URL_PAR10" => "Jeśli pierwszy zawiedzie to instalator przejdzie do drugiego i tak dalej.",
+	"GS_IS_URL_PAR10" => "Jeśli pierwszy zawiedzie to instalator przejdzie do drugiego i tak dalej. Pliki muszą być identyczne ponieważ przerwane ściąganie będzie kontynuowane od ostatniego miejsca.",
 	"GS_IS_URL_PAR11" => "4. Dla zaoszczędzenia miejsca na dysku instalator kasuje ostatni ściągnięty plik jak tylko zacznie się pobieranie następnego. Aby zachować pliki użyj komendy <a href=\"#get\">GET</a>.",
 	
 	#Manual installation

@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,9,18,1,23,40,8,665,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,9,25,1,16,49,33,602,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -2752,24 +2752,35 @@ function GS_lang($string_name, $number_array, $bold=0) {
 function GS_convert_utf8_to_windows($input, $language="Windows") {
 	if (mb_strlen($input) == strlen($input))
 		return $input;
-
+	
+	// Unicode characters to be replaced
 	$unicode = [
 		#Cyrillic
 		"а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","ъ","ы","ь","э","ю","я",
 		"А","Б","В","Г","Д","Е","Ё","Ж","З","И","Й","К","Л","М","Н","О","П","Р","С","Т","У","Ф","Х","Ц","Ч","Ш","Щ","Ъ","Ы","Ь","Э","Ю","Я",
 		#Polish
 		"ą","ć","ę","ł","ń","ó","ś","ź","ż",
-		"Ą","Ć","Ę","Ł","Ń","Ó","Ś","Ź","Ż"
+		"Ą","Ć","Ę","Ł","Ń","Ó","Ś","Ź","Ż",
+		#Czech
+		"á","č","ď","é","ě","ň","ó","ř","š","ť","ú","ů","ý","ž",
+		"Á","Č","Ď","É","Ě","Ň","Ó","Ř","Š","Ť","Ú","Ů","Ý","Ž",
 	];
-		
+	
+	if ($language == "Czech")
+		$language = "Polish";	//Czech and Polish version have similar fonts.pbo
+	
+	// Replacement in Windows code page based on user's language and what's available in fonts.pbo
 	$windows = [
 		"English" => [
 			#Cyrillic phonetically
 			"a","b","v","g","d","ye","yo","zh","z","i","y","k","l","m","n","o","p","r","s","t","u","f","h","ts","ch","sh","shsh","","i","","e","yu","ya",
 			"A","B","V","G","D","YE","YO","ZH","Z","I","Y","K","L","M","N","O","P","R","S","T","U","F","H","TS","CH","SH","SHSH","","I","","E","YU","YA",
 			#Polish without diacritics
-			"a","c","e","l","n","o","s","z","z",
-			"A","C","E","L","N","O","S","z","z"
+			"a","c","e","l","n","\xF3","s","z","z",
+			"A","C","E","L","N","\xD3","S","z","z",
+			#Czech partial
+			"\xE1","c","d","\xE9","e","n","\xF3","r","\x9A","t","\xFA","u","\xFD","\x9E",
+			"\xC1","C","D","\xC9","E","N","\xD3","R","\x8A","T","\xDA","U","\xDD","\x8E",
 		],
 		
 		"Russian" => [
@@ -2778,23 +2789,31 @@ function GS_convert_utf8_to_windows($input, $language="Windows") {
 			"\xC0","\xC1","\xC2","\xC3","\xC4","\xC5","\xA8","\xC6","\xC7","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD0","\xD1","\xD2","\xD3","\xD4","\xD5","\xD6","\xD7","\xD8","\xD9","\xDA","\xDB","\xDC","\xDD","\xDE","\xDF", 
 			#Polish without diacritics
 			"a","c","e","l","n","o","s","z","z",
-			"A","C","E","L","N","O","S","z","z"
+			"A","C","E","L","N","O","S","z","z",
+			#Czech without diacritics
+			"a","c","d","e","e","n","o","r","s","t","u","u","y","z",
+			"A","C","D","E","E","N","O","R","S","T","U","U","Y","Z",
 		],
 
 		"Polish" => [
 			#Cyrillic phonetically
-			"a","b","w","g","d","ie","io","\xBF","z","i","ij","k","l","m","n","o","p","r","s","t","u","f","h","c","\xE6","sz","si","","y","","e","ju","ja",
-			"A","B","W","G","D","IE","IO","\xAF","Z","I","ij","K","L","M","N","O","P","R","S","T","U","F","H","C","\xC6","sz","si","","y","","E","JU","JA",
+			"a","b","w","g","d","je","jo","\xBF","z","i","ij","k","l","m","n","o","p","r","s","t","u","f","h","c","\xE6","sz","si","","y","","e","ju","ja",
+			"A","B","W","G","D","JE","JO","\xAF","Z","I","IJ","K","L","M","N","O","P","R","S","T","U","F","H","C","\xC6","sz","si","","y","","E","JU","JA",
 			#Polish in Windows-1250
 			"\xB9","\xE6","\xEA","\xB3","\xF1","\xF3","\x9C","\x9F","\xBF",
-			"\xA5","\xC6","\xCA","\xA3","\xD1","\xD3","\x8C","\x8F","\xAF"
+			"\xA5","\xC6","\xCA","\xA3","\xD1","\xD3","\x8C","\x8F","\xAF",
+			#Czech in Windows-1250
+			"\xE1","\xE8","\xEF","\xE9","\xEC","\xF2","\xF3","\xF8","\x9A","\x9D","\xFA","\xF9","\xFD","\x9E",
+			"\xC1","\xC8","\xCF","\xC9","\xCC","\xD2","\xD3","\xD8","\x8A","\x8D","\xDA","\xD9","\xDD","\x8E",
 		],
 		
 		"Windows" => [
 			"\xE0","\xE1","\xE2","\xE3","\xE4","\xE5","\xB8","\xE6","\xE7","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF0","\xF1","\xF2","\xF3","\xF4","\xF5","\xF6","\xF7","\xF8","\xF9","\xFA","\xFB","\xFC","\xFD","\xFE","\xFF",
 			"\xC0","\xC1","\xC2","\xC3","\xC4","\xC5","\xA8","\xC6","\xC7","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD0","\xD1","\xD2","\xD3","\xD4","\xD5","\xD6","\xD7","\xD8","\xD9","\xDA","\xDB","\xDC","\xDD","\xDE","\xDF", 
 			"\xB9","\xE6","\xEA","\xB3","\xF1","\xF3","\x9C","\x9F","\xBF",
-			"\xA5","\xC6","\xCA","\xA3","\xD1","\xD3","\x8C","\x8F","\xAF"
+			"\xA5","\xC6","\xCA","\xA3","\xD1","\xD3","\x8C","\x8F","\xAF",
+			"\xE1","\xE8","\xEF","\xE9","\xEC","\xF2","\xF3","\xF7","\x9A","\x9D","\xFA","\xF9","\xFD","\x9E",
+			"\xC1","\xC8","\xCF","\xC9","\xCC","\xD2","\xD3","\xD7","\x8A","\x8D","\xDA","\xD9","\xDD","\x8E",
 		]
 	];
 	

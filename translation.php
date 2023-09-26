@@ -63,14 +63,15 @@ foreach($db->results(true) as $row) {
 // User pressed on the "Convert" button - convert translation_strings.php (utf8) to strings.txt (windows-1250/1251) for the game
 if ($permissions["en-US"]) {
 	if (isset($_POST["convert"])) {
-		$text = "\tstring stringtable[][STR_MAX] = {\r\n";
+		$text = "\tstd::wstring stringtable[][STR_MAX] = {\r\n";
 
 		forEach($addoninstaller as $language_key=>$language) {
 			$text .= "\t\t{\r\n";
 			
 			forEach($language as $stringtable_key => $stringtable_value) {
 				$stringtable_value = str_replace("\\", "\\\\", $stringtable_value);
-				$text .= "\t\t\t\"".GS_convert_utf8_to_windows($stringtable_value)."\"".($stringtable_key!=array_key_last($language)?",":"")."\t\t//$stringtable_key\r\n";
+				$stringtable_value = str_replace("\\\\n", "\\r\\n", $stringtable_value);
+				$text .= "\t\t\tL\"".$stringtable_value."\"".($stringtable_key!=array_key_last($language)?",":"")."\r\n";
 			}
 				
 			$text .= "\t\t}".($language_key!=array_key_last($addoninstaller)?",":"")."\r\n";
