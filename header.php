@@ -10,18 +10,13 @@ if (!securePage($_SERVER['PHP_SELF']))
 if (!$user->isLoggedIn())
 	Redirect::to('users\login.php');
 
-if (!Input::exists())
-	Redirect::to('index.php');
-
 $uid = $user->data()->id;
 
-if (!Token::check($_POST["csrf"])) {
-	Token::generate();
-	echo "<div id=\"page-wrapper\"><div class=\"container\"><br><br><br><br><br><b>" . lang("GS_STR_ERROR_EXPIRED") . "</b><br><br><br>";
-	#dump($_POST);
-	die("</div></div>");
+if (!empty(Input::get('action')) && !Token::check(Input::get('csrf'))) {
+	echo "<p><strong>" . lang("GS_STR_ERROR_EXPIRED") . "</strong></p>";
+	require_once $abs_us_root . $us_url_root . 'usersc/templates/' . $settings->template . '/footer.php';
+	die();
 }
-
 
 
 	
@@ -85,6 +80,7 @@ if ($gs_my_permission_level == GS_PERM_ADMIN)
 if ($db->query($sql,[$uid])->error()) {
 	if ($gs_my_permission_level == GS_PERM_ADMIN)
 		echo $sql . $db->errorString();
+	require_once $abs_us_root . $us_url_root . 'usersc/templates/' . $settings->template . '/footer.php';
 	die(lang("GS_STR_ERROR_GET_DB_RECORD"));
 }
 
@@ -143,7 +139,6 @@ if ($gs_my_permission_level == GS_PERM_ADMIN) {
 $permission_to["Add New"] = $my_records < ($record_type=="server" ? GS_PERMISSION_MAX_SERVERS[$gs_my_permission_level] : GS_PERMISSION_MAX_MODS[$gs_my_permission_level]);
 
 
-$navigation_menu = NULL;
 
 // Show error message if there's no access
 if (!$permission_to[$form->hidden["display_form"]]) {
@@ -156,22 +151,22 @@ if (!$permission_to[$form->hidden["display_form"]]) {
 		$message = lang($record_type=="server" ? "GS_STR_SERVER_REMOVED_ERROR" : "GS_STR_MOD_REMOVED_ERROR");
 	
 	$form->fail($message);
-} else
+} else {
 	if ($form->hidden["display_form"] != "Add New") {
 		$button_class    = $record_type == "server" ? "primary" : "mods";
-		$navigation_menu = new Generated_Form([], $form->hidden["csrf"], NULL, false);
+		echo '<div class="col-lg-8" style="margin-bottom:1em;">';
 		
-		$navigation_menu->hidden["uniqueid"]     = $form->hidden["uniqueid"];
-		$navigation_menu->hidden["display_name"] = $form->hidden["display_name"];
-		$navigation_menu->label_size             = 0;
-		
-		foreach ($permission_to as $key=>$value)
+		foreach ($permission_to as $key=>$value) {
 			if ($value && $key!="Add New"  &&  $key!=$form->hidden["display_form"]) {
-				$navigation_menu->add_button("display_form", $key, lang(GS_FORM_ACTIONS[$key]), "btn-$button_class btn-xs");
-				$navigation_menu->change_control(-1, ["Inline"=>-1, "LabelClass"=>" "]);
+				echo '
+				<a 
+					class="btn btn-'.$button_class.' btn-xs" 
+					href="edit_'.$record_column.'.php?uniqueid='.$form->hidden["uniqueid"].'&display_form='.$key.'"
+				>'.lang(GS_FORM_ACTIONS[$key]).'</a> &nbsp; ';
 			}
+		}
+		
+		echo '</div>';
 	}
-
+}
 ?>
-
-<?php if (isset($navigation_menu)) echo $navigation_menu->display(); ?>

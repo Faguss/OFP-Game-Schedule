@@ -2128,3 +2128,76 @@ function GS_mod_version_selection(select_id, index) {
 
 	window.location.replace(GS_input_url + (GS_input_url.slice(-1)=="?" ? "" : "&") + mods + vers);
 }
+
+// Query game server status
+function GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, output_type) {
+	for (var i=0; i<GS_serv_id.length; i++) {
+		if (GS_expired[i]) {
+			$.ajax({
+				type: 'POST',
+				data: {queryserver:GS_serv_id[i]},
+				input_id: GS_serv_id[i],
+				url: 'js_request.php',
+				dataType: 'json',
+				output_type: output_type,
+				success: function (server) {
+					console.log(this.output_type);
+					if (server != null) {
+						if (output_type == 'descriptionlist') {
+							if (server.gstate)
+								$('#query'+this.input_id+'_status').html(GS_game_status[server.gstate]);
+							else
+								$('#query'+this.input_id+'_status').html(GS_game_status[0]);
+							
+							if (server.gametype && server.gametype != '') {
+								var mission_name = server.gametype + '.' + server.mapname;
+								$('#query'+this.input_id+'_mission').html(mission_name);
+								$('#query'+this.input_id+'_mission').show();
+								$('#query'+this.input_id+'_mission_dt').show();
+							} else {
+								$('#query'+this.input_id+'_mission').hide();
+								$('#query'+this.input_id+'_mission_dt').hide();
+							}
+							
+							if (server.gstate && server.gstate != 0) {
+								var players = server.numplayers;
+
+								if (server.players) {
+									for (var j=0; j<server.players.length; j++)
+										players += '<br>' + server.players[j].player;
+									
+									$('#query'+this.input_id+'_players').html(players);
+									$('#query'+this.input_id+'_players').show();
+									$('#query'+this.input_id+'_players_dt').show();
+								}
+							} else {
+								$('#query'+this.input_id+'_players').hide();
+								$('#query'+this.input_id+'_players_dt').hide();
+							}
+						} else {															
+							var str = '';
+							
+							if (server.gstate) {
+								str += GS_game_status[server.gstate];
+								
+								if (server.gametype && server.gametype != '')
+									str += ' - ' + server.gametype + '.' + server.mapname;
+								
+								if (server.players) {
+									if (server.players.length > 0)
+										str += ' -';
+									
+									for (var j=0; j<server.players.length; j++)
+										str += ' ' + server.players[j].player;
+								}
+							} else
+								str += GS_game_status[0];
+							
+							$('#query'+this.input_id).html(str);
+						}
+					}
+				}
+			});
+		}
+	}	
+}

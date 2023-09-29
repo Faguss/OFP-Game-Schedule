@@ -58,6 +58,8 @@ $lang = array_merge($lang, array(
 	"GS_STR_INDEX_UPDATE" => "Обновить",
 	"GS_STR_INDEX_INSTALLATION" => "Установка",
 	"GS_STR_INDEX_LIMIT_REACHED" => "максимальное количество записей",
+"GS_STR_INDEX_SHOW" => "Показать",
+"GS_STR_INDEX_NO_RECORDS" => "Нет записей",
 	
 	#Edit server details page
 	"GS_STR_SERVER" => "Сервер",

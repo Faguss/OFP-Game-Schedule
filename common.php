@@ -149,6 +149,25 @@ define("GS_EVENT_SINGLE", 0);
 define("GS_EVENT_DAILY", 1);
 define("GS_EVENT_WEEKLY", 2);
 
+// Server status id
+define("GS_SERVER_STATUS", [
+	"GS_STR_SERVER_OFFLINE",
+	"GS_STR_SERVER_CREATE",
+	"GS_STR_SERVER_CREATE",
+	"GS_STR_SERVER_CREATE",
+	"GS_STR_SERVER_EDIT",
+	"GS_STR_SERVER_WAIT",
+	"GS_STR_SERVER_WAIT",
+	"GS_STR_SERVER_SETUP",
+	"GS_STR_SERVER_SETUP",
+	"GS_STR_SERVER_DEBRIEFING",
+	"GS_STR_SERVER_DEBRIEFING",
+	"GS_STR_SERVER_SETUP",
+	"GS_STR_SERVER_SETUP",
+	"GS_STR_SERVER_BRIEFING",
+	"GS_STR_SERVER_PLAY"
+]);
+
 
 
 // Functions
@@ -1831,6 +1850,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 	$user_list            = [];
 	$js_addedon           = [];
 	$js_serv_id           = [];
+	$js_expired           = [];
 	$add_persistent_title = -1;
 	
 	// Get user list first
@@ -1871,17 +1891,6 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		
 		$server_order = array_merge($event_based, $persistent);
 	}
-
-	// Prepare a list translating game status id to a description
-	$server_status_list   = [lang("GS_STR_SERVER_OFFLINE")];
-	$server_status_list   = array_pad($server_status_list, 4, lang("GS_STR_SERVER_CREATE"));
-	$server_status_list[] = lang("GS_STR_SERVER_EDIT");
-	$server_status_list   = array_pad($server_status_list, 7, lang("GS_STR_SERVER_WAIT"));
-	$server_status_list   = array_pad($server_status_list, 9, lang("GS_STR_SERVER_SETUP"));
-	$server_status_list   = array_pad($server_status_list, 11, lang("GS_STR_SERVER_DEBRIEFING"));
-	$server_status_list   = array_pad($server_status_list, 13, lang("GS_STR_SERVER_SETUP"));
-	$server_status_list[] = lang("GS_STR_SERVER_BRIEFING");
-	$server_status_list[] = lang("GS_STR_SERVER_PLAY");
 
 	// Display server information
 	foreach($server_order as $uniqueid) {
@@ -2013,7 +2022,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		$js_expired[]    = strtotime("now") > strtotime($server["status_expires"]);
 		
 		// Add server status
-		$server_status_name    = $server_status_list[0];
+		$server_status_name    = lang(GS_SERVER_STATUS[0]);
 		$server_status_mission = "";
 		$server_status_players = "";
 		
@@ -2021,7 +2030,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		
 		if (isset($server_status)) {
 			if (isset($server_status["gstate"]))
-				$server_status_name = $server_status_list[$server_status["gstate"]];
+				$server_status_name = lang(GS_SERVER_STATUS[$server_status["gstate"]]);
 			
 			if (isset($server_status["gametype"]) && isset($server_status["mapname"]))
 				$server_status_mission = $server_status["gametype"] . "." . $server_status["mapname"];
@@ -2035,7 +2044,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		}
 		
 		$display_mission = $server_status_mission=="" || $server_status_mission=="." ? "none" : "block";
-		$display_players = empty($server_status_name!=$server_status_list[0]) ? "none" : "block";
+		$display_players = empty($server_status_name!=lang(GS_SERVER_STATUS[0])) ? "none" : "block";
 	
 		$html .= "
 			<dt>".lang("GS_STR_SERVER_STATUS") .":</dt>
@@ -2097,62 +2106,19 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");";
 		
 	// Show server status
+	$server_status_list = [];
+	foreach(GS_SERVER_STATUS as $string_key)
+		$server_status_list[] = lang($string_key);
+		
 	$html .= "
 	var GS_serv_id     = ".json_encode($js_serv_id)."
 	var GS_game_status = ".json_encode($server_status_list)."
 	var GS_expired     = ".json_encode($js_expired)."
 	
-	window.onload = function() {
-		for (var i=0; i<GS_serv_id.length; i++) {
-			if (GS_expired[i]) {
-				$.ajax({
-					type: 'POST',
-					data: {queryserver:GS_serv_id[i]},
-					input_id: GS_serv_id[i],
-					url: 'js_request.php',
-					dataType: 'json',
-					success: function (server) {
-						if (server != null) {							
-							if (server.gstate)
-								$('#query'+this.input_id+'_status').html(GS_game_status[server.gstate]);
-							else
-								$('#query'+this.input_id+'_status').html(GS_game_status[0]);
-							
-							if (server.gametype && server.gametype != '') {
-								var mission_name = server.gametype + '.' + server.mapname;
-								$('#query'+this.input_id+'_mission').html(mission_name);
-								$('#query'+this.input_id+'_mission').show();
-								$('#query'+this.input_id+'_mission_dt').show();
-							} else {
-								$('#query'+this.input_id+'_mission').hide();
-								$('#query'+this.input_id+'_mission_dt').hide();
-							}
-							
-							if (server.gstate && server.gstate != 0) {
-								var players = server.numplayers;
-
-								if (server.players) {
-									for (var j=0; j<server.players.length; j++)
-										players += '<br>' + server.players[j].player;
-									
-									$('#query'+this.input_id+'_players').html(players);
-									$('#query'+this.input_id+'_players').show();
-									$('#query'+this.input_id+'_players_dt').show();
-								}
-							} else {
-								$('#query'+this.input_id+'_players').hide();
-								$('#query'+this.input_id+'_players_dt').hide();
-							}
-						}
-					}
-				});
-			}
-		}
-	}
-	";
-	
-	$html .= "</script>
-	";
+	$(document).ready(function() {
+		GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, 'descriptionlist')
+	});
+	</script>";
 		
 	return $html;
 }
@@ -2764,26 +2730,33 @@ function GS_convert_utf8_to_windows($input, $language="Windows") {
 		#Czech
 		"á","č","ď","é","ě","ň","ó","ř","š","ť","ú","ů","ý","ž",
 		"Á","Č","Ď","É","Ě","Ň","Ó","Ř","Š","Ť","Ú","Ů","Ý","Ž",
+		#French/Italian/Spanish/German
+		"à","á","â","ä","æ","ß","ç","œ","è","é","ê","ë","ì","í","î","ï","ñ","ò","ó","ô","ö","ú","û","ü","ù","ÿ",
+		"À","Á","Â","Ä","Æ","ẞ","Ç","Œ","È","É","Ê","Ë","Ì","Í","Î","Ï","Ñ","Ò","Ó","Ô","Ö","Ú","Û","Ü","Ù","Ÿ",
 	];
 	
-	if ($language == "Czech")
-		$language = "Polish";	//Czech and Polish version have similar fonts.pbo
+	$language = strtolower($language);
+	if ($language == "czech")
+		$language = "polish";	//Czech and Polish version have similar fonts.pbo
 	
-	// Replacement in Windows code page based on user's language and what's available in fonts.pbo
+	// Replacement in Windows code page based on user's game version
 	$windows = [
-		"English" => [
+		"english" => [
 			#Cyrillic phonetically
 			"a","b","v","g","d","ye","yo","zh","z","i","y","k","l","m","n","o","p","r","s","t","u","f","h","ts","ch","sh","shsh","","i","","e","yu","ya",
 			"A","B","V","G","D","YE","YO","ZH","Z","I","Y","K","L","M","N","O","P","R","S","T","U","F","H","TS","CH","SH","SHSH","","I","","E","YU","YA",
 			#Polish without diacritics
 			"a","c","e","l","n","\xF3","s","z","z",
 			"A","C","E","L","N","\xD3","S","z","z",
-			#Czech partial
+			#Czech partially without diacritics
 			"\xE1","c","d","\xE9","e","n","\xF3","r","\x9A","t","\xFA","u","\xFD","\x9E",
 			"\xC1","C","D","\xC9","E","N","\xD3","R","\x8A","T","\xDA","U","\xDD","\x8E",
+			#French/Italian/Spanish/German
+			"\xE0","\xE1","\xE2","\xE4","\xE6","\xDF","\xE7","\x9C","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF1","\xF2","\xF3","\xF4","\xF6","\xFA","\xFB","\xFC","\xF9","\xFF",
+			"\xC0","\xC1","\xC2","\xC4","\xC6","\xDF","\xC7","\x8C","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD1","\xD2","\xD3","\xD4","\xD6","\xDA","\xDB","\xDC","\xD9","\x9F",
 		],
 		
-		"Russian" => [
+		"russian" => [
 			#Cyrillic in Windows-1251
 			"\xE0","\xE1","\xE2","\xE3","\xE4","\xE5","\xB8","\xE6","\xE7","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF0","\xF1","\xF2","\xF3","\xF4","\xF5","\xF6","\xF7","\xF8","\xF9","\xFA","\xFB","\xFC","\xFD","\xFE","\xFF",
 			"\xC0","\xC1","\xC2","\xC3","\xC4","\xC5","\xA8","\xC6","\xC7","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD0","\xD1","\xD2","\xD3","\xD4","\xD5","\xD6","\xD7","\xD8","\xD9","\xDA","\xDB","\xDC","\xDD","\xDE","\xDF", 
@@ -2793,9 +2766,12 @@ function GS_convert_utf8_to_windows($input, $language="Windows") {
 			#Czech without diacritics
 			"a","c","d","e","e","n","o","r","s","t","u","u","y","z",
 			"A","C","D","E","E","N","O","R","S","T","U","U","Y","Z",
+			#French/Italian/Spanish/German without diacrictics
+			"a","a","a","a","ae","ss","c","ce","e","e","e","e","i","i","i","i","n","o","o","o","o","u","u","u","u","y",
+			"A","A","A","A","AE","SS","C","CE","E","E","E","E","I","I","I","I","N","O","O","O","O","U","U","U","U","Y",
 		],
 
-		"Polish" => [
+		"polish" => [
 			#Cyrillic phonetically
 			"a","b","w","g","d","je","jo","\xBF","z","i","ij","k","l","m","n","o","p","r","s","t","u","f","h","c","\xE6","sz","si","","y","","e","ju","ja",
 			"A","B","W","G","D","JE","JO","\xAF","Z","I","IJ","K","L","M","N","O","P","R","S","T","U","F","H","C","\xC6","sz","si","","y","","E","JU","JA",
@@ -2805,15 +2781,20 @@ function GS_convert_utf8_to_windows($input, $language="Windows") {
 			#Czech in Windows-1250
 			"\xE1","\xE8","\xEF","\xE9","\xEC","\xF2","\xF3","\xF8","\x9A","\x9D","\xFA","\xF9","\xFD","\x9E",
 			"\xC1","\xC8","\xCF","\xC9","\xCC","\xD2","\xD3","\xD8","\x8A","\x8D","\xDA","\xD9","\xDD","\x8E",
+			#French/Italian/Spanish/German partially without diacritics
+			"a","\xE1","\xE2","\xE4","ae","\xDF","\xE7","ce","e","\xE9","e","\xEB","i","\xED","\xEE","i","n","o","\xF3","\xF4","\xF6","\xFA","u","\xFC","u","y",
+			"A","\xC1","\xC2","\xC4","AE","\xDF","\xC7","CE","E","\xC9","E","\xCB","I","\xCD","\xCE","I","N","O","\xD3","\xD4","\xD6","\xDA","U","\xDC","U","Y",
 		],
 		
-		"Windows" => [
+		"windows" => [
 			"\xE0","\xE1","\xE2","\xE3","\xE4","\xE5","\xB8","\xE6","\xE7","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF0","\xF1","\xF2","\xF3","\xF4","\xF5","\xF6","\xF7","\xF8","\xF9","\xFA","\xFB","\xFC","\xFD","\xFE","\xFF",
 			"\xC0","\xC1","\xC2","\xC3","\xC4","\xC5","\xA8","\xC6","\xC7","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD0","\xD1","\xD2","\xD3","\xD4","\xD5","\xD6","\xD7","\xD8","\xD9","\xDA","\xDB","\xDC","\xDD","\xDE","\xDF", 
 			"\xB9","\xE6","\xEA","\xB3","\xF1","\xF3","\x9C","\x9F","\xBF",
 			"\xA5","\xC6","\xCA","\xA3","\xD1","\xD3","\x8C","\x8F","\xAF",
 			"\xE1","\xE8","\xEF","\xE9","\xEC","\xF2","\xF3","\xF7","\x9A","\x9D","\xFA","\xF9","\xFD","\x9E",
 			"\xC1","\xC8","\xCF","\xC9","\xCC","\xD2","\xD3","\xD7","\x8A","\x8D","\xDA","\xD9","\xDD","\x8E",
+			"\xE0","\xE1","\xE2","\xE4","\xE6","\xDF","\xE7","\x9C","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF1","\xF2","\xF3","\xF4","\xF6","\xFA","\xFB","\xFC","\xF9","\xFF",
+			"\xC0","\xC1","\xC2","\xC4","\xC6","\xDF","\xC7","\x8C","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD1","\xD2","\xD3","\xD4","\xD6","\xDA","\xDB","\xDC","\xD9","\x9F",
 		]
 	];
 	

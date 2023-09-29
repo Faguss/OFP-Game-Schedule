@@ -285,14 +285,18 @@ if ($form->hidden["display_form"] == "Update")
 	$form->change_control(-1, ["Type"=>"Static", "Text"=>"<a target=\"_blank\" href=\"mod_updates\">".lang("GS_STR_MOD_UPDATES")."</a>"]);
 	
 	// Display buttons for navigating between sub-sections
-	forEach(GS_FORM_ACTIONS_MODUPDATE as $section=>$section_name) {
-		$class = "btn-mods " . ($form->hidden["display_subform"]==$section ? "active" : "");
+	$html = "";
+	forEach(GS_FORM_ACTIONS_MODUPDATE as $section=>$section_name) {		
+		$class = "btn btn-mods " . ($form->hidden["display_subform"]==$section ? "active" : "");
+		$html .= '<a class="'.$class.'" href="edit_mod.php?uniqueid='.$form->hidden["uniqueid"].'&display_form='.$form->hidden["display_form"].'&display_subform='.$section.'">'.lang($section_name).'</a> &nbsp; ';
 		
-		$form->add_button("display_subform", $section, lang($section_name), $class, "", ($form->hidden["display_subform"]==$section ? "disabled=\"disabled\"" : ""));
-		$form->add_html(" &nbsp; &nbsp; ");
-		$form->change_control([-1,-2], ["Inline"=>-3]);
+		//$form->add_button("display_subform", $section, lang($section_name), $class, "", ($form->hidden["display_subform"]==$section ? "disabled=\"disabled\"" : ""));
+		//$form->add_html(" &nbsp; &nbsp; ");
+		//$form->change_control([-1,-2], ["Inline"=>-3]);
 	}
 	
+	$form->add_text("subsections", "");
+	$form->change_control(-1, ["Type"=>"Static", "Text"=>$html]);
 	$form->add_space(1);
 	
 	// Display controls for the current section	
@@ -306,8 +310,16 @@ if ($form->hidden["display_form"] == "Update")
 		$form->add_select("version"  , lang("GS_STR_MOD_SELECT_VER"), "", []);
 		$form->add_text("version_new", lang("GS_STR_MOD_NEW_NUM")   , lang("GS_STR_MOD_NEW_NUM_HINT"), "");
 		$form->change_control("version_new", ["Group"=>"id=\"version_new_group\""]);
+		$form->add_text(
+			"changelog", 
+			lang("GS_STR_MOD_PATCHNOTES"), 
+			lang("GS_STR_MOD_PATCHNOTES_HINT")." <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a>", 
+			lang("GS_STR_MOD_PATCHNOTES_EXAMPLE"), 
+			"", 
+			-1
+		);
 	}
-	
+		
 	// Script editing controls
 	$form->add_select("script", lang("GS_STR_MOD_INSTALLATION_SCRIPT"), "", []);
 	$form->add_text("scripttext", "", $install_hint, $install_example, "", -1);
@@ -317,17 +329,6 @@ if ($form->hidden["display_form"] == "Update")
 	$form->change_control(["size", "sizetype"], ["Inline"=>3]);
 	$form->add_html($js_modal);
 		
-	// Patch notes input
-	if ($form->hidden["display_subform"] != "Link")
-		$form->add_text(
-			"changelog", 
-			lang("GS_STR_MOD_PATCHNOTES"), 
-			lang("GS_STR_MOD_PATCHNOTES_HINT")." <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a>", 
-			lang("GS_STR_MOD_PATCHNOTES_EXAMPLE"), 
-			"", 
-			-1
-		);
-
 	// Submit button
 	$form->add_button("action", $form->hidden["display_subform"], lang(GS_FORM_ACTIONS_MODUPDATE[$form->hidden["display_subform"]]."_SUBMIT"), "btn-mods btn-lg", "SubmitButton");
 		
@@ -404,8 +405,12 @@ if ($form->hidden["display_form"] == "Update")
 
 		// Set up validation	
 		// If the user is copying script from the other record - ignore script text in validation
-		$form->init_validation(["max"=>GS_MAX_TXT_INPUT_LENGTH, "required"=>true], $data["script"]!=-1 && $data["version"]==-1 ? ["scripttext", "size", "sizetype", "documentation_link"] : ["documentation_link"]);
-
+		$exclude = ["documentation_link", "subsections", "DeleteLink"];
+		if ($data["script"]!=-1 && $data["version"]==-1)
+			$exclude = array_merge($exclude, ["scripttext", "size", "sizetype"]);
+		
+		$form->init_validation(["max"=>GS_MAX_TXT_INPUT_LENGTH, "required"=>true], $exclude);
+		
 		$form->add_validation_rules(["scripttext"], ["max"=>GS_MAX_SCRIPT_INPUT_LENGTH, "display"=>lang("GS_STR_MOD_INSTALLATION_SCRIPT")]);
 		$form->add_validation_rules(["changelog"] , ["max"=>GS_MAX_SCRIPT_INPUT_LENGTH, "required"=>$form->hidden["display_subform"]!="Link" && $data["version"]!=$lowest]);
 		$form->add_validation_rules(["size"]      , [">="=>0, "required"=>false]);
@@ -418,7 +423,6 @@ if ($form->hidden["display_form"] == "Update")
 			// If adding a new version then verify its number
 			if ($data["version"] == -1)
 				$form->add_validation_rules(["version_new"], [">"=>$highest, "unique"=>["gs_mods_updates",["and", ["modid","=",$id], ["version","LIKE",$data["version_new"]]]]]);
-
 
 		if ($form->validate($custom_errors,lang("GS_STR_ERROR_FORMDATA"))  &&  $is_ok) {
 			// Set up three arrays for inserting data to three different db tables
