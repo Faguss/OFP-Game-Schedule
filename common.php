@@ -299,7 +299,7 @@ function GS_uniqueid_to_id($table_name, $id_list) {
 }
 
 // Handle form for server/mod sharing
-function GS_record_sharing($record_type, $record_table, $record_column, &$form, $id, $uid, $permission_to, $gs_my_permission_level, $current_entry_owner) {
+function GS_record_sharing($record_title, $record_type, $record_table, $record_column, &$form, $id, $uid, $permission_to, $gs_my_permission_level, $current_entry_owner) {
 	$db          = DB::getInstance();
 	$limit       = $record_type=="server" ? GS_PERMISSION_MAX_SERV_CONTRIBUTORS[$gs_my_permission_level] : GS_PERMISSION_MAX_MOD_CONTRIBUTORS[$gs_my_permission_level];
 	$permissions = [];
@@ -318,7 +318,7 @@ function GS_record_sharing($record_type, $record_table, $record_column, &$form, 
 	$checkbox_JS = "GS_limit_permissions_choice('permissions[]');";
 	$confirm_msg = lang($record_type == "server" ? "GS_STR_SHARE_TRANSFER_CONFIRM_SERVER" : "GS_STR_SHARE_TRANSFER_CONFIRM_MOD");
 
-	$form->title = lang($record_type=="server" ? "GS_STR_SERVER_SHARESERVER_PAGE_TITLE" : "GS_STR_SERVER_SHAREMOD_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
+	$form->title = lang($record_type=="server" ? "GS_STR_SERVER_SHARESERVER_PAGE_TITLE" : "GS_STR_SERVER_SHAREMOD_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 
 	$form->add_select("username", lang("GEN_UNAME"), "", [], "", "datalist", "placeholder=\"bob45\"");
 	$form->add_select("permissions", lang("GS_STR_SHARE_PERMISSIONS"), lang("GS_STR_SHARE_TRANSFER_HINT"), $permissions_select, "", "checkbox", "onClick=\"{$checkbox_JS}\"");
@@ -604,13 +604,11 @@ function GS_record_sharing($record_type, $record_table, $record_column, &$form, 
 }
 
 // Handle form for server/mod deletion
-function GS_record_delete($record_type, $record_table, &$form, $id, $uid) {
+function GS_record_delete($record_title, $record_type, $record_table, &$form, $id, $uid) {
 	$db = DB::getInstance();
 	$record_type_localized = ucfirst(lang("GS_STR_".strtoupper($record_type)));
 
-	$form->title = lang("GS_STR_DELETE_PAGE_TITLE", [strtolower(lang("GS_STR_".strtoupper($record_type))), "<B>{$form->hidden["display_name"]}</B>"]);
-	
-	$form->add_button("action", "Go Back", lang("GS_STR_DELETE_GOBACK"), "btn-success btn-lg");
+	$form->title = lang("GS_STR_DELETE_PAGE_TITLE", [strtolower(lang("GS_STR_".strtoupper($record_type))), "<strong>$record_title</strong>"]);
 	
 	if ($form->hidden["action"] == "Delete") {
 		$result = $db->update("gs_{$record_table}", $id, ["removed"=>true, "modified"=>date("Y-m-d H:i:s"), "modifiedby"=>$uid]);
@@ -1845,13 +1843,13 @@ function GS_get_current_url($add_https=true, $add_path=true) {
 
 // Read array with servers and output html
 function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTIONS, $server_order=[]) {
-	$html                 = "";
-	$js_event_data        = [];
-	$user_list            = [];
-	$js_addedon           = [];
-	$js_serv_id           = [];
-	$js_expired           = [];
-	$add_persistent_title = -1;
+	$html          = "";
+	$js_event_data = [];
+	$user_list     = [];
+	$js_addedon    = [];
+	$js_serv_id    = [];
+	$js_expired    = [];
+	$add_title     = ["events"=>false, "persistent"=>false];
 	
 	// Get user list first
 	if ($options & GS_USER_INFO) {
@@ -1878,9 +1876,10 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 	
 	// Option: put servers with events first and those without at the end
 	if ($options & GS_SPLIT_PERSISTENT) {
-		$event_based          = [];
-		$persistent           = [];
-		$add_persistent_title = true;
+		$event_based = [];
+		$persistent  = [];
+		$add_title["persistent"] = true;
+		$add_title["events"]     = true;
 
 		forEach ($servers["info"] as $index=>$server) {
 			if (count($server["events"]) == 0)
@@ -1906,43 +1905,40 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		$current_type      = [];
 		$current_started   = [];
 		
-		if ($options & GS_SPLIT_PERSISTENT  &&  $add_persistent_title  &&  count($server["events"])==0) {
-			$add_persistent_title = false;
-			$html .= "</div><div class=\"gs_section_title\">".lang("GS_STR_INDEX_PERSISTENT")."</div><div class=\"row\">";
-		}
-		
-		$html .= "<div class=\"col-lg-$box_size\">";
-		
-		// Add links to edit page if user has the right to edit this mod
-		if (!empty($servers["rights"][$id])) {
-			$navigation_menu = new Generated_Form([], Session::get(Config::get('session/token_name')), "edit_server.php", false);
-			$navigation_menu->hidden["uniqueid"]     = $uniqueid;
-			$navigation_menu->hidden["display_name"] = $server["name"];
-			$navigation_menu->label_size             = 0;
+		if ($options & GS_SPLIT_PERSISTENT) {
+			if ($add_title["events"] && count($server["events"]) > 0) {
+				$add_title["events"] = false;
+				$html .= '<div class="col-lg-'.$box_size.'"><h2 class="all_servers_title_separator">'.lang("GS_STR_INDEX_UPCOMING").'</h2></div>';
+			}
 			
-			foreach ($servers["rights"][$id] as $key=>$value)
-				if ($value  &&  $key!="Add New") {
-					$navigation_menu->add_button("display_form", $key, lang(GS_FORM_ACTIONS[$key]), "btn-primary btn-xs");
-					$navigation_menu->change_control(-1, ["Inline"=>-1, "LabelClass"=>" "]);
-				}
-
-			$html .= $navigation_menu->display();
+			if ($add_title["persistent"] && count($server["events"]) == 0) {
+				$add_title["persistent"] = false;
+				$html .= '<div class="col-lg-'.$box_size.'"><h2 class="all_servers_title_separator">'.lang("GS_STR_INDEX_PERSISTENT").'</h2></div>';
+			}
 		}
-		
-		$html .= "
-			<div class=\"panel panel-default\">
-				<div class=\"panel-body servers_background\" style=\"display:flex;\">
-					<div style=\"flex-grow:2\">";
-					
-		// Show image
-		if (!empty($server["logo"]) && substr($server["logo"], -3)!="paa")
-			$html .= "
-			<div style=\"margin-bottom: 10px;\">
-			<img style=\"vertical-align:middle\" src=\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$server["logo"]}\">
-			<span class=\"gs_servermod_title\">$server_name</span>
-			</div>";
-		else
-			$html .= "<h2 style=\"margin-top:0;\">$server_name</h2>";
+
+		$html .= '
+		<div class="col-lg-'.$box_size.'">
+			<div class="panel panel-default">
+				<div class="panel-body servers_background">
+				<div class="permalink_parent">
+					<div class="permalink_child">
+						<a href="show.php?server='.$server["uniqueid"].($server["access"]!="" ? "&password={$server["access"]}" : "").'"><span class="glyphicon glyphicon-link"></span></a>
+						<a href="rss.php?server='.$server["uniqueid"].($server["access"]!="" ? "&password={$server["access"]}" : "").'"><span class="fa fa-rss"></span></a>
+					</div>
+				</div>';
+
+		// Logo, name and edit controls
+		$html .= '
+			<div class="media">
+				<div class="media-left">
+					'.GS_output_item_logo("server", $server["logo"], 128).'
+				</div>
+				<div class="media-body media-middle">
+					'.GS_show_dropdown_controls($server, "server", $servers["rights"][$id]).'
+				</div><!--end media-body-->
+			</div><!--end media-->
+		';
 
 		$html .= "<dl class=\"row\" style=\"margin-bottom:0;\">";
 		
@@ -2065,60 +2061,57 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 				$html .= "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$server["admin"]], date("jS M Y",strtotime($server["adminsince"]))])."</small>";
 		}
 		
-		$html .= "
-		</div>
-		<div>
-			<a href=\"show.php?server={$server["uniqueid"]}".($server["access"]!="" ? "&password={$server["access"]}" : "")."\"><span class=\"glyphicon glyphicon-link\"></span></a>
-			<br>
-			<a href=\"rss.php?server={$server["uniqueid"]}".($server["access"]!="" ? "&password={$server["access"]}" : "")."\"><span class=\"fa fa-rss\"></span></a>
-		</div>
+		$html .= '		
+				</div><!-- end panel body -->
+			</div><!-- end panel -->
+		</div><!-- end column -->';
+	}
+	
+	if (!empty($js_event_data)) {
+		$locale_file = "en-gb";
 		
-		</div></div></div>";
-	}
-	
-	$locale_file = "en-gb";
-	
-	switch(lang("THIS_CODE")) {
-		case "ru-RU" : $locale_file="ru"; break;
-		case "pl-PL" : $locale_file="pl"; break;
-	}
+		switch(lang("THIS_CODE")) {
+			case "ru-RU" : $locale_file="ru"; break;
+			case "pl-PL" : $locale_file="pl"; break;
+		}
 
-	$localized_strings = [
-		"Daily" => "GS_STR_SERVER_EVENT_REPEAT_DAILY_DESC",
-		"0"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC0",
-		"1"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC1",
-		"2"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC2",
-		"3"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC3",
-		"4"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC4",
-		"5"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC5",
-		"6"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC6"
-	];
-	
-	foreach($localized_strings as $key=>$value)
-		$localized_strings[$key] = lang($value);
+		$localized_strings = [
+			"Daily" => "GS_STR_SERVER_EVENT_REPEAT_DAILY_DESC",
+			"0"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC0",
+			"1"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC1",
+			"2"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC2",
+			"3"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC3",
+			"4"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC4",
+			"5"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC5",
+			"6"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC6"
+		];
 		
-	$html .= "
-	<script type=\"text/javascript\" src=\"usersc/js/gs_functions.js\"></script>
-	<script type=\"text/javascript\" src=\"usersc/js/moment.js\"></script>
-	<script type=\"text/javascript\" src=\"usersc/js/{$locale_file}.js\"></script>
-	<script type=\"text/javascript\">
-		GS_convert_server_events(".json_encode($js_event_data).",".json_encode($localized_strings).",".json_encode(["GS_EVENT_SINGLE"=>GS_EVENT_SINGLE,"GS_EVENT_WEEKLY"=>GS_EVENT_WEEKLY,"GS_EVENT_DAILY"=>GS_EVENT_DAILY]).");
-		GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");";
+		foreach($localized_strings as $key=>$value)
+			$localized_strings[$key] = lang($value);
+			
+		$html .= "
+		<script type=\"text/javascript\" src=\"usersc/js/gs_functions.js\"></script>
+		<script type=\"text/javascript\" src=\"usersc/js/moment.js\"></script>
+		<script type=\"text/javascript\" src=\"usersc/js/{$locale_file}.js\"></script>
+		<script type=\"text/javascript\">
+			GS_convert_server_events(".json_encode($js_event_data).",".json_encode($localized_strings).",".json_encode(["GS_EVENT_SINGLE"=>GS_EVENT_SINGLE,"GS_EVENT_WEEKLY"=>GS_EVENT_WEEKLY,"GS_EVENT_DAILY"=>GS_EVENT_DAILY]).");
+			GS_convert_addedon_date('server_addedon',".json_encode($js_addedon).");";
+			
+		// Show server status
+		$server_status_list = [];
+		foreach(GS_SERVER_STATUS as $string_key)
+			$server_status_list[] = lang($string_key);
+			
+		$html .= "
+		var GS_serv_id     = ".json_encode($js_serv_id)."
+		var GS_game_status = ".json_encode($server_status_list)."
+		var GS_expired     = ".json_encode($js_expired)."
 		
-	// Show server status
-	$server_status_list = [];
-	foreach(GS_SERVER_STATUS as $string_key)
-		$server_status_list[] = lang($string_key);
-		
-	$html .= "
-	var GS_serv_id     = ".json_encode($js_serv_id)."
-	var GS_game_status = ".json_encode($server_status_list)."
-	var GS_expired     = ".json_encode($js_expired)."
-	
-	$(document).ready(function() {
-		GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, 'descriptionlist')
-	});
-	</script>";
+		$(document).ready(function() {
+			GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, 'descriptionlist')
+		});
+		</script>";
+	}
 		
 	return $html;
 }
@@ -2556,10 +2549,35 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $gs_permissio
 					$last_id = -1;
 			}
 			
-			if (isset($input["mod"]) && !empty($input["mod"]) && (isset($mod_id) && !in_array($mod["uniqueid"],$input["mod"]) || !isset($mod_id)))
+			// If input is to get specific mod/server then exlude all other mods/servers
+			if (
+				isset($input["mod"]) && 
+				!empty($input["mod"]) && 
+				(
+					(
+						isset($mod_id) && 
+						!in_array("all",$input["mod"]) && 
+						!in_array($mod["uniqueid"],$input["mod"])
+					)
+					|| 
+					!isset($mod_id)
+				)
+			)
 				$valid_row = false;
 			
-			if (isset($input["server"]) && !empty($input["server"]) && (isset($server_id) && !in_array($server["uniqueid"],$input["server"]) || !isset($server_id)))
+			if (
+				isset($input["server"]) && 
+				!empty($input["server"]) && 
+				(
+					(
+						isset($server_id) && 
+						!in_array("all",$input["server"]) && 
+						!in_array($server["uniqueid"],$input["server"])
+					) 
+					|| 
+					!isset($server_id)
+				)
+			)
 				$valid_row = false;
 
 			$table_row["description"] = lang($operation_name, $lang_arguments);
@@ -3034,6 +3052,7 @@ function GS_scripting_highlighting($code) {
 	return $output;
 }
 
+// Download
 function GS_url_get_contents($url, $timeout=NULL) {
     if (!function_exists('curl_init'))
         die('CURL is not installed!');
@@ -3049,5 +3068,47 @@ function GS_url_get_contents($url, $timeout=NULL) {
     $output = curl_exec($request);
     curl_close($request);
     return $output;
+}
+
+// Output address to image or placeholder
+function GS_output_item_logo($record_type, $filename, $size=32) {
+	$html = '<img width='.$size.' height='.$size.' src=';
+		
+	if (substr($filename, -3) == "jpg")
+		$html .= 'logo/'.$filename;
+	else
+		$html .= "images/placeholder/placeholder_".$record_type."_".$size.".png";
+		
+	return $html.'>';
+}
+
+// Show drop-down menu for server/mod if user has the right to edit it
+function GS_show_dropdown_controls($item, $record_type, $permission_to, $custom_title="") {
+	$html_controls = "";
+	$title = empty($custom_title) ? '<span class="gs_servermod_title">'.($item["name"]!="" ? $item["name"] : $item["uniqueid"]).'</span>' : $custom_title;
+			
+	foreach ($permission_to as $permission=>$value)
+		if ($value && $permission!="Add New") {
+			if ($permission == "Delete")
+				$html_controls .= '<li role="separator" class="divider"></li>';
+			
+			$html_controls .= '<li><a href="edit_'.$record_type.'.php?uniqueid='.$item["uniqueid"].'&display_form='.$permission.'">'.lang(GS_FORM_ACTIONS[$permission]).'</a></li>';
+		}
+		
+	if (empty($html_controls))
+		return $title;
+			
+	return 
+	'<div class="dropdown">
+		<p id="dropdownMenu'.$item["uniqueid"].'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			'.$title.'
+			<span class="caret"></span>
+		</p>
+		<ul class="dropdown-menu" aria-labelledby="dropdownMenu'.$item["uniqueid"].'">
+			<li><a href="show.php?'.($record_type=="server" ? "server" : "mod").'='.$item["uniqueid"].'">'.lang("GS_STR_INDEX_SHOW").'</a></li>
+			<li role="separator" class="divider"></li>
+			'.$html_controls.'
+		</ul>
+	</div><!--end dropdown-->';
 }
 ?>

@@ -15,6 +15,7 @@ RewriteRule ^api_documentation$ api_documentation.php [QSA,L]
 RewriteRule ^recent_activity$ recent_activity.php [QSA,L]
 RewriteRule ^rss$ rss.php [QSA,L]
 RewriteRule ^allmods$ allmods.php [QSA,L]
+RewriteRule ^allservers$ allservers.php [QSA,L]
 RewriteRule ^mod_updates$ modupdates.php [QSA,L]
 
 RewriteCond %{REQUEST_URI} preview_install.php

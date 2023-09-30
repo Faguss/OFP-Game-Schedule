@@ -13,21 +13,6 @@ require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 <?php
 require_once "common.php";
 
-function format_logo($record_type, $filename) {
-	$url   = "";
-	$color = $record_type=="server" ? "blue" : "green" ;
-		
-	if (substr($filename, -3) == "jpg")
-		$url = "logo/$filename";
-	else
-		if (substr($filename, -3) == "paa")
-			$url = "images/placeholder_32_".$color."_paa.png";
-		else
-			$url = "images/placeholder_32_".$color.".png";
-		
-	return $url;
-}
-
 function format_items($key_array, $items, $record_type, $record_column, $permission_to, $gs_my_permission_level) {
 	$html        = "";
 	$item_count  = 0;
@@ -70,7 +55,7 @@ function format_items($key_array, $items, $record_type, $record_column, $permiss
 			<div class="col-lg-'.$column_size.'">
 				<div class="media">
 					<div class="media-left">
-						<img width=32 height=32 src='.format_logo($record_type, $item["logo"]).'>
+						'.GS_output_item_logo($record_type, $item["logo"]).'
 					</div>
 					<div class="media-body media-middle">
 						<div class="dropdown">
@@ -177,7 +162,13 @@ $gs_my_permission_level = GS_get_permission_level($user);
 // Get servers
 $servers      = GS_list_servers(["current"], [], GS_REQTYPE_WEBSITE, 0, $lang["THIS_LANGUAGE"], $user);
 $mods         = GS_list_mods($servers["mods"], [], [], [], GS_REQTYPE_WEBSITE, $servers["lastmodified"]);
-$servers_html = "";
+$servers_html = '
+	<div class="permalink_parent">
+		<div class="permalink_child">
+			<a href="allservers"><span class="glyphicon glyphicon-link"></span></a>
+			<a href="rss?server=all"><span class="fa fa-rss"></span></a>
+		</div>
+	</div>';
 
 $all_events    = [];
 $persistent    = [];
@@ -225,24 +216,12 @@ if (!empty($all_events)) {
 		foreach($server["mods"] as $mod_id)
 			$server_mods[] = '<a target="_blank" href="show.php?mod='.$mods["info"][$mod_id]["uniqueid"].'">'.$mods["info"][$mod_id]["name"].'</a>';
 		
-		$mods_html .= '
-		<div class="col-lg-3">
-			<div class="media">
-				<div class="media-left">
-					<img width=32 height=32 src='.format_logo($record_type, $item["logo"]).'>
-				</div>
-				<div class="media-body media-middle">
-					<a href="show.php?mod='.$item["uniqueid"].'" target="_blank">'.$mod_name.'</a>
-				</div>
-			</div>
-		</div>';
-		
 		$servers_html .= '
 		<div class="row">
 			<div class="col-lg-4">
 				<div class="media">
 					<div class="media-left">
-						<img width=32 height=32 src='.format_logo("server", $server["logo"]).'>
+						'.GS_output_item_logo("server", $server["logo"]).'
 					</div>
 					<div class="media-body media-middle">
 						<a target="_blank" href="show.php?server='.$server["uniqueid"].'">'.$server_name.'</a>
@@ -283,14 +262,14 @@ if (!empty($persistent)) {
 			<div class="col-lg-4">
 				<div class="media">
 					<div class="media-left">
-						<img width=32 height=32 src='.format_logo("server", $server["logo"]).'>
+						'.GS_output_item_logo("server", $server["logo"]).'
 					</div>
 					<div class="media-body media-middle">
 						<a target="_blank" href="show.php?server='.$server["uniqueid"].'">'.$server_name.'</a>
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-4" id="query'.$server["uniqueid"].'">'.$status["summary"].'</div>
+			<div class="col-lg-8" id="query'.$server["uniqueid"].'">'.$status["summary"].'</div>
 		</div>';	
 	}
 }
@@ -326,7 +305,10 @@ $items     = $db->results(true);
 $sorted    = sort_into_columns($items);
 $mods_html = '
 	<div class="permalink_parent">
-		<a class="permalink_child" href="allmods"><span class="glyphicon glyphicon-link"></span></a>
+		<div class="permalink_child">
+			<a href="allmods"><span class="glyphicon glyphicon-link"></span></a>
+			<a href="rss?mod=all"><span class="fa fa-rss"></span></a>
+		</div>
 	</div>';
 
 for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
@@ -348,7 +330,7 @@ for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 		<div class="col-lg-3">
 			<div class="media">
 				<div class="media-left">
-					<img width=32 height=32 src='.format_logo($record_type, $item["logo"]).'>
+					'.GS_output_item_logo("mod", $item["logo"]).'
 				</div>
 				<div class="media-body media-middle">
 					<a href="show.php?mod='.$item["uniqueid"].'" target="_blank">'.$mod_name.'</a>
@@ -469,7 +451,7 @@ if (isset($user) && $user->isLoggedIn()){
 	}
 } else {
 	echo '
-	<div class="jumbotron">
+	<div class="well">
 		<h1 align="center">'.lang("GS_STR_INDEX_WELCOME").'</h1>
 		<p align="center" class="text-muted">'.lang("GS_STR_INDEX_DESCRIPTION").'</p>
 		<h3 align="center"><a href="quickstart">'.lang("GS_STR_INDEX_QUICKSTART").'</a></h3>

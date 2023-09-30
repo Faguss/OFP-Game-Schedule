@@ -1,7 +1,4 @@
 <?php
-if (!empty($form->data["uniqueid"]))
-	$form->title .= '<span style="float:right;font-size:12px;">'.$form->data["uniqueid"].'</span>';
-
 $form->hidden["action"] = NULL;
 echo $form->display();
 ?>

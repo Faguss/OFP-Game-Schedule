@@ -11,7 +11,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$voice_links_combined = substr($voice_links_combined, 0, -2) . ". " . lang("GS_STR_SERVER_VOICE_HINT");
 	
 	if ($form->hidden["display_form"] == "Edit")
-		$form->title=lang("GS_STR_SERVER_PAGE_TITLE", ["<b>{$form->hidden["display_name"]}</b>"]);
+		$form->title=lang("GS_STR_SERVER_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 	else
 		$form->title=lang("GS_STR_INDEX_ADDNEW_SERVER");
 		
@@ -109,7 +109,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 			
 			if ($result) {
 				$form->hidden["display_name"] = $data["name"]!="" ? $data["name"] : $data["ip"];
-				$form->title                  = lang("GS_STR_SERVER_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
+				$form->title                  = lang("GS_STR_SERVER_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 				
 				if ($form->hidden["action"] == "Add New") {
 					$id                           = $db->lastId();
@@ -149,7 +149,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 // If user wants to add/remove playing times
 if ($form->hidden["display_form"] == "Schedule") 
 {
-	$form->title = lang("GS_STR_SERVER_EVENT_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
+	$form->title = lang("GS_STR_SERVER_EVENT_PAGE_TITLE", ["<B>$record_title</B>"]);
 	$form->size  = 9;
 	
 	// If user wants to remove entries
@@ -435,7 +435,7 @@ if ($form->hidden["display_form"] == "Schedule")
 // If user wants to add/remove mods to the server
 if ($form->hidden["display_form"] == "Mods")
 {
-	$form->title = lang("GS_STR_SERVER_MOD_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
+	$form->title = lang("GS_STR_SERVER_MOD_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 	
 	// If user wants to remove entries
 	if ($form->hidden["action"] == "Discard") {
@@ -761,11 +761,11 @@ if ($form->hidden["display_form"] == "Mods")
 
 // If user wants to grant/revoke access for others
 if ($form->hidden["display_form"] == "Share")
-	GS_record_sharing($record_type, $record_table, $record_column, $form, $id, $uid, $permission_to, $gs_my_permission_level, $current_entry_owner);
+	GS_record_sharing($record_title, $record_type, $record_table, $record_column, $form, $id, $uid, $permission_to, $gs_my_permission_level, $current_entry_owner);
 
 // If user wants to delete server
 if ($form->hidden["display_form"] == "Delete") 
-	GS_record_delete($record_type, $record_table, $form, $id, $uid);
+	GS_record_delete($record_title, $record_type, $record_table, $form, $id, $uid);
 
 require_once "footer.php";
 ?>

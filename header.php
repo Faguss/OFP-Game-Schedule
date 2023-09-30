@@ -35,13 +35,10 @@ $record_column = $record_type=="server" ? "server" : "mod";
 require_once "common.php";
 $gs_my_permission_level = GS_get_permission_level($user);
 
-$form             = new Generated_Form(["uniqueid", "action", "display_form", "display_name", "display_subform"]);
+$form             = new Generated_Form(["uniqueid", "action", "display_form", "display_subform"]);
 $form->size       = 8;
 $form->label_size = 3;
 $form->input_size = 9;
-
-if ($form->hidden["action"] == "Go Back")
-	Redirect::to('index.php');
 
 if ($form->hidden["display_subform"] == "")
 	$form->hidden["display_subform"] = array_keys(GS_FORM_ACTIONS_MODUPDATE)[0];
@@ -54,7 +51,8 @@ $sql = "
 		gs_{$record_table}_admins.*,
 		gs_{$record_table}.id as id1,
 		gs_{$record_table}.uniqueid,
-		gs_{$record_table}.removed
+		gs_{$record_table}.removed,
+		gs_{$record_table}.name
 		
 	FROM 
 		gs_{$record_table}, 
@@ -69,7 +67,8 @@ if ($gs_my_permission_level == GS_PERM_ADMIN)
 	SELECT 
 		gs_{$record_table}.id as id1,
 		gs_{$record_table}.uniqueid,
-		gs_{$record_table}.removed
+		gs_{$record_table}.removed,
+		gs_{$record_table}.name
 		
 	FROM 
 		gs_{$record_table}
@@ -84,6 +83,7 @@ if ($db->query($sql,[$uid])->error()) {
 	die(lang("GS_STR_ERROR_GET_DB_RECORD"));
 }
 
+$record_title        = "";
 $my_records          = 0;
 $record_deleted      = false;
 $permission_to       = [];
@@ -95,8 +95,10 @@ if ($gs_my_permission_level == GS_PERM_ADMIN) {
 		$permission_to[$name] = true;
 		
 	foreach ($db->results(true) as $admin) {
-		if ($form->hidden["uniqueid"] == $admin["uniqueid"])
+		if ($form->hidden["uniqueid"] == $admin["uniqueid"]) {
 			$id = $admin["id1"];
+			$record_title = $admin["name"]!="" ? $admin["name"] : $admin["uniqueid"];
+		}
 	}
 } else {
 	foreach (GS_FORM_ACTIONS_BY_PAGE[$record_type] as $name)
@@ -109,8 +111,10 @@ if ($gs_my_permission_level == GS_PERM_ADMIN) {
 		$exist    = !$admin["removed"];
 		
 		// unique key to primary key
-		if ($form->hidden["uniqueid"] == $admin["uniqueid"])
+		if ($form->hidden["uniqueid"] == $admin["uniqueid"]) {
 			$id = $admin["id1"];
+			$record_title = $admin["name"]!="" ? $admin["name"] : $admin["uniqueid"];
+		}
 		
 		if ($exist) {
 			if ($owner)
@@ -153,20 +157,22 @@ if (!$permission_to[$form->hidden["display_form"]]) {
 	$form->fail($message);
 } else {
 	if ($form->hidden["display_form"] != "Add New") {
-		$button_class    = $record_type == "server" ? "primary" : "mods";
-		echo '<div class="col-lg-8" style="margin-bottom:1em;">';
-		
+		echo '
+		<ul class="nav nav-tabs" role="tablist" style="padding-left:1.3em;padding-right:1.3em;border-bottom:0px;">
+			<li role="presentation"> 
+				<a target="_blank" style="background-color:#f9faff;" href="show.php?'.$record_column.'='.$form->hidden["uniqueid"].'" role="tab">'.lang(GS_STR_INDEX_SHOW).'</a>
+			</li>';
+				
 		foreach ($permission_to as $key=>$value) {
-			if ($value && $key!="Add New"  &&  $key!=$form->hidden["display_form"]) {
+			if ($value && $key!="Add New") {
 				echo '
-				<a 
-					class="btn btn-'.$button_class.' btn-xs" 
-					href="edit_'.$record_column.'.php?uniqueid='.$form->hidden["uniqueid"].'&display_form='.$key.'"
-				>'.lang(GS_FORM_ACTIONS[$key]).'</a> &nbsp; ';
+				<li role="presentation" class="'.($form->hidden["display_form"]==$key?"active":"").'"> 
+				<a style="background-color:#f9faff;" href="edit_'.$record_column.'.php?uniqueid='.$form->hidden["uniqueid"].'&display_form='.$key.'" role="tab">'.lang(GS_FORM_ACTIONS[$key]).'</a>
+				</li>';
 			}
 		}
 		
-		echo '</div>';
+		echo '</ul>';
 	}
 }
 ?>

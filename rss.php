@@ -25,7 +25,7 @@ $exclude_list = [
 	GS_LOG_MOD_LINK_DELETED
 ];
 
-if (!empty($input["mod"]))
+if (!empty($input["mod"])) {
 	$exclude_list = [
 		GS_LOG_SERVER_MOD_REMOVED,
 		GS_LOG_SERVER_MOD_ADDED,
@@ -34,14 +34,34 @@ if (!empty($input["mod"]))
 		GS_LOG_MOD_SHARE_ACCESS,
 		GS_LOG_MOD_TRANSFER_ADMIN
 	];
+	
+	if (in_array("all",$input["mod"])) {
+		$exclude_list = array_merge($exclude_list, [
+			GS_LOG_MOD_UPDATED,
+			GS_LOG_MOD_SCRIPT_UPDATED,
+			GS_LOG_MOD_SCRIPT_ADDED,
+			GS_LOG_MOD_VERSION_UPDATED,
+			GS_LOG_MOD_LINK_ADDED,
+			GS_LOG_MOD_LINK_UPDATED,
+			GS_LOG_MOD_LINK_DELETED
+		]);
+	}
+}
 
-if (!empty($input["server"]))
+if (!empty($input["server"])) {
 	$exclude_list = [
 		GS_LOG_SERVER_MOD_CHANGED,
 		GS_LOG_SERVER_REVOKE_ACCESS,
 		GS_LOG_SERVER_SHARE_ACCESS,
 		GS_LOG_SERVER_TRANSFER_ADMIN
 	];
+	
+	if (in_array("all",$input["server"])) {
+		$exclude_list = array_merge($exclude_list, [
+			GS_LOG_SERVER_UPDATED,
+		]);
+	}
+}
 
 
 $table      = GS_get_activity_log(40, $exclude_list, false, GS_get_permission_level($user), $input);
@@ -63,8 +83,12 @@ foreach($table as $row) {
 		
 		$description .= "<a href=\"{$url}show.php?server={$row["server_id"]}\">".lang("GS_STR_SERVER")."</a><br>";
 		
-		if (!empty($input["server"]))
-			$feed_title = "Server Updates: {$row["server_name"]}";
+		if (!empty($input["server"])) {
+			if (in_array("all",$input["server"]))
+				$feed_title = "Server Updates";
+			else
+				$feed_title = "Server Updates: {$row["server_name"]}";
+		}
 	}
 	
 	if (isset($row["mod_name"])) {
@@ -78,8 +102,12 @@ foreach($table as $row) {
 		
 		$description .= "<a href=\"{$url}show.php?mod={$row["mod_id"]}$version\">".lang("GS_STR_MOD_PREVIEW_INST")."</a><br>";
 		
-		if (!empty($input["mod"]))
-			$feed_title = "Mod Updates: {$row["mod_name"]}";
+		if (!empty($input["mod"])) {
+			if (in_array("all",$input["mod"]))
+				$feed_title = "Mod Updates";
+			else
+				$feed_title = "Mod Updates: {$row["mod_name"]}";
+		}
 	}
 	
 	if (isset($row["mod_changelog"]))
@@ -99,7 +127,7 @@ foreach($table as $row) {
 	";
 }
 		
-echo  "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>
+echo  "<?xml version=\"1.0\" encoding=\"utf-8\" ?>
 <rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">
 
 <channel>

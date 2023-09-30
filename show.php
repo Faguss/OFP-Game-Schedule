@@ -2,12 +2,7 @@
 require_once 'users/init.php';
 require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 require_once "common.php";
-?>
 
-<div id="page-wrapper">
-	<div class="container">
-
-<?php
 if (!isset($user) || (isset($user) && !$user->isLoggedIn()))
 	languageSwitcher();
 
@@ -25,14 +20,17 @@ $csrf          = Session::get(Config::get('session/token_name'));
 if (!empty($servers["id"]))
 	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
 
-echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, GS_USER_INFO, $input["server"]) . "</div>";
+echo '<div class="row">' . GS_format_server_info($servers, $mods, 12, GS_USER_INFO, $input["server"]) . '</div>';
 
 
 
 if (!empty($mods["id"]))
-	echo "<center><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"https://youtu.be/vj04wSh-9CA\" target=\"_blank\">".lang("GS_STR_MOD_HOWTO_INSTALL")."</a></center><br>";
+	echo '
+	<center>
+		<a style="cursor:pointer; font-weight:bold; font-size:large;" href="https://youtu.be/vj04wSh-9CA" target="_blank">'.lang("GS_STR_MOD_HOWTO_INSTALL").'</a>
+	</center>
+	<br>';
 
-echo "<div class=\"row\">";
 $user_list        = [];
 $js_addedon       = [];
 $Parsedown        = new Parsedown();
@@ -47,48 +45,40 @@ if (!$db->query($sql,$mods["userlist"])->error())
 		$user_list[$row["id"]] = $row["username"];
 
 // Display mods
+echo '<div class="row">';
+
 foreach($input["mod"] as $input_index=>$uniqueid) {
 	$id = array_search($uniqueid, $mods["id"]);
 	if ($id === FALSE)
 		continue;
 
 	$mod = $mods["info"][$id];
-	
-	echo "<div class=\"col-lg-12\">";
-	
-	// Add links to edit page if user has the right to edit this mod
-	if (!empty($mods["rights"][$id])) {
-		$navigation_menu = new Generated_Form([], $csrf, "edit_mod.php", false);
-		$navigation_menu->hidden["uniqueid"]     = $uniqueid;
-		$navigation_menu->hidden["display_name"] = $mod["name"];
-		$navigation_menu->label_size             = 0;
-		
-		foreach ($mods["rights"][$id] as $key=>$value)
-			if ($value  &&  $key!="Add New") {
-				$navigation_menu->add_button("display_form", $key, lang(GS_FORM_ACTIONS[$key]), "btn-mods btn-xs");
-				$navigation_menu->change_control(-1, ["Inline"=>-1, "LabelClass"=>" "]);
-			}
 
-		echo $navigation_menu->display();
-	}
+	echo '
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-body mods_background">
+				<div class="permalink_parent">
+					<div class="permalink_child">
+						<a href="show.php?mod='.$mod["uniqueid"].($mod["access"]!="" ? "&password={$mod["access"]}" : "").'"><span class="glyphicon glyphicon-link"></span></a>
+						<a href="rss.php?mod='.$mod["uniqueid"].($mod["access"]!="" ? "&password={$mod["access"]}" : "").'"><span class="fa fa-rss"></span></a>
+					</div><!--end permalink_child-->
+				</div><!--end permalink_parent-->';
 
-	echo "
-		<div class=\"panel panel-default\">
-			<div class=\"panel-body mods_background\" style=\"display:flex;\">
-				<div style=\"flex-grow:2\">";
-
-	// Mod subtitle
+	// Logo, name and edit controls
 	$subtitle = !empty($mod["subtitle"]) ? " &nbsp; <span class=\"gs_mod_subtitle\">({$mod["subtitle"]})</span>" : "";
-
-	// Show image
-	if (!empty($mod["logo"]) && substr($mod["logo"], -3)!="paa")
-		echo "
-		<div style=\"margin-bottom: 10px;\">
-		<img style=\"vertical-align:middle\" src=\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$mod["logo"]}\">
-		<span class=\"gs_servermod_title\">{$mod["name"]} $subtitle</span>
-		</div>";
-	else
-		echo "<h2 style=\"margin-top:0;\">{$mod["name"]} $subtitle</h2>";
+	$title    = '<span class="gs_servermod_title">'.$mod["name"].$subtitle.'</span>';
+	
+	echo '
+		<div class="media">
+			<div class="media-left">
+				'.GS_output_item_logo("mod", $mod["logo"], 128).'
+			</div>
+			<div class="media-body media-middle">
+				'.GS_show_dropdown_controls($mod, "mod", $mods["rights"][$id], $title).'
+			</div><!--end media-body-->
+		</div><!--end media-->
+	';
 	
 	echo "<dl class=\"row\" style=\"margin-bottom:0;\">";
 	
@@ -142,14 +132,9 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 			echo "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$mod["admin"]], date("jS M Y",strtotime($mod["adminsince"]))])."</small>";
 	}
 	
-	echo "</div>
-	<div>
-		<a href=\"show.php?mod={$mod["uniqueid"]}".($mod["access"]!="" ? "&password={$mod["access"]}" : "")."\"><span class=\"glyphicon glyphicon-link\"></span></a>
-		<br>
-		<a href=\"rss.php?mod={$mod["uniqueid"]}".($mod["access"]!="" ? "&password={$mod["access"]}" : "")."\"><span class=\"fa fa-rss\"></span></a>
-	</div>
-
-	</div></div>";
+	echo '		
+		</div><!-- end panel body -->
+	</div><!-- end panel -->';
 			
 	if (!$input_onlylog)
 		echo "<p>" . lang("GS_STR_MOD_PREVIEW_INSTSCRIPT", ["<a target=\"_blank\" href=\"install_scripts\">", "</a>"]);
@@ -174,15 +159,20 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 	// Show mod updates
 	foreach($mod["updates"] as $update_index=>$update) {
 		// Version, date and author (if different from original owner)
-		echo "<div class=\"panel panel-default\">
-				<div class=\"panel-heading\"><strong>{$update["version"]}<span style=\"font-size:10px;float:right;\">";
+		echo '
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<strong>'.$update["version"].'
+					<span style="font-size:10px;float:right;">';
 
 		if ($update["createdby"] != $mod["createdby"])		
 			echo lang("GS_STR_ADDED_BY_ON",[$user_list[$update["createdby"]],$update["date"]]);
 		else
 			echo $update["date"];
 		
-		echo "</span></strong></div>";
+		echo '		</span>
+				</strong>
+			</div><!-- end panel heading-->';
 
 		// Show script
 		if (!$input_onlylog)
@@ -197,35 +187,40 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 			}
 		
 		if ($number_of_notes > 0  &&  ($number_of_notes!=1 || $update["note_version"][0]!=$mod["firstversion"])) {	// don't show patch notes field if there's only one note and it's the first version
-			echo "<hr style=\"margin-top:0px;margin-bottom:0px\"><div class=\"panel-body\" style=\"background-color:#fdffe1;\">";
+			echo '
+			<hr style="margin-top:0px;margin-bottom:0px">
+			<div class="panel-body" style="background-color:#fdffe1;">';
 			
 			foreach($update["note"] as $note_index=>$note) {
 				if ($update["note_version"][$note_index] == $mod["firstversion"])	// clear changelog for the first version of the mod
 					$note = "";
 				
-				echo "<p>";
+				echo '<p>';
 
 				if ($number_of_notes > 1) {
-					echo "<span style=\"font-size:10px;\">{$update["note_version"][$note_index]}<span style=\"float:right;\">";
+					echo '<span style="font-size:10px;">'.$update["note_version"][$note_index].'<span style="float:right;">';
 					
 					if ($update["note_author"][$note_index] != $mod["createdby"])
 						echo lang("GS_STR_ADDED_BY_ON",[$user_list[$update["note_author"][$note_index]],$update["note_date"][$note_index]]);
 					else
 						echo $update["note_date"][$note_index];
 						
-					echo "</span></span><br>";
+					echo '</span></span><br>';
 				}
 
 				echo $Parsedown->line(html_entity_decode($note, ENT_QUOTES))."</p>";
 			}
 			
-			echo "</div>";
+			echo '
+			</div><!-- end panel body-->';
 		}
 		
-		echo "</div>";
+		echo '
+		</div><!-- end panel-->';
 	}
 	
-	echo "</div><br><hr><br>";
+	echo '
+	</div><!--end column--><br><hr><br>';
 }
 
 
@@ -274,17 +269,9 @@ if (!empty($js_addedon)) {
 	";
 }
 
-echo "</div>";
+echo '</div><!-- end mods row-->';
 	
 if (isset($user) && $user->isLoggedIn())
 	languageSwitcher();
-?>
 
-
-	</div>
-</div>
-
-<!-- Place any per-page javascript here -->
-
-
-<?php require_once $abs_us_root . $us_url_root . 'usersc/templates/' . $settings->template . '/footer.php'; //custom template footer ?>
+require_once $abs_us_root . $us_url_root . 'usersc/templates/' . $settings->template . '/footer.php'; //custom template footer ?>

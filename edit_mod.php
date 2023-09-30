@@ -79,7 +79,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->input_size = 10;
 	
 	if ($form->hidden["display_form"] == "Edit")
-		$form->title=lang("GS_STR_MOD_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
+		$form->title=lang("GS_STR_MOD_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 	else
 		$form->title=lang("GS_STR_INDEX_ADDNEW_MOD");
 	
@@ -239,7 +239,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				file_put_contents("mods_timestamp.txt", time());
 				
 				$form->hidden["display_name"] = $data["name"];
-				$form->title                  = lang("GS_STR_MOD_PAGE_TITLE", ["<B>{$form->hidden["display_name"]}</B>"]);
+				$form->title                  = lang("GS_STR_MOD_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 				
 				// Update logo hash
 				$db->update("gs_mods", $id, ["logohash"=>empty($data["logo"]) ? "" : hash_file('crc32', $form->image_dir.$data["logo"])]);
@@ -279,7 +279,7 @@ if ($form->hidden["display_form"] == "Update")
 	$form->size       = 12;
 	$form->label_size = 2;
 	$form->input_size = 10;
-	$form->title      = lang("GS_STR_MOD_UPDATE_PAGE_TITLE", ["<b>{$form->hidden["display_name"]}</b>"]);
+	$form->title      = lang("GS_STR_MOD_UPDATE_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 	
 	$form->add_text("documentation_link", "");
 	$form->change_control(-1, ["Type"=>"Static", "Text"=>"<a target=\"_blank\" href=\"mod_updates\">".lang("GS_STR_MOD_UPDATES")."</a>"]);
@@ -321,6 +321,7 @@ if ($form->hidden["display_form"] == "Update")
 	}
 		
 	// Script editing controls
+	$form->add_space(1);
 	$form->add_select("script", lang("GS_STR_MOD_INSTALLATION_SCRIPT"), "", []);
 	$form->add_text("scripttext", "", $install_hint, $install_example, "", -1);
 	$form->add_emptyspan("convertlink_field", "id=\"convertlink_field_group\"");
@@ -329,19 +330,21 @@ if ($form->hidden["display_form"] == "Update")
 	$form->change_control(["size", "sizetype"], ["Inline"=>3]);
 	$form->add_html($js_modal);
 		
-	// Submit button
-	$form->add_button("action", $form->hidden["display_subform"], lang(GS_FORM_ACTIONS_MODUPDATE[$form->hidden["display_subform"]]."_SUBMIT"), "btn-mods btn-lg", "SubmitButton");
-		
-	$form->add_html("
-	<br>
-	<p>
-		<button type=\"button\" onclick=\"GS_preview_installation('{$form->hidden["display_subform"]}')\">".lang("GS_STR_MOD_PREVIEW_INST")."</button> 
+	// Preview button
+	$form->add_space(1);
+	$html = "
+		<button type=\"button\" class=\"btn btn-mods\" onclick=\"GS_preview_installation('{$form->hidden["display_subform"]}')\">".lang("GS_STR_MOD_PREVIEW_INST")."</button> 
 		&nbsp; &nbsp " . 
 		lang("GS_STR_MOD_LINK_FROM") . ": <select id='preview_installation_from_version'></select>
-	</p>
-	<p>".lang("GS_STR_MOD_DOWNLOADSIZE").": <strong id='preview_installation_size'><strong></p>
-	");
-	
+		&nbsp; &nbsp " . 
+		lang("GS_STR_MOD_DOWNLOADSIZE") . ": <strong id='preview_installation_size'></strong>
+	";
+	$form->add_text("previewinstallation", "");
+	$form->change_control(-1, ["Type"=>"Static", "Text"=>$html, "Inline"=>9]);
+		
+	// Submit button
+	$form->add_button("action", $form->hidden["display_subform"], lang(GS_FORM_ACTIONS_MODUPDATE[$form->hidden["display_subform"]]."_SUBMIT"), "btn-mods btn-lg", "SubmitButton", "style=\"float:right;\"");
+	$form->change_control(-1, ["CloseInline"=>true, "Inline"=>3]);
 
 	// If user wants to update database
 	if (array_search($form->hidden["action"], array_keys(GS_FORM_ACTIONS_MODUPDATE)) !== FALSE && !is_array(Input::get("DeleteLink"))) {
@@ -405,7 +408,7 @@ if ($form->hidden["display_form"] == "Update")
 
 		// Set up validation	
 		// If the user is copying script from the other record - ignore script text in validation
-		$exclude = ["documentation_link", "subsections", "DeleteLink"];
+		$exclude = ["documentation_link", "subsections", "DeleteLink", "previewinstallation"];
 		if ($data["script"]!=-1 && $data["version"]==-1)
 			$exclude = array_merge($exclude, ["scripttext", "size", "sizetype"]);
 		
@@ -853,7 +856,7 @@ if ($form->hidden["display_form"] == "Update")
 
 // If user wants to grant/revoke access for others
 if ($form->hidden["display_form"] == "Share") 
-	GS_record_sharing($record_type, $record_table, $record_column, $form, $id, $uid, $permission_to, $gs_my_permission_level, $current_entry_owner);
+	GS_record_sharing($record_title, $record_type, $record_table, $record_column, $form, $id, $uid, $permission_to, $gs_my_permission_level, $current_entry_owner);
 
 
 
@@ -889,7 +892,7 @@ if ($form->hidden["display_form"] == "Delete") {
 			$form->add_html(GS_lang("GS_STR_DELETE_MOD_USED", [$count]) . ". " . lang("GS_STR_DELETE_MOD_SURE") . "<br><br><br>");
 	}
 	
-	GS_record_delete($record_type, $record_table, $form, $id, $uid);
+	GS_record_delete($record_title, $record_type, $record_table, $form, $id, $uid);
 }
 
 require_once "footer.php";
