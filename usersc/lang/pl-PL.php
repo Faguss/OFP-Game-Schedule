@@ -39,7 +39,8 @@ $lang = array_merge($lang,array(
     #Home page
 	"GS_STR_INDEX_WELCOME" => "Witamy w Rozkładzie Rozgrywek do OFP",
 	"GS_STR_INDEX_DESCRIPTION" => "Organizator gier sieciowych do Operation Flashpoint / ARMA: Cold War Assault",
-	"GS_STR_INDEX_QUICKSTART" => "Jak to działa?",
+	"GS_STR_INDEX_QUICKSTART" => "Rozpocznij",
+	"GS_STR_INDEX_LEARN_MORE" => "Dowiedz się więcej",
 	"GS_STR_INDEX_UPCOMING" => "Nadchodzące spotkania",
 	"GS_STR_INDEX_PERSISTENT" => "Stałe serwery",
 	"GS_STR_INDEX_ALLMODS" => "Wszystkie dostępne mody",

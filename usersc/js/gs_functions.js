@@ -2141,7 +2141,6 @@ function GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, output_typ
 				dataType: 'json',
 				output_type: output_type,
 				success: function (server) {
-					console.log(this.output_type);
 					if (server != null) {
 						if (output_type == 'descriptionlist') {
 							if (server.gstate)

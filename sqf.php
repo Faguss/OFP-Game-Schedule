@@ -469,7 +469,7 @@ switch($input_mode) {
 		$argline .= "-".$modifier."connect=".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)." ";
 		
 		if (!empty($server["password"]))
-			$argline .= "-".$modifier."password=".GS_encrypt($ip, GS_ENCRYPT_KEY, GS_MODULUS_KEY)." ";
+			$argline .= "-".$modifier."password=".GS_encrypt($server["password"], GS_ENCRYPT_KEY, GS_MODULUS_KEY)." ";
 		
 		if (!empty($server["equalmodreq"]))
 			$argline .= "-serverequalmodreq=true ";
