@@ -1,3 +1,22 @@
+.faq_paragraph {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	line-height: 26px;
+}
+
+.faq_image {
+	height: 100px;
+	transition: transform .2s;
+	outline: 2px solid #888;
+}
+
+.faq_image:hover {
+	transform: scale(3);
+	outline: 0px;
+	z-index: 10;
+	position: relative;
+}
+
 .all_servers_title_separator {
 	text-align: center;
 	background-color: cornsilk;

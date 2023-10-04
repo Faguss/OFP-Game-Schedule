@@ -80,7 +80,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 		</div><!--end media-->
 	';
 	
-	echo "<dl class=\"row\" style=\"margin-bottom:0;\">";
+	echo '<dl>';
 	
 	$keys = [
 		"description" => lang("GS_STR_MOD_DESCRIPTION"),

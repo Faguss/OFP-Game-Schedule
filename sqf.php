@@ -304,7 +304,7 @@ switch($input_mode) {
 		
 	// Return mod information
 	case "mods_v2" : {
-		$mods     = GS_list_mods([], ["all"], $input["modver"], $input["password_mods"], GS_REQTYPE_GAME, 0);
+		$mods = GS_list_mods([], ["all"], $input["modver"], $input["password_mods"], GS_REQTYPE_GAME, 0);
 		$database = new igsedb();
 		
 		// Get user names from user id list
@@ -320,6 +320,8 @@ switch($input_mode) {
 		$mods_that_user_can_update  = "";
 		$mods_that_user_doesnt_have = "";
 		$mods_update_count          = 0;
+		
+		uasort($mods["info"], function($a,$b){return strnatcasecmp(ltrim($a["name"],"@![]"), ltrim($b["name"],"@![]"));});
 		
 		foreach($mods["info"] as $id=>$mod) {
 			$mods_simple_array .= "]+[[\"{$mod["uniqueid"]}\",\"{$mod["name"]}\",{$mod["forcename"]}]";

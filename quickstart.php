@@ -29,7 +29,8 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Optionally: if the server uses mods then add them from the list",
 	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "You can also submit your own mod",
 	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "After adding a game time the server will be listed publicly. Players can join now",
-	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Install Fwatch 1.16 and OFP Aspect Ratio pack 2.07. %m1%Download%m2%<br><span style=\"font-size:small\">Archive password is \"fwatch\". Extract it and run the installer. <a href=\"/fwatch/116test\">More info</a><br>Watch <a href=\"https://youtu.be/wD74VpadQY4\">video</a></span><br><br> Start the game with fwatch.exe. You'll see \"Mods\" button in the lower left corner. Click on it and then on the \"Schedule\" button. Select server from the list",
+	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Install Fwatch 1.16 and OFP Aspect Ratio pack 2.07. %m1%Download%m2%<br><span style=\"font-size:small\">Archive password is \"fwatch\". Extract it and run the installer. <a href=\"/fwatch/116test\">More info</a><br>Watch <a href=\"https://youtu.be/wD74VpadQY4\">video</a></span>",
+	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Start the game with fwatch.exe. You'll see \"Mods\" button in the lower left corner. Click on it and then on the \"Schedule\" button. Select server from the list",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Double-click on the server name to show available options. If you lack required mods then double-click on the \"Download\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Wait for the installer to finish. Playing the game or even quitting it won't affect the installation",
 	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Once it's done go to the server options again and double-click on the \"Connect\"",
@@ -55,7 +56,8 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Дополнительно: если на Вашем сервере используются моды, выберите и добавьте их в список",
 	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "Вы также можете добавить свой собственный мод",
 	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "Сервер будет отображаться для всех после добавления времени начала игры. Игроки могут подключиться.",
-	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Вам понадобится Fwatch 1.16 и OFP Aspect Ratio сборки 2.07. %m1%Скачать%m2%<br><span style=\"font-size:small\">Пароль архива \"fwatch\". Извлеките его и запустите установщик. <a href=\"/fwatch/116test\">Больше информации</a><br>Смотрите <a href=\"https://youtu.be/wD74VpadQY4\">видео</a></span><br><br>Запустите игру, используя fwatch.exe. Вы увидите кнопку \"Mods\" в левом нижнем углу. Нажмите на неё, а затем на кнопку \"Расписание\". Выберите сервер из списка",
+	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Вам понадобится Fwatch 1.16 и OFP Aspect Ratio сборки 2.07. %m1%Скачать%m2%<br><span style=\"font-size:small\">Пароль архива \"fwatch\". Извлеките его и запустите установщик. <a href=\"/fwatch/116test\">Больше информации</a><br>Смотрите <a href=\"https://youtu.be/wD74VpadQY4\">видео</a></span>",
+	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Запустите игру, используя fwatch.exe. Вы увидите кнопку \"Mods\" в левом нижнем углу. Нажмите на неё, а затем на кнопку \"Расписание\". Выберите сервер из списка",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Нажмите два раза на название сервера, чтобы просмотреть опции. Если Вам не хватает необходимых модов, нажмите два раза на \"Скачать\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Дождитесь завершения установки. Установка не прервётся во время или при закрытии игры",
 	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Как только установка закончится, перейдите к опциям сервера и нажмите два раза на \"Подключиться\"",
@@ -81,7 +83,8 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV" => "Dodatkowo: jeśli serwer używa modów to dodaj je z listy",
 	"GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD" => "Możesz także dodać własny mod",
 	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "Po dodaniu czasu rozpoczęcia gry serwer pojawi się na publicznej liście. Gracze mogą już dołączyć",
-	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Zainstaluj Fwatch 1.16 oraz OFP Aspect Ratio pack 2.07. %m1%Pobierz%m2%<br><span style=\"font-size:small\">Hasło archiwum to \"fwatch\". Wypakuj je i uruchom instalator. <a href=\"/fwatch/116test\">Więcej informacji</a><br>Patrz <a href=\"https://youtu.be/wD74VpadQY4\">film</a></span><br><br>Uruchom grę przez fwatch.exe. W lewym dolnym rogu pojawi się przycisk \"Mods\". Kliknij na nim a potem na przycisku \"Plan Rozgrywek\". Wybierz serwer z listy",
+	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Zainstaluj Fwatch 1.16 oraz OFP Aspect Ratio pack 2.07. %m1%Pobierz%m2%<br><span style=\"font-size:small\">Hasło archiwum to \"fwatch\". Wypakuj je i uruchom instalator. <a href=\"/fwatch/116test\">Więcej informacji</a><br>Patrz <a href=\"https://youtu.be/wD74VpadQY4\">film</a></span>",
+	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Uruchom grę przez fwatch.exe. W lewym dolnym rogu pojawi się przycisk \"Mods\". Kliknij na nim a potem na przycisku \"Plan Rozgrywek\". Wybierz serwer z listy",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Kliknij dwa razy na nazwie serwera żeby wyświetlić opcje. Jeśli nie masz wymaganych modów to kliknij dwa razy na \"Ściągnij\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Zaczekaj aż instalator skończy. Granie albo wyjście z gry nie ma wpływu na proces instalacji",
 	"GS_STR_QUICKSTART_FORPLAYERS_CONNECT" => "Po instalacji przejdź ponownie do opcji serwera i kliknij podwójnie na \"Dołącz\"",
@@ -95,15 +98,6 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 		<?php languageSwitcher(); ?>
 		
 		<div class="jumbotron">
-			<h2 align="center"><?=lang("GS_STR_QUICKSTART_TITLE")?></h2>
-			<p align="center" class="text-muted"><?=lang("GS_STR_QUICKSTART_SUBTITLE")?></p>
-			<p align="center" style="font-size:24px;font-weight:500;">
-				<a align="center" href="<?=lang("GS_STR_QUICKSTART_WHY_URL") ?>"><?=lang("GS_STR_QUICKSTART_WHY") ?></a>
-				&nbsp; &nbsp;
-				<a align="center" href="#players"><?=lang("GS_STR_QUICKSTART_FORPLAYERS") ?></a>
-				&nbsp; &nbsp;
-				<a align="center" href="#organizers"><?=lang("GS_STR_QUICKSTART_FORORGANIZERS") ?></a>
-			</p>
 <?php
 $paragraphs = [
 	[
@@ -111,9 +105,13 @@ $paragraphs = [
 		"anchor"    => "players",
 	],
 	[
+		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_INSTALL",
+		"image"     => "0_fwatch_installer",
+		"arguments" => ["<A HREF=\"https://ofp-faguss.com/fwatch/download/fwatch116beta_installer.7z\">", "</a>"],
+	],
+	[
 		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_START",
 		"image"     => "6_serverdisplay",
-		"arguments" => ["<A HREF=\"https://ofp-faguss.com/fwatch/download/fwatch116beta_installer.7z\">", "</a>"],
 	],
 	[
 		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV",
@@ -165,21 +163,19 @@ $paragraphs = [
 	],
 ];
 
-forEach($paragraphs as $paragraph) {
+forEach($paragraphs as $pkey=>$paragraph) {
 	$arguments = isset($paragraph["arguments"]) ? $paragraph["arguments"] : [];
 	
 	if (isset($paragraph["string"]))
 		echo "<p align=\"center\">".lang($paragraph["string"], $arguments)."</p>";
 	
 	if (isset($paragraph["title"])) {
-		echo "
-		<a name=\"".$paragraph["anchor"]."\"></a>
-		<br>
-		<hr>
-		<br>
-		<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang($paragraph["title"])."</h2>
-		<br>
-		";
+		echo "<a name=\"".$paragraph["anchor"]."\"></a>";
+		
+		if ($pkey > 0)
+			echo "<br><hr><br>";
+		
+		echo "<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang($paragraph["title"])."</h2><br>";
 	}
 	
 	if (isset($paragraph["image"])) {
@@ -203,56 +199,6 @@ forEach($paragraphs as $paragraph) {
 	}
 }
 
-
-/*foreach ($strings as $i=>$string) {
-	$arguments = [];
-
-	if ($string == "GS_STR_QUICKSTART_FORORGANIZERS") {
-		echo "
-		<a name=\"organizers\"></a>
-		<br>
-		<hr>
-		<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang("GS_STR_QUICKSTART_FORORGANIZERS").":</h2>
-		<br>
-		";
-	}
-	
-	if ($string == "GS_STR_QUICKSTART_FORPLAYERS_START") {
-		echo "
-		<a name=\"players\"></a>
-		<br>
-		<hr>
-		<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang("GS_STR_QUICKSTART_FORPLAYERS")."</h2>
-		<br>
-		";
-		$arguments = ["<A HREF=\"http://ofp-faguss.com/fwatch/116test\">", "</a><br><br>"];
-	}
-	
-	if ($string == "GS_STR_QUICKSTART_FORORGANIZERS_LOGIN")
-		$arguments = ["<a href='users/login.php' target='_blank'>Steam / Discord / VK / Google / Facebook</a>"];
-
-	echo "<p align=\"center\">".lang($string, $arguments)."</p>";
-	
-	if (!empty($images[$i])) {
-		$array = $images[$i];
-		
-		if (!is_array($images[$i]))
-			$array = [$images[$i]];
-		
-		echo "<div class=\"text-center\">";
-		
-		forEach ($array as $index=>$item) {
-			$image_name = "images/quickstart/" . $item . "_" . substr($lang["THIS_CODE"],0,2) . ".png";
-			
-			if (!file_exists($image_name))
-				$image_name = substr($image_name,0,-3) . "jpg";
-			
-			echo "<img " . ($index!=0 ? "style=\"margin-top:0.7em;\"" : "") . " src=\"$image_name\" alt=\"$item\" class=\"img-thumbnail blackborder\">";
-		}
-			
-		echo "</div><a name=\"paragraph".($i+1)."\"></a><br><br>";
-	}
-}*/
 ?>
 
 			
