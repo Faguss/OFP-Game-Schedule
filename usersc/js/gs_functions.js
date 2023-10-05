@@ -2101,6 +2101,15 @@ function GS_convert_server_events(event_data, stringtable, event_types) {
 	}
 }
 
+function GS_localize_date(class_name) {
+	var all_tags = document.getElementsByClassName(class_name);
+	
+	for (var i=0; i<all_tags.length; i++) {
+		var event_date = moment(all_tags[i].innerHTML);
+		all_tags[i].innerHTML = event_date.format("dddd, MMMM Do YYYY");
+	}
+}
+
 
 
 

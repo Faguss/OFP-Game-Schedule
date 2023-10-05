@@ -21,8 +21,8 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_SUBTITLE" => "for the game Operation Flashpoint / Arma: Cold War Assault",
 	"GS_STR_QUICKSTART_WHY" => "Why use it?",
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/UoT6sQQ6dLY",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "How to join?",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "How to organize?",
+	"GS_STR_QUICKSTART_FORPLAYERS" => "How to join a server?",
+	"GS_STR_QUICKSTART_FORORGANIZERS" => "How to setup a server?",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "First you log in with your %m1% account",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Add a new server record. Fill the fields with information about the OFP server you're going to play on",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Now go to the \"Schedule\" section. Set the game start time",
@@ -75,8 +75,8 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_SUBTITLE" => "do gry Operation Flashpoint / Arma: Cold War Assault",
 	"GS_STR_QUICKSTART_WHY" => "Dlaczego warto skorzystać?",
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/UoT6sQQ6dLY",
-	"GS_STR_QUICKSTART_FORPLAYERS" => "Jak dołączyć?",
-	"GS_STR_QUICKSTART_FORORGANIZERS" => "Jak zorganizować?",
+	"GS_STR_QUICKSTART_FORPLAYERS" => "Jak dołączyć do serwera?",
+	"GS_STR_QUICKSTART_FORORGANIZERS" => "Jak ustawić serwer?",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Najpierw zaloguj się przy pomocy konta %m1%",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Dodaj nowy wpis serwera. Wypełnij puste pola danymi o serwerze na którym będzieci grali",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Przejdź do sekcji \"Harmonogram\". Ustaw czas rozpoczęcia gry",
@@ -92,123 +92,166 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN" => "Miłej zabawy!"
 	));
 }
-?>
-<div id="page-wrapper">
-	<div class="container">
-		<?php languageSwitcher(); ?>
-		
-		<div class="jumbotron">
-<?php
-$paragraphs = [
-	[
-		"title"     => "GS_STR_QUICKSTART_FORPLAYERS",
-		"anchor"    => "players",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_INSTALL",
-		"image"     => "0_fwatch_installer",
-		"arguments" => ["<A HREF=\"https://ofp-faguss.com/fwatch/download/fwatch116beta_installer.7z\">", "</a>"],
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_START",
-		"image"     => "6_serverdisplay",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV",
-		"image"     => "7_downloadmods",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL",
-		"image"     => "8_installing",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_CONNECT",
-		"image"     => "9_connect",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT",
-		"image"     => ["10_autoconnect", "11_autoconnect"],
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN",
+
+languageSwitcher();
+
+echo '
+<ul id="quickstart_tabs" class="nav nav-tabs" role="tablist">
+	<li role="presentation" class="active"><a href="#players" aria-controls="players" role="tab" data-toggle="tab">'.lang("GS_STR_QUICKSTART_FORPLAYERS").'</a></li>
+	<li role="presentation"><a href="#organizers" aria-controls="organizers" role="tab" data-toggle="tab">'.lang("GS_STR_QUICKSTART_FORORGANIZERS").'</a></li>
+</ul>
+<div class="jumbotron">
+<div class="tab-content">
+';
+
+$sections = [
+	"players"=>[
+		[
+			"title"     => "GS_STR_QUICKSTART_FORPLAYERS",
+			"anchor"    => "players",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORPLAYERS_INSTALL",
+			"image"     => "0_fwatch_installer",
+			"arguments" => ["<A HREF=\"https://ofp-faguss.com/fwatch/download/fwatch116beta_installer.7z\">", "</a>"],
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORPLAYERS_START",
+			"image"     => "6_serverdisplay",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV",
+			"image"     => "7_downloadmods",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL",
+			"image"     => "8_installing",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORPLAYERS_CONNECT",
+			"image"     => "9_connect",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORPLAYERS_AUTO_CONNECT",
+			"image"     => ["10_autoconnect", "11_autoconnect"],
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORPLAYERS_HAVEFUN",
+		],
 	],
 	
-	[
-		"title"     => "GS_STR_QUICKSTART_FORORGANIZERS",
-		"anchor"    => "organizers",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_LOGIN",
-		"image"     => "1_mainmenu",
-		"arguments" => ["<a href='users/login.php' target='_blank'>Steam / Discord / VK / Google / Facebook</a>"],
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV",
-		"image"     => "2_addnewserver",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE",
-		"image"     => "3_schedule",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV",
-		"image"     => "4_assignmod",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD",
-		"image"     => "5_addnewmod",
-	],
-	[
-		"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_READY",
+	"organizers"=>[
+		[
+			"title"     => "GS_STR_QUICKSTART_FORORGANIZERS",
+			"anchor"    => "organizers",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_LOGIN",
+			"image"     => "1_mainmenu",
+			"arguments" => ["<a href='users/login.php' target='_blank'>Steam / Discord / VK / Google / Facebook</a>"],
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV",
+			"image"     => "2_addnewserver",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE",
+			"image"     => "3_schedule",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_ADDMODTOSERV",
+			"image"     => "4_assignmod",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_SUBMITMOD",
+			"image"     => "5_addnewmod",
+		],
+		[
+			"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_READY",
+		],
 	],
 ];
 
-forEach($paragraphs as $pkey=>$paragraph) {
-	$arguments = isset($paragraph["arguments"]) ? $paragraph["arguments"] : [];
+foreach ($sections as $section_name=>$paragraphs) {
+	echo '<div role="tabpanel" class="tab-pane active" id="'.$section_name.'">';
 	
-	if (isset($paragraph["string"]))
-		echo "<p align=\"center\">".lang($paragraph["string"], $arguments)."</p>";
-	
-	if (isset($paragraph["title"])) {
-		echo "<a name=\"".$paragraph["anchor"]."\"></a>";
+	forEach ($paragraphs as $pkey=>$paragraph) {
+		$arguments = isset($paragraph["arguments"]) ? $paragraph["arguments"] : [];
 		
-		if ($pkey > 0)
-			echo "<br><hr><br>";
+		if (isset($paragraph["string"]))
+			echo "<p align=\"center\">".lang($paragraph["string"], $arguments)."</p>";
 		
-		echo "<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang($paragraph["title"])."</h2><br>";
-	}
-	
-	if (isset($paragraph["image"])) {
-		$array = $paragraph["image"];
-		
-		if (!is_array($paragraph["image"]))
-			$array = [$paragraph["image"]];
-		
-		echo "<div class=\"text-center\">";
-		
-		forEach ($array as $index=>$item) {
-			$image_name = "images/quickstart/" . $item . "_" . substr($lang["THIS_CODE"],0,2) . ".png";
+		if (isset($paragraph["title"])) {
+			#echo "<a name=\"".$paragraph["anchor"]."\"></a>";
 			
-			if (!file_exists($image_name))
-				$image_name = substr($image_name,0,-3) . "jpg";
+			if ($pkey > 0)
+				echo "<br><hr><br>";
 			
-			echo "<img " . ($index!=0 ? "style=\"margin-top:0.7em;\"" : "") . " src=\"$image_name\" alt=\"$item\" class=\"img-thumbnail blackborder\">";
+			echo "<h2 align=\"center\" style=\"color:#cc4f80;font-size:45px\">".lang($paragraph["title"])."</h2><br>";
 		}
 		
-		echo "</div><br><br>";
+		if (isset($paragraph["image"])) {
+			$array = $paragraph["image"];
+			
+			if (!is_array($paragraph["image"]))
+				$array = [$paragraph["image"]];
+			
+			echo "<div class=\"text-center\">";
+			
+			forEach ($array as $index=>$item) {
+				$image_name = "images/quickstart/" . $item . "_" . substr($lang["THIS_CODE"],0,2) . ".png";
+				
+				if (!file_exists($image_name))
+					$image_name = substr($image_name,0,-3) . "jpg";
+				
+				echo "<img " . ($index!=0 ? "style=\"margin-top:0.7em;\"" : "") . " src=\"$image_name\" alt=\"$item\" class=\"img-thumbnail blackborder\">";
+			}
+			
+			echo "</div><br><br>";
+		}
 	}
+	
+	echo '</div>';
 }
 
 ?>
 
 			
-			<br><br>
-			<p><small><?=lang("GS_STR_TRANSLATION") ?></small></p>
-			<br><br>			
-		</div>
-	</div>
+	<br><br>
+	<p><small><?=lang("GS_STR_TRANSLATION") ?></small></p>
+	<br><br>
+	</div>			
 </div>
 
+<script>
+$(document).ready(() => {
+	let url = location.href.replace(/\/$/, "");
+	if (location.hash) {
+		const hash = url.split("#");
+		$('#quickstart_tabs a[href="#'+hash[1]+'"]').tab("show");
+		url = location.href.replace(/\/#/, "#");
+		history.replaceState(null, null, url);
+		setTimeout(() => {
+			$(window).scrollTop(0);
+		}, 400);
+	} 
+
+	$('a[data-toggle="tab"]').on("click", function() {
+		let newUrl;
+		const hash = $(this).attr("href");
+		
+		if (hash == "#players") {
+			newUrl = url.split("#")[0];
+		} else {
+			newUrl = url.split("#")[0] + hash;
+		}
+		
+		newUrl += "/";
+		history.replaceState(null, null, newUrl);
+	});
+});
+
+</script>
 <!-- Place any per-page javascript here -->
 
 
