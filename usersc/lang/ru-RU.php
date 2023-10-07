@@ -39,7 +39,7 @@ $lang = array_merge($lang, array(
 	#Home page	
 	"GS_STR_INDEX_WELCOME" => "Добро пожаловать в Расписание Игр для OFP",
 "GS_STR_INDEX_DESCRIPTION" => "Органайзер многопользовательской игры Operation Flashpoint / ARMA: Cold War Assault",
-"GS_STR_INDEX_QUICKSTART" => "Начать?",
+"GS_STR_INDEX_QUICKSTART" => "Начать",
 "GS_STR_INDEX_LEARN_MORE" => "Узнать больше",
 	"GS_STR_INDEX_UPCOMING" => "Будущие игры",
 "GS_STR_INDEX_PERSISTENT" => "Постоянные Серверы",
@@ -100,6 +100,9 @@ $lang = array_merge($lang, array(
 	"GS_STR_SERVER_PERSISTENT" => "Расписание",
 "GS_STR_SERVER_PERSISTENT_HINT" => "Сервер полагается на определенное время игры?",
 "GS_STR_SERVER_PERSISTENT_OFF" => "Этот сервер не имеет расписания. Держите его в списке",
+"GS_STR_SERVER_PICK_IP" => "Выберите адрес из списка серверов",
+"GS_STR_SERVER_MASTER_LIST" => "Основной список серверов",
+"GS_STR_SERVER_MASTER_5MIN" => "Обновляется каждые пять минут",
 
 	#Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Неправильный адрес веб-сайта",

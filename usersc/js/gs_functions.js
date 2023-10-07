@@ -34,6 +34,7 @@ function GS_format_event_list(data, list_id, stringtable, event_types) {
 		var starttime = data[i]["starttime"];
 		var duration  = data[i]["duration"];
 
+		var original   = moment(starttime);
 		var start      = moment(starttime);
 		var end        = moment(starttime).add(duration, "minutes");
 		var day        = start.day();
@@ -82,6 +83,7 @@ function GS_format_event_list(data, list_id, stringtable, event_types) {
 			description = stringtable["Expired"];
 		
 		output.push({
+			"original"   : original,
 			"starttime"  : start, 
 			"endtime"    : end, 
 			"type"       : type, 
@@ -141,7 +143,7 @@ function GS_make_event_editable(list, data, form_inputs, edit_button_id, languag
 						var new_value  = "";
 						
 						switch(k) {
-							case 0: new_value=data[j]["starttime"].format("Do MMMM [(]dddd[)] YYYY HH:mm"); break;
+							case 0: new_value=data[j]["original"].format("Do MMMM [(]dddd[)] YYYY HH:mm"); break;
 							case 1: new_value=data[j]["timezone"]; break;
 							case 2: new_value=data[j]["type"]; break;
 							case 3: new_value=data[j]["duration"]; break;
@@ -250,7 +252,7 @@ function GS_table_rows_swap(direction, row_id, field_id) {
 }
 
 // Get game server status
-function GS_get_server_status(ip_id, ip_group, location_group_id, name_id, password_id, version_id, equalmodreq_id, location_id) {
+function GS_get_server_status(ip_id) {
 	var ip_input = document.getElementById(ip_id);
 	var ip       = ip_input.value;
 	var port     = '2302';
@@ -261,8 +263,6 @@ function GS_get_server_status(ip_id, ip_group, location_group_id, name_id, passw
 		port = parts[1];
 	}
 	
-	
-	// Get server version and equalmodrequired
 	var ip_input_backup = ip_input.innerHTML;
 	ip_input.innerHTML  = "";
 	$(ip_input).addClass('schedule_modal_loader');
@@ -271,24 +271,54 @@ function GS_get_server_status(ip_id, ip_group, location_group_id, name_id, passw
 		$(ip_input).removeClass('schedule_modal_loader');
 		ip_input.innerHTML = ip_input_backup;
 		
-		$('#'+name_id).val(data.hostname);
-		$('#'+version_id).val(data.actver.substring(0,1)+"."+data.actver.substring(1));
-		$('#'+equalmodreq_id).val(data.equalModRequired);
-		
-		if (data.password == "1") {
-			if ($('#'+password_id).val() == "")
-				$('#'+password_id).val("<type password here>");
-		} else
-			$('#'+password_id).val("");
+		GS_fill_input_fields_from_server_query(data);
+		GS_get_server_location(ip);
 	})
 	.fail(function() {
 		$(ip_input).removeClass('schedule_modal_loader');
 		ip_input.innerHTML = ip_input_backup;
 	});
+}
+
+function GS_fill_input_fields_from_server_query(data) {
+	// If passed array index
+	if (!isNaN(data)) {
+		var index = data;
+		data = master_server.list[index];
+		if (master_server.location[index] != "") {
+			$('#location').val(master_server.location[index]);
+		};
+	}
 	
+	$('#name').val(data.hostname);
+	$('#version').val(data.actver.substring(0,1)+"."+data.actver.substring(1));
+	$('#equalmodreq').val(data.equalModRequired);
 	
-	// Get location
-	var location_input        = document.getElementById(location_id);
+	if (data.password == "1") {
+		if ($('#password').val() == "")
+			$('#password').val("<type password here>");
+	} else
+		$('#password').val("");
+}
+
+function GS_get_server_location(ip) {
+	// If passed array index
+	var index = ip;
+	
+	if (!isNaN(index)) {
+		if (master_server.location[index] != "") {
+			$('#location').val(master_server.location[index]);
+			return;
+		} else {
+			ip        = master_server.address[index];
+			var parts = ip.split(':');
+			
+			if (parts.length >= 2)
+				ip = parts[0];
+		}
+	}
+	
+	var location_input        = document.getElementById("location");
 	var location_input_backup = location_input.innerHTML;
 	location_input.innerHTML  = "";
 	
@@ -304,14 +334,18 @@ function GS_get_server_status(ip_id, ip_group, location_group_id, name_id, passw
 			location_input.innerHTML = location_input_backup;
 			
 			if (!jQuery.isEmptyObject(data)) {
-				$('#'+location_id).val(data.continent+", "+data.country);
+				var final_text = data.continent+", "+data.country;
+				$('#location').val(final_text);
+				if (!isNaN(index)) {
+					master_server.location[index] = final_text;
+				}
 			}
 		},
 		fail: function() {
 			$(location_input).removeClass('schedule_modal_loader');
 			location_input.innerHTML = location_input_backup;
 		}
-	});
+	});	
 }
 
 const SQM_EXPECT = {
@@ -828,6 +862,37 @@ function GS_drag_over_handler(event, field, enable) {
 	field.style.backgroundColor = enable ? "coral" : "transparent";
 }
 
+// Fill master server list with server names
+function GS_get_server_list(master_server, list_id) {
+	if (document.getElementById(list_id).childElementCount == 0) {
+		$.ajax({
+			type: 'GET',
+			url: 'https://master.ofpisnotdead.com/servers.txt',
+			dataType: 'text',
+			success: function (address_list) {
+				if (address_list != null) {
+					ip_adresses = address_list.trim().split("\n");
+					for (const ip_address of ip_adresses) {
+						$.ajax({
+							type: 'GET',
+							url: 'https://ofp-api.ofpisnotdead.com/'+ip_address,
+							dataType: 'json',
+							success: function (server_status) {
+								if (server_status != null) {
+									var index = master_server.list.length;
+									master_server.list.push(server_status);
+									master_server.location.push("");
+									master_server.address.push(ip_address);
+									$("#"+list_id).append("<li><a style=\"cursor:pointer\" data-dismiss=\"modal\" onclick=\"$('#ip').val(\'"+ip_address+"\'); GS_fill_input_fields_from_server_query("+index+"); GS_get_server_location("+index+");\">"+server_status.hostname+"</a></li>");
+								}
+							}
+						});
+					}
+				}
+			}
+		});
+	}
+}
 
 
 

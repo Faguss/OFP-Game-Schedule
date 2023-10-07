@@ -100,6 +100,9 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_PERSISTENT" => "Harmonogram",
 	"GS_STR_SERVER_PERSISTENT_HINT" => "Czy ten serwer ma konkretne czasy grania?",
 	"GS_STR_SERVER_PERSISTENT_OFF" => "Ten serwer nie ma harmonogramu. Niech ciągle będzie na liście",
+	"GS_STR_SERVER_PICK_IP" => "Wybierz adres z listy serwerów",
+	"GS_STR_SERVER_MASTER_LIST" => "Główna lista serwerów",
+	"GS_STR_SERVER_MASTER_5MIN" => "Aktualizowana co 5 minut",
 
     #Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Błędny adres strony",

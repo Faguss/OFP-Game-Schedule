@@ -172,8 +172,11 @@ $sections = [
 	],
 ];
 
+$active = true;
+
 foreach ($sections as $section_name=>$paragraphs) {
-	echo '<div role="tabpanel" class="tab-pane active" id="'.$section_name.'">';
+	echo '<div role="tabpanel" class="tab-pane '.($active?"active":"").'" id="'.$section_name.'">';
+	$active = false;
 	
 	forEach ($paragraphs as $pkey=>$paragraph) {
 		$arguments = isset($paragraph["arguments"]) ? $paragraph["arguments"] : [];

@@ -100,6 +100,9 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_PERSISTENT" => "Schedule",
 	"GS_STR_SERVER_PERSISTENT_HINT" => "Is the server relying on specific game times?",
 	"GS_STR_SERVER_PERSISTENT_OFF" => "This server doesn't have a schedule. Keep it on the list",
+	"GS_STR_SERVER_PICK_IP" => "Select address from the server list",
+	"GS_STR_SERVER_MASTER_LIST" => "Master server list",
+	"GS_STR_SERVER_MASTER_5MIN" => "Updated every 5 minutes",
 
     #Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Invalid website address",

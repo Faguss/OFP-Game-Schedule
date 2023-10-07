@@ -1,6 +1,33 @@
 <?php
 require_once "header.php";
 
+// Modal for displaying server list from the master
+echo '
+<div class="modal fade" id="server_list_modal" tabindex="-1" role="dialog" aria-labelledby="server_list_modal_label">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="server_list_modal_label">'.lang("GS_STR_SERVER_MASTER_LIST").'</h4>
+			</div>
+			
+			<div class="modal-body">
+				<p>'.lang("GS_STR_SERVER_MASTER_5MIN").'</p>
+				<ul id="server_list_content">
+				</ul>
+			</div>
+			
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">'.lang("GEN_CLOSE").'</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var master_server = {list:[], location:[], address:[]};
+</script>';
+
+
 // If user wants to add new server or edit existing
 if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 {
@@ -15,7 +42,8 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	else
 		$form->title=lang("GS_STR_INDEX_ADDNEW_SERVER");
 		
-	$form->add_text("ip", lang("GS_STR_SERVER_ADDRESS"), lang("GS_STR_SERVER_ADDRESS_HINT"), "192.168.1.101:2302");
+	$master_list = '<a data-toggle="modal" data-target="#server_list_modal" onclick="GS_get_server_list(master_server, \'server_list_content\');">'.lang("GS_STR_SERVER_PICK_IP").'</a>';
+	$form->add_text("ip", lang("GS_STR_SERVER_ADDRESS"), lang("GS_STR_SERVER_ADDRESS_HINT")."<p>$master_list</p>", "192.168.1.101:2302");
 	
 	// Auto configuration
 	$form->include_file("usersc/js/gs_functions.js");
@@ -28,9 +56,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				".lang("GS_STR_SERVER_SELECT_FILES")."
 			</label>
 		</div>
-	</div>
-	<script type=\"text/javascript\">		
-	</script>");
+	</div>");
 	
 	$form->add_text("name"             , lang("GS_STR_SERVER_NAME")         , lang("GS_STR_SERVER_NAME_HINT")      , lang("GS_STR_SERVER_NAME_EXAMPLE"));
 	$form->add_text("password"         , lang("GS_STR_SERVER_PASSWORD")     , lang("GS_STR_SERVER_PASSWORD_HINT")  , "123", "", 0, "");
@@ -48,7 +74,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	
 	// Trigger info download on IP change
 	$form->change_control("location", ["Group"=>"id=\"location_group\""]);
-	$form->change_control("ip", ["Property"=>"onchange=\"GS_get_server_status('ip', this, 'location_group', 'name', 'password', 'version', 'equalmodreq', 'location')\""]);
+	$form->change_control("ip", ["Property"=>"onchange=\"GS_get_server_status('ip')\""]);
 	
 	
 	// If user submitted form

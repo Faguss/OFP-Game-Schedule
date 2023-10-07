@@ -516,28 +516,36 @@ switch($input_mode) {
 		
 		if (!empty($arg_mod))
 			$argline .= "-modid=$arg_mod ";
+		
+		$start_date = $event["date_original"];
+		$end_date   = $event["date_original_end"];
+		
+		if ($event["vacation"]) {
+			$start_date = $event["date"];
+			$end_date   = $event["date_end"];
+		}
 			
 		$output .= 
 			pack("l", GR_OK) .
 			pack("Vl", GR_TAG_SERVER_VERSION, array_search($server["version"], [1=>"1.96", 2=>"1.99", 3=>"2.01"])) . 
 			pack("Vvvvvvvvv", GR_TAG_EVENT_DATE_START,
-				$event["date"]->format("Y"),
-				$event["date"]->format("n"),
-				$event["date"]->format("w"),
-				$event["date"]->format("j"),
-				$event["date"]->format("H"),
-				$event["date"]->format("i"),
-				$event["date"]->format("s"),
+				$start_date->format("Y"),
+				$start_date->format("n"),
+				$start_date->format("w"),
+				$start_date->format("j"),
+				$start_date->format("H"),
+				$start_date->format("i"),
+				$start_date->format("s"),
 				0
 			) .
 			pack("Vvvvvvvvv", GR_TAG_EVENT_DATE_END,
-				$event["date_end"]->format("Y"),
-				$event["date_end"]->format("n"),
-				$event["date_end"]->format("w"),
-				$event["date_end"]->format("j"),
-				$event["date_end"]->format("H"),
-				$event["date_end"]->format("i"),
-				$event["date_end"]->format("s"),
+				$end_date->format("Y"),
+				$end_date->format("n"),
+				$end_date->format("w"),
+				$end_date->format("j"),
+				$end_date->format("H"),
+				$end_date->format("i"),
+				$end_date->format("s"),
 				0
 			) .
 			pack("Vl", GR_TAG_EVENT_TYPE, $event["type"]) .
