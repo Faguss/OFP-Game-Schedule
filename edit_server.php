@@ -317,7 +317,7 @@ if ($form->hidden["display_form"] == "Schedule")
 					"modifiedby" => $uid
 				];
 
-				if ($form->hidden["action"] == "Edit") {					
+				if ($form->hidden["action"] == "Edit") {
 					if (count($data["schedulelist"]) == 1) {
 						$id_list = GS_uniqueid_to_id("gs_serv_times", $data["schedulelist"]);
 						
@@ -424,22 +424,24 @@ if ($form->hidden["display_form"] == "Schedule")
 			];
 		}
 
+		$vacation_js = "GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])";
 		
 		$form->change_control("schedulelist", [
 			"Options"=>$schedule_select, 
 			"Property"=>"onChange=\"
 				GS_display_info_when_selected(this,'{$form->hidden["display_form"]}',$js_new_array,'$description_field'); 
-				GS_make_event_editable(this,$js_new_array,['starttime_input','timezone','type','duration','breakstart_input','breakend_input'],'EditButton')
-				GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])\""
+				GS_make_event_editable(this,$js_new_array,['starttime_input','timezone','type','duration','breakstart_input','breakend_input'],'EditButton');
+				$vacation_js\""
 		]);
 		$form->add_button("action", "Cancel", lang("GS_STR_SERVER_EVENT_REMOVE"), "btn-warning");
 		$form->add_emptyspan($description_field);
 		$form->include_file("usersc/js/ru.js");
 		$form->add_html("
-			<SCRIPT TYPE=\"text/javascript\">
+			<script type=\"text/javascript\">
 				var {$js_curr_schedule["name"]} = ".json_encode($js_curr_schedule["data"])."
 				var $js_new_array = GS_format_event_list({$js_curr_schedule["name"]},'schedulelist',".json_encode($localized_strings).",".json_encode(["GS_EVENT_SINGLE"=>GS_EVENT_SINGLE,"GS_EVENT_WEEKLY"=>GS_EVENT_WEEKLY,"GS_EVENT_DAILY"=>GS_EVENT_DAILY]).");
-			</SCRIPT>");
+				$vacation_js
+			</script>");
 	} else
 		$form->remove_controls_until(["Name"=>"action"]);
 }

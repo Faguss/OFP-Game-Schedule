@@ -155,7 +155,7 @@ function GS_make_event_editable(list, data, form_inputs, edit_button_id, languag
 					}
 					
 					var hidden_input   = document.getElementById(form_inputs[0].replace("_input", "_datetime"));
-					hidden_input.value = data[j]["starttime"].toISOString(true);
+					hidden_input.value = data[j]["original"].toISOString(true);
 
 					var edit_button           = document.getElementById(edit_button_id);
 					edit_button.style.display = "inline-block";
