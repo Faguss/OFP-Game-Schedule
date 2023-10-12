@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,9,25,1,16,49,33,602,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,10,12,4,17,23,45,618,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1224,11 +1224,6 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 								$start_date->format("s").",0,".
 								($time_zone -> getOffset($start_date) / 60).
 								",false],{$event["duration"]}]";
-								
-						$event["date_original"] = $start_date_orig;
-						$end_date_orig = clone $start_date_orig;
-						$end_date_orig->modify("+".$event["duration"]."minutes");
-						$event["date_original_end"] = $end_date_orig;
 					}
 					
 					if ($request_type == GS_REQTYPE_WEBSITE) {
