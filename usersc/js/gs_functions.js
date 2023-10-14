@@ -290,7 +290,16 @@ function GS_fill_input_fields_from_server_query(data) {
 		};
 	}
 	
-	$('#name').val(data.hostname);
+	var server_name = data.hostname;
+	var link_pattern = /(http|bit\.ly|www\.)([\S]+)/gi;
+	var urls = server_name.match(link_pattern);
+	
+	if (urls && urls.length>0) {
+		$('#website').val(urls[0]);
+		server_name = server_name.replaceAll(link_pattern, '').trim();
+	}
+	
+	$('#name').val(server_name);
 	$('#version').val(data.actver.substring(0,1)+"."+data.actver.substring(1));
 	$('#equalmodreq').val(data.equalModRequired);
 	
@@ -872,7 +881,10 @@ function GS_get_server_list(master_server, list_id) {
 			success: function (address_list) {
 				if (address_list != null) {
 					ip_adresses = address_list.trim().split("\n");
+					$("#master_server_modal_loader").addClass('schedule_modal_loader');
+					var downloads = 0;
 					for (const ip_address of ip_adresses) {
+						downloads++;
 						$.ajax({
 							type: 'GET',
 							url: 'https://ofp-api.ofpisnotdead.com/'+ip_address,
@@ -885,6 +897,11 @@ function GS_get_server_list(master_server, list_id) {
 									master_server.address.push(ip_address);
 									$("#"+list_id).append("<li><a style=\"cursor:pointer\" data-dismiss=\"modal\" onclick=\"$('#ip').val(\'"+ip_address+"\'); GS_fill_input_fields_from_server_query("+index+"); GS_get_server_location("+index+");\">"+server_status.hostname+"</a></li>");
 								}
+							},
+							complete: function () {
+								downloads--;
+								if (downloads==0)
+									$("#master_server_modal_loader").removeClass('schedule_modal_loader');
 							}
 						});
 					}

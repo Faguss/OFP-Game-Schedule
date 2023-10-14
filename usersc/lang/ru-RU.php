@@ -102,7 +102,7 @@ $lang = array_merge($lang, array(
 "GS_STR_SERVER_PERSISTENT_OFF" => "Этот сервер не имеет расписания. Держите его в списке",
 "GS_STR_SERVER_PICK_IP" => "Выберите адрес из списка серверов",
 "GS_STR_SERVER_MASTER_LIST" => "Основной список серверов",
-"GS_STR_SERVER_MASTER_5MIN" => "Обновляется каждые пять минут",
+"GS_STR_SERVER_MASTER_5MIN" => "Источник: <a href=\"master.ofpisnotdead.com\">master.ofpisnotdead.com</a>. Обновляется каждые пять минут",
 
 	#Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Неправильный адрес веб-сайта",
@@ -157,6 +157,7 @@ $lang = array_merge($lang, array(
 	"GS_STR_SERVER_EVENT_REMOVE" => "Удалить выбранное",
 	"GS_STR_SERVER_EVENT_NOW" => "Текущая сессия",
 	"GS_STR_SERVER_EVENT_EXPIRED" => "Завершенная сессия",
+"GS_STR_SERVER_EVENT_VACATION" => "На паузе до",
 	
 	#Edit server schedule page feedback    
 	"GS_STR_SERVER_EVENT_UPDATE" => "Событие обновлено",

@@ -102,7 +102,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_PERSISTENT_OFF" => "Ten serwer nie ma harmonogramu. Niech ciągle będzie na liście",
 	"GS_STR_SERVER_PICK_IP" => "Wybierz adres z listy serwerów",
 	"GS_STR_SERVER_MASTER_LIST" => "Główna lista serwerów",
-	"GS_STR_SERVER_MASTER_5MIN" => "Aktualizowana co 5 minut",
+	"GS_STR_SERVER_MASTER_5MIN" => "Źródło: <a href=\"master.ofpisnotdead.com\">master.ofpisnotdead.com</a>. Aktualizowana co 5 minut",
 
     #Edit server details page feedback
 	"GS_STR_SERVER_URL_ERROR" => "Błędny adres strony",
@@ -157,6 +157,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_EVENT_REMOVE" => "Usuń Zaznaczone",
 	"GS_STR_SERVER_EVENT_NOW" => "Teraz",
 	"GS_STR_SERVER_EVENT_EXPIRED" => "Sesja przedawniona",
+	"GS_STR_SERVER_EVENT_VACATION" => "Przerwa do",
     
     #Edit server schedule page feedback
 	"GS_STR_SERVER_EVENT_UPDATE" => "Sesja zaktulizowana",

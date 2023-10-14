@@ -13,6 +13,7 @@ echo '
 			
 			<div class="modal-body">
 				<p>'.lang("GS_STR_SERVER_MASTER_5MIN").'</p>
+				<p id="master_server_modal_loader"></p>
 				<ul id="server_list_content">
 				</ul>
 			</div>

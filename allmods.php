@@ -106,6 +106,8 @@ languageSwitcher();
 			
 			if (!empty($modfolders[$i]["logo"]) && substr($modfolders[$i]["logo"], -3)!="paa")
 				$html .= "<img width=64 height=64 src=\"".GS_get_current_url(false).GS_LOGO_FOLDER."/{$modfolders[$i]["logo"]}\">";
+			else
+				$html .= "<img src=\"images\\placeholder\\placeholder_mod_64.png\">";
 				
 			$html .= "
 				</td>
