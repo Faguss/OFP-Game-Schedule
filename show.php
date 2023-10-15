@@ -176,7 +176,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 
 		// Show script
 		if (!$input_onlylog)
-			echo "<pre style=\"margin:0;border:0;\"><code>". GS_scripting_highlighting($update["script"]) . "</code></pre>";
+			echo "<pre style=\"margin:0;border:0;\"><code>". GS_scripting_highlighting($update["script"], $mod["name"]) . "</code></pre>";
 		
 		// Show changelog
 		$number_of_notes = 0;
