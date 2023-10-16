@@ -1592,7 +1592,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					$link_num        = count($mods_links[$id]);
 					
 					foreach($columns_to_copy as $column)
-						$mods_links[$id][$link_num][$column] = in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_INSTALL_SCRIPT]) ? html_entity_decode($row[$column], ENT_QUOTES) : $row[$column];
+						$mods_links[$id][$link_num][$column] = html_entity_decode($row[$column], ENT_QUOTES);
 				}
 
 				if ($last_version != $version) {
@@ -1601,7 +1601,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					$update_num      = count($mods_updates[$id]);
 									
 					foreach($columns_to_copy as $column)
-						$mods_updates[$id][$update_num][$column] = in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_INSTALL_SCRIPT]) ? html_entity_decode($row[$column], ENT_QUOTES) : $row[$column];
+						$mods_updates[$id][$update_num][$column] = html_entity_decode($row[$column], ENT_QUOTES);
 				}
 				
 				if ($request_type == GS_REQTYPE_WEBSITE) {
@@ -2833,561 +2833,647 @@ function GS_convert_utf8_to_windows($input, $language="Windows") {
 	return $output;
 }
 
+// Trim beginning of a string
+function GS_begins_with($sequence, &$string) {
+	$length = strlen($sequence);
+	$match  = substr($string,0,$length) == $sequence;
+
+	if ($match)
+		$string = substr($string, $length);
+
+	return $match;
+};
+
+// Trim beginning of a path
+function GS_path_last_item($path) {
+	$last_slash = strrpos($path, "\\");
+	return $last_slash!==FALSE ? substr($path, $last_slash+1) : $path;
+}
+
+// Trim ending of a path
+function GS_path_only($path) {
+	$last_slash = strrpos($path, "\\");
+	return $last_slash!==FALSE ? substr($path, 0, $last_slash) : "";
+}
+
 // Code highlighting for addon installer scripting language
 function GS_scripting_highlighting($code, $modname="modfolder") {
-	$all_commands = [
-		"auto_installation" => ["names"=>["auto_installation"], "url"=>"auto_installation"],
-		"get" => ["names"=>["download","get"], "url"=>"get"],
-		"unpack" => ["names"=>["unpack","extract"], "url"=>"unpack"],
-		"move" => ["names"=>["move","copy"], "url"=>"move"],
-		"makedir" => ["names"=>["makedir","newfolder"], "url"=>"makedir"],
-		"ask_run" => ["names"=>["ask_run","ask_execute"], "url"=>"ask_run"],
-		"begin_mod" => ["names"=>["begin_mod"], "url"=>""],
-		"delete" => ["names"=>["delete","remove"], "url"=>"delete"],
-		"rename" => ["names"=>["rename"], "url"=>"rename"],
-		"ask_get" => ["names"=>["ask_get","ask_download"], "url"=>"ask_get"],
-		"if_version" => ["names"=>["if_version"], "url"=>"if_version"],
-		"else" => ["names"=>["else"], "url"=>"if_version"],
-		"endif" => ["names"=>["endif"], "url"=>"if_version"],
-		"makepbo" => ["names"=>["makepbo"], "url"=>"makepbo"],
-		"unpbo" => ["names"=>["extractpbo","unpackpbo","unpbo"], "url"=>"unpbo"],
-		"edit" => ["names"=>["edit"], "url"=>"edit"],
-		"begin_ver" => ["names"=>["begin_ver"], "url"=>""],
-		"alias" => ["names"=>["alias","merge_with"], "url"=>"alias"],
-		"filedate" => ["names"=>["filedate"], "url"=>"filedate"],
-		"install_version" => ["names"=>["install_version"], "url"=>""],
-		"exit" => ["names"=>["exit","quit"], "url"=>"exit"],
-	];
+    $all_commands = [
+        "auto_install" => ["names"=>["auto_installation"], "url"=>"auto_installation"],
+        "get" => ["names"=>["download","get"], "url"=>"get"],
+        "unpack" => ["names"=>["unpack","extract"], "url"=>"unpack"],
+        "move" => ["names"=>["move"], "url"=>"move"],
+        "copy" => ["names"=>["copy"], "url"=>"move"],
+        "makedir" => ["names"=>["makedir","newfolder"], "url"=>"makedir"],
+        "ask_run" => ["names"=>["ask_run","ask_execute"], "url"=>"ask_run"],
+        "begin_mod" => ["names"=>["begin_mod"], "url"=>""],
+        "delete" => ["names"=>["delete","remove"], "url"=>"delete"],
+        "rename" => ["names"=>["rename"], "url"=>"rename"],
+        "ask_get" => ["names"=>["ask_get","ask_download"], "url"=>"ask_get"],
+        "if_version" => ["names"=>["if_version"], "url"=>"if_version"],
+        "else" => ["names"=>["else"], "url"=>"if_version"],
+        "endif" => ["names"=>["endif"], "url"=>"if_version"],
+        "makepbo" => ["names"=>["makepbo"], "url"=>"makepbo"],
+        "unpbo" => ["names"=>["extractpbo","unpackpbo","unpbo"], "url"=>"unpbo"],
+        "edit" => ["names"=>["edit"], "url"=>"edit"],
+        "begin_ver" => ["names"=>["begin_ver"], "url"=>""],
+        "alias" => ["names"=>["alias","merge_with"], "url"=>"alias"],
+        "filedate" => ["names"=>["filedate"], "url"=>"filedate"],
+        "install_version" => ["names"=>["install_version"], "url"=>""],
+        "exit" => ["names"=>["exit","quit"], "url"=>"exit"],
+    ];
 
-	$command_switches_names = [
-		"/password:",
-		"/no_overwrite",
-		"/match_dir",
-		"/keep_source",
-		"/insert",
-		"/newfile",
-		"/append",
-		"/match_dir_only"
-	];
-	$word_begin            = -1;
-	$word_count            = 1;
-	$arg_count             = 1;
-	$word_line_num         = 1;
-	$command_id            = -1;
-	$last_command_line_num = -1;
-	$last_url_list_id      = -1;
-	$in_quote              = false;
-	$remove_quotes         = true;
-	$url_block             = false;
-	$url_line              = false;
-	$instruction_id        = [];
-	$instruction_arg       = [];
-	$url_list              = [];
-	$switch_list           = [];
-	$output                = "";
-	$output_temp           = "";
-	$is_url                = function ($text) {return substr($text,0,7)=="http://" || substr($text,0,8)=="https://" || substr($text,0,6)=="ftp://" || substr($text,0,4)=="www.";};
-	
-	for($i=0; $i<=strlen($code); $i++) {
-		$end_of_word = $i==strlen($code) || ($i<strlen($code) && ctype_space($code[$i]));
-		
-		// When quote
-		if ($i<strlen($code) && ($code[$i]=="\""  ||  substr($code,$i,6)=="&quot;"))
-			$in_quote = !$in_quote;
-		
-		// If beginning of an url block
-		if ($i<strlen($code) && ($code[$i]=="{"  &&  $word_begin<0)) {
-			$url_block = true;
-	
-			// if bracket is the first thing in the line then it's auto installation
-			if ($word_count == 1) {
-				$last_command_line_num           = $word_line_num;
-				$instruction_id[$word_line_num]  = 0;
-				$instruction_arg[$word_line_num] = [];
-				$url_list[$word_line_num]        = [];
-			}
-			
-			$output_temp .= "{";
-			continue;
-		}
-		
-		// If ending of an url block
-		if ($i<strlen($code) && ($code[$i]=="}"  &&  $url_block)) {
-			$end_of_word = true;
-			
-			// If there's a space between the last word and the closing bracket
-			if ($word_begin == -1) {	
-				$url_block = false;
-				$url_line  = false;
-				$word_count++;
-				$output_temp .= "}";
-				$output      .= "<span class=\"whole_block\">" . $output_temp . "</span>";
-				$output_temp  = "";
-				continue;
-			}
-		}
-		
-		// Remember beginning of the word
-		if (!$end_of_word  &&  $word_begin<0) {
-			$word_begin = $i;
-			
-			// If custom delimeter - jump to the end of the argument
-			if (substr($code,$i,2)==">>"  ||  substr($code,$i,8)=="&gt;&gt;") {
-				$offset        = substr($code,$i,2) == ">>" ? 2 : 8;
-				$separator     = $code[$i + $offset];
-				$end           = strpos($code, $separator, $i+$offset+1);
-				$end_of_word   = true;
-				$i             = $end===false ? count($code)-1 : $end+1;
-				$remove_quotes = false;
-			}
-		}
+    $command_switches_names = [
+        "/password:",
+        "/no_overwrite",
+        "/match_dir",
+        "/keep_source",
+        "/insert",
+        "/newfile",
+        "/append",
+        "/match_dir_only"
+    ];
+    $word_begin            = -1;
+    $word_count            = 1;
+    $arg_count             = 1;
+    $word_line_num         = 1;
+    $command_id            = -1;
+    $last_command_line_num = -1;
+    $last_url_list_id      = -1;
+    $in_quote              = false;
+    $remove_quotes         = true;
+    $url_block             = false;
+    $url_line              = false;
+    $instruction_id        = [];
+    $instruction_arg       = [];
+    $url_list              = [];
+    $switch_list           = [];
+    $output                = "";
+    $output_temp           = "";
+    $is_url                = function ($text) {return substr($text,0,7)=="http://" || substr($text,0,8)=="https://" || substr($text,0,6)=="ftp://" || substr($text,0,4)=="www.";};
+    $last_unpbo            = "";
+    $mod_alias             = [];
+    
+    for($i=0; $i<=strlen($code); $i++) {
+        $end_of_word = $i==strlen($code) || ($i<strlen($code) && ctype_space($code[$i]));
+        
+        // When quote
+        if ($i<strlen($code) && ($code[$i]=="\""  ||  substr($code,$i,6)=="&quot;"))
+            $in_quote = !$in_quote;
+        
+        // If beginning of an url block
+        if ($i<strlen($code) && ($code[$i]=="{" && $word_begin<0)) {
+            $url_block = true;
+    
+            // if bracket is the first thing in the line then it's auto installation
+            if ($word_count == 1) {
+                $last_command_line_num           = $word_line_num;
+                $instruction_id[$word_line_num]  = 'auto_install';
+                $instruction_arg[$word_line_num] = [];
+                $url_list[$word_line_num]        = [];
+                $switch_list[$word_line_num]     = [];
+            }
+            
+            $output_temp .= "{";
+            continue;
+        }
+        
+        // If ending of an url block
+        if ($i<strlen($code) && ($code[$i]=="}"  &&  $url_block)) {
+            $end_of_word = true;
+            
+            // If there's a space between the last word and the closing bracket
+            if ($word_begin == -1) {	
+                $url_block = false;
+                $url_line  = false;
+                $word_count++;
+                $output_temp .= "}";
+                continue;
+            }
+        }
+        
+        // Remember beginning of the word
+        if (!$end_of_word  &&  $word_begin<0) {
+            $word_begin = $i;
+            
+            // If custom delimeter - jump to the end of the argument
+            if (substr($code,$i,2)==">>"  ||  substr($code,$i,8)=="&gt;&gt;") {
+                $offset        = substr($code,$i,2) == ">>" ? 2 : 8;
+                $separator     = $code[$i + $offset];
+                $end           = strpos($code, $separator, $i+$offset+1);
+                $end_of_word   = true;
+                $i             = $end===false ? count($code)-1 : $end+1;
+                $remove_quotes = false;
+            }
+        }
 
-		// When hit end of the word
-		if ($end_of_word  &&  $word_begin>=0  &&  !$in_quote) {
-			$word = substr($code, $word_begin, $i-$word_begin);
-				
-			// If first word in the line
-			if ($word_count==1  &&  !$url_block) {
-				$command_id = -1;
-				$arg_count  = 1;
-				
-				// Check if it's a valid command
-				if ($is_url($word))
-					$command_id = "auto_installation";
-				else {
-					foreach ($all_commands as $id=>$info) {
-						if (in_array(strtolower($word), $info["names"])) {
-							$command_id = $id;
-							break;
-						}
-					}
-				}
+        // When hit end of the word
+        if ($end_of_word  &&  $word_begin>=0  &&  !$in_quote) {
+            $word = substr($code, $word_begin, $i-$word_begin);
+                
+            // If first word in the line
+            if ($word_count==1  &&  !$url_block) {
+                $command_id = -1;
+                $arg_count  = 1;
+                
+                // Check if it's a valid command
+                if ($is_url($word))
+                    $command_id = "auto_install";
+                else {
+                    foreach ($all_commands as $id=>$info) {
+                        if (in_array(strtolower($word), $info["names"])) {
+                            $command_id = $id;
+                            break;
+                        }
+                    }
+                }
 
-				// If so then add it to database, otherwise skip this line
-				if ($command_id != -1) {
-					$last_command_line_num           = $word_line_num;
-					$instruction_arg[$word_line_num] = [];
-					$instruction_id[$word_line_num]  = $command_id;
-					$url_list[$word_line_num]        = [];
-					$switch_list[$word_line_num]     = [];
-					
-					// If command is an URL then add it to the url database
-					if ($is_url($word)) {
-						$url_line                           = true;
-						$last_url_list_id                   = count($url_list_id);
-						$url_list[$last_command_line_num][] = $word;
-						$output_temp                       .= "<a class=\"scripting_command_url\" href=\"$word\" target=\"_blank\">$word</a>";
-					} else
-						$output_temp .= "<a class=\"scripting_command\" href=\"install_scripts#{$all_commands[$command_id]["url"]}\" target=\"_blank\">$word</a>";
-				} else {
-					$end          = strpos($code,"\n", $i);
-					$i            = ($end===false ? strlen($code) : $end);
-					$word         = substr($code, $word_begin, $i-$word_begin);
-					$output_temp .= "<span class=\"scripting_command_comment\">$word</span>";
-					$output      .= $output_temp;
-					$output_temp  = "";
-				}
-			} else {
-				// Check if URL starts here
-				if (!$url_line  &&  $command_id!=15)
-					$url_line = $is_url($word);
-				
-				// Check if it's a valid command switch
-				$is_switch   = false;
-				$colon       = strrpos($word, ":");
-				$switch_name = $colon!==FALSE ? substr($word,0,$colon+1) : $word;
-				
-				for ($j=0; $j<count($command_switches_names) && !$is_switch; $j++)
-					$is_switch = strcasecmp($switch_name, $command_switches_names[$j]) == 0;
+                // If so then add it to database, otherwise skip this line
+                if ($command_id != -1) {
+                    $last_command_line_num           = $word_line_num;
+                    $instruction_arg[$word_line_num] = [];
+                    $instruction_id[$word_line_num]  = $command_id;
+                    $url_list[$word_line_num]        = [];
+                    $switch_list[$word_line_num]     = [];
+                    
+                    // If command is an URL then add it to the url database
+                    if ($is_url($word)) {
+                        $url_line                           = true;
+                        $url_list[$last_command_line_num][] = $word;
+                        $last_url_list_id                   = array_key_last($url_list[$last_command_line_num]);
+                        $output_temp                       .= '<a class="scripting_command_url" href="'.$word.'" target="_blank">'.htmlspecialchars($word).'</a>';
+                    } else
+                        $output_temp .= '<a class="scripting_command" href="install_scripts#'.$all_commands[$command_id]["url"].'" target="_blank">'.htmlspecialchars($word).'</a>';
+                } else {
+                    $end          = strpos($code,"\n", $i);
+                    $i            = ($end===false ? strlen($code) : $end);
+                    $word         = substr($code, $word_begin, $i-$word_begin);
+                    $output_temp .= '<span class="scripting_command_comment">'.htmlspecialchars($word).'</span>';
+                    $output      .= $output_temp;
+                    $output_temp  = "";
+                }
+            } else {
+                // Check if URL starts here
+                if (!$url_line  &&  $command_id!=15)
+                    $url_line = $is_url($word);
+                
+                // Check if it's a valid command switch
+                $is_switch   = false;
+                $colon       = strrpos($word, ":");
+                $switch_name = $colon!==FALSE ? substr($word,0,$colon+1) : $word;
+                
+                for ($j=0; $j<count($command_switches_names) && !$is_switch; $j++)
+                    $is_switch = strcasecmp($switch_name, $command_switches_names[$j]) == 0;
 
-				// Add word to the URL database or the arguments database
-				if (!$is_switch && $url_line) {
-					if ($last_url_list_id == -1) {
-						$last_url_list_id                   = count($url_list[$last_command_line_num]);
-						$url_list[$last_command_line_num][] = $word;
-						$output_temp                       .= "<a class=\"scripting_command_url\" href=\"$word\" target=\"_blank\">$word</a>";
-					} else {
-						$url_list[$last_command_line_num][$last_url_list_id] .= " " . $word;
-						$output_temp                                         .= $word;
-					}
-				} else {
-					if (substr($word,0,1) == "/")
-						$switch_list[$last_command_line_num][] = $word;
-					else
-						$instruction_arg[$last_command_line_num][] = $word;
-					
-					if ($is_switch)
-						$output_temp .= "<span class=\"scripting_command_switch\">$word</span>";
-					else
-						$output_temp .= "<span class=\"scripting_command_arg".($arg_count++)."\">$word</span>";
-				}
-			}
-			
-			// If ending of an url block
-			if ($i<strlen($code) && ($code[$i]=="}"  &&  $url_block)) {
-				$url_block = false;
-				$url_line  = false;
-			}
+                // Add word to the URL database or the arguments database
+                if (!$is_switch && $url_line) {
+                    if ($last_url_list_id == -1) {
+                        $url_list[$last_command_line_num][] = $word;
+                        $last_url_list_id                   = array_key_last($url_list[$last_command_line_num]);
+                        $output_temp                       .= '<a class="scripting_command_url" href="$word" target="_blank">'.htmlspecialchars($word).'</a>';
+                    } else {
+                        $url_list[$last_command_line_num][$last_url_list_id] .= " " . $word;
+                        $output_temp                                         .= $word;
+                    }
+                } else {
+                    if (substr($word,0,1) == "/")
+                        $switch_list[$last_command_line_num][] = $word;
+                    else
+                        $instruction_arg[$last_command_line_num][] = $word;
+                    
+                    if ($is_switch)
+                        $output_temp .= '<span class="scripting_command_switch">'.htmlspecialchars($word).'</span>';
+                    else
+                        $output_temp .= '<span class="scripting_command_arg'.($arg_count++).'">'.htmlspecialchars($word).'</span>';
+                }
+            }
+            
+            // If ending of an url block
+            if ($i<strlen($code) && ($code[$i]=="}"  &&  $url_block)) {
+                $url_block = false;
+                $url_line  = false;
+            }
 
-			$word_begin = -1;
-			$word_count++;
-		}
+            $word_begin = -1;
+            $word_count++;
+        }
 
-		// When new line			
-		if (!$in_quote  &&  (($i<strlen($code)  &&  $code[$i]=="\n") || $i==strlen($code))) {
-			$arg_count        = 1;
-			$word_count       = 1;
-			$url_line         = false;
-			$last_url_list_id = -1;
-			$word_line_num++;
-			
-			if (!$url_block) {
-				if (ctype_space($output_temp))
-					$output .= $output_temp;
-				else {
-					$command_name              = end($instruction_id);
-					$file_name                 = "";
-					$urls_for_this_command     = end($url_list);
-					$args_for_this_command     = end($instruction_arg);
-					$switches_for_this_command = array_map('strtolower', end($switch_list));
-					$command_description       = "";
+        // When new line			
+        if (!$in_quote  &&  (($i<strlen($code)  &&  $code[$i]=="\n") || $i==strlen($code))) {
+            $arg_count        = 1;
+            $word_count       = 1;
+            $url_line         = false;
+            $last_url_list_id = -1;
+            $word_line_num++;
+            
+            if (!$url_block) {
+                if (empty($output_temp) || ctype_space($output_temp))
+                    $output .= $output_temp;
+                else {
+                    $command_name              = end($instruction_id);
+                    $file_name                 = "";
+                    $urls_for_this_command     = end($url_list);
+                    $args_for_this_command     = end($instruction_arg);
+                    $switches_for_this_command = array_map('strtolower', end($switch_list));
+                    $command_description       = "";
 
-					if (!empty($urls_for_this_command)) {
-						$url   = $urls_for_this_command[0];
-						$parts = explode(" ", $url);
-						
-						if (count($parts) == 1) {
-							$last_slash = strrpos($url, "/");
-							if ($last_slash !== FALSE) {
-								$file_name = substr($url, $last_slash+1);
-							} else {
-								$file_name = $url;
-							}
-						} else {
-							$file_name = end($parts);
-						}
+                    if (!empty($urls_for_this_command)) {
+                        $url   = $urls_for_this_command[0];
+                        preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $url, $parts);
+                        
+                        if (count($parts[0]) == 1) {
+                            $last_slash = strrpos($url, "/");
+                            if ($last_slash !== FALSE) {
+                                $file_name = substr($url, $last_slash+1);
+                            } else {
+                                $file_name = $url;
+                            }
+                        } else {
+                            $file_name = end($parts[0]);
+                        }
 
-						$command_description = "Download $file_name";
+                        $command_description = "Download " . trim($file_name, "\"");
 
-						if (count($urls_for_this_command) > 1)
-							$command_description .= " (" . count($urls_for_this_command) . " mirrors)";
+                        if (count($urls_for_this_command) > 1)
+                            $command_description .= " (" . count($urls_for_this_command) . " mirrors)";
 
-						$command_description .= " to the fwatch\\tmp folder.\n";
-					}
+                        $command_description .= " to the fwatch\\tmp folder.\n";
+                    }
 
-					if (empty($file_name) && !empty($args_for_this_command)) {
-						$file_name = $args_for_this_command[0];
-					}
+                    if (empty($file_name) && !empty($args_for_this_command)) {
+                        $file_name = $args_for_this_command[0];
+                    }
 
-					$file_name              = trim($file_name, "\"");
-					$file_name_without_path = $file_name;
-					$file_name_path_only    = "";
-					$last_slash             = strrpos($file_name, "\\");
-					if ($last_slash !== FALSE) {
-						$file_name_without_path = substr($file_name, $last_slash+1);
-						$file_name_path_only    = substr($file_name, 0, $last_slash);
-					}
+                    $file_name = trim($file_name, "\"");
 
-					switch($command_name) {
-						case 'unpack' : {
-							if (!empty($file_name)) {
-								$command_description .= "Extract fwatch\\tmp\\$file_name to the fwatch\\tmp\\_extracted".(!empty($file_name_path_only)?"\\$file_name_path_only":"")." folder";
-							} else
-								$command_description = "Extract last downloaded file";
-						} break;
+                    $archive_password = "";
+                    foreach ($switches_for_this_command as $switch) {
+                        if (GS_begins_with("/password:",$switch)) {
+                            $archive_password = $switch;
+                            break;
+                        }
+                    }
 
-						case 'copy' : 
-						case 'move' : {
-							if (!empty($file_name)) {
-								$destination = "";
-								$new_name    = "";
-								$offset      = empty($urls_for_this_command) ? 0 : 1;
-								$destination = count($args_for_this_command) >= 2-$offset ? $args_for_this_command[1-$offset] : "";
-								$new_name    = count($args_for_this_command) >= 3-$offset ? $args_for_this_command[2-$offset] : "";
-								$destination = trim($destination, "\"");
-								$new_name    = trim($new_name, "\"");
+                    switch($command_name) {
+                        case 'auto_install' : {
+                            $last_dot = strrpos($command_description, ".");
+                            if ($last_dot !== FALSE)
+                                $command_description = substr($command_description, 0, $last_dot);
 
-								$source_dir = "fwatch\\tmp\\_extracted";
+                            if (!empty($archive_password))
+                                $command_description .= ", open it with $archive_password password";
 
-								if (substr($file_name,0,12) == "&lt;mod&gt;\\") {
-									$source_dir = $modname;
-									$file_name  = substr($file_name, 12);
-								}
+                            $command_description .= " and automatically install it.";
+                        } break;
+                        
+                        case 'unpack' : {
+                            if (!empty($file_name)) {
+                                $file_name_path_only = GS_path_only($file_name);
+                                $destination         = $file_name_path_only;
 
-								if (substr($file_name,0,10) == "&lt;dl&gt;") {
-									$source_dir = "";
-									$file_name  = "last downloaded file";
-								}
+                                if (GS_begins_with("_extracted\\",$destination))
+                                    $destination .= "\\_extracted";
 
-								if (substr($file_name,0,13) == "&lt;game&gt;\\") {
-									$source_dir = "";
-									$file_name  = substr($file_name, 13);
-								}
+                                $command_description .= 
+                                    "Extract fwatch\\tmp\\$file_name " . 
+                                    (!empty($archive_password)?"(with $archive_password password) ":"") .
+                                    "\nto the fwatch\\tmp\\_extracted" . 
+                                    (!empty($destination)?"\\$destination":"") . 
+                                    " folder";
+                            } else
+                                $command_description = "Extract last downloaded file";
+                        } break;
 
-								$pattern = "";
+                        case 'copy' : 
+                        case 'move' : {
+                            if (!empty($file_name)) {
+                                $destination = "";
+                                $new_name    = "";
+                                $offset      = empty($urls_for_this_command) ? 0 : 1;
+                                $destination = count($args_for_this_command) >= 2-$offset ? $args_for_this_command[1-$offset] : "";
+                                $new_name    = count($args_for_this_command) >= 3-$offset ? $args_for_this_command[2-$offset] : "";
+                                $destination = trim($destination, "\"");
+                                $new_name    = trim($new_name, "\"");
 
-								if (preg_match("/(\*|\?)/", $file_name_without_path)) {
-									$file_type = "files";
+                                $source_dir = "fwatch\\tmp\\_extracted";
 
-									if (in_array("/match_dir", $switches_for_this_command))
-										$file_type = "files and folders";
+                                if (GS_begins_with("<mod>\\", $file_name)) {
+                                    $source_dir = $modname;
+                                }
 
-									if (in_array("/match_dir_only", $switches_for_this_command))
-										$file_type = "folders";
-									
-									if ($file_name_without_path == "*") {
-										$pattern = "all $file_type from the ";
-										$file_name = $file_name_path_only;
-									} else                                         
-										if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
-											$pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
-											$file_name = $file_name_path_only;
-										}
-								}
+                                if (GS_begins_with("<dl>\\", $file_name)) {
+                                    $source_dir = "";
+                                    $file_name  = "last downloaded file";
+                                }
 
-								$path_parts = explode("\\/", $file_name);
-								if (strcasecmp(end($path_parts),$modname) == 0)
-									$destination = "game";
-								else
-									if (empty($destination) || $destination == ".")
-										$destination = $modname;
-									else
-										$destination = "$modname\\$destination";
+                                if (GS_begins_with("<game>\\", $file_name)) {
+                                    $source_dir = "";
+                                }
 
-								$file_type = strpos($file_name, ".") !== FALSE ? "file" : "folder";
-								$command_description .= 
-									($command_name=="move" ? "Move " : "Copy ") . 
-									(!empty($pattern) ? $pattern : "") . 
-									$source_dir . 
-									(!empty($source_dir)&&!empty($file_name) ? "\\" : "") . 
-									$file_name .
-									(!empty($new_name) ? " as $new_name" : "") . 
-									" to the $destination folder";
-								
-								if (in_array("/no_overwrite", $switches_for_this_command))
-									$command_description .= " without overwriting";
-							} else {
-								$command_description = "Not enough arguments";
-							}
-						} break;
+                                $pattern = "";
+                                $file_name_without_path = GS_path_last_item($file_name);
+                                $file_name_path_only    = GS_path_only($file_name);
 
-						case 'unpbo' : {
-							if (!empty($file_name)) {
-								if (substr($file_name,0,13) == "&lt;game&gt;\\") {
-									$source_dir = "";
-									$file_name  = substr($file_name, 13);
-								} else {
-									$file_name = "$modname\\$file_name";
-								}
+                                if (preg_match("/(\*|\?)/", $file_name_without_path)) {
+                                    $file_type = "files";
 
-								$command_description .= "Extract $file_name";
+                                    if (in_array("/match_dir", $switches_for_this_command))
+                                        $file_type = "files and folders";
 
-								$destination = count($args_for_this_command) >= 2 ? $args_for_this_command[1] : "";
-								if (!empty($destination))
-									$command_description .= " to the $modname\\$destination";
-							}
-						} break;
+                                    if (in_array("/match_dir_only", $switches_for_this_command))
+                                        $file_type = "folders";
+                                    
+                                    if ($file_name_without_path == "*") {
+                                        $pattern   = "all $file_type from the ";
+                                        $file_name = $file_name_path_only;
+                                    } else     
+                                        if ($file_name_without_path == "*.pa?") {
+                                            $pattern = "all paa and pac files from the ";
+                                            $file_name = $file_name_path_only;
+                                        } else
+                                            if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
+                                                $pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
+                                                $file_name = $file_name_path_only;
+                                            }
+                                }
 
-						case 'makepbo' : {
-							if (!empty($file_name)) {
-								$command_description = "Create $file_name_without_path.pbo from $modname\\$file_name";
-								
-								if (!in_array("/keep_source", $switches_for_this_command))
-									$command_description .= " and then delete the latter";
-							} else {
-								$command_description = "Not enough arguments";
-							}
-						} break;
+                                $path_parts = explode("\\", $file_name);
+                                $last_part  = strtolower(end($path_parts));
+                                if (strcasecmp($last_part,$modname) == 0 || in_array($last_part,$mod_alias))
+                                    $destination = "game";
+                                else
+                                    if (empty($destination) || $destination == ".")
+                                        $destination = $modname;
+                                    else
+                                        $destination = "$modname\\$destination";
 
-						case 'edit' : {
-							if (count($args_for_this_command) >= 3) {
-								$line_number = $args_for_this_command[1];
-								$text        = $args_for_this_command[2];
+                                $file_type = strpos($file_name, ".") !== FALSE ? "file" : "folder";
+                                $command_description .= 
+                                    ($command_name=="move" ? "Move " : "Copy ") . 
+                                    (!empty($pattern) ? $pattern : "") . 
+                                    $source_dir . 
+                                    (!empty($source_dir)&&!empty($file_name) ? "\\" : "") . 
+                                    $file_name .
+                                    (!empty($new_name) ? "\nas $new_name" : "") . 
+                                    "\nto the $destination folder";
 
-								if (substr($text,0,2) == ">>") {
-									$text = substr($text,3,strlen($text)-4);
-								}
+                                if (in_array("/no_overwrite", $switches_for_this_command))
+                                    $command_description .= " without overwriting";
+                            } else {
+                                $command_description = "Not enough arguments";
+                            }
+                        } break;
 
-								if (in_array("/insert", $switches_for_this_command))
-									$command_description = "Insert new line $text as the line $line_number";
-								else
-									if (in_array("/append", $switches_for_this_command))
-										$command_description .= "Add $text to the line $line_number";
-									else
-										$command_description .= "Replace line $line_number with $text";
+                        case 'unpbo' : {
+                            if (!empty($file_name)) {
+                                $game_source = false;
 
-								$command_description .= " in the $modname\\$file_name";
-							} else {
-								$command_description = "Not enough arguments";
-							}
-						} break;
+                                if (GS_begins_with("<game>\\", $file_name)) {
+                                    $source_dir = "";
+                                    $game_source = true;
+                                } else
+                                    $file_name = "$modname\\$file_name";
 
-						case 'delete' : {
-							if (!empty($args_for_this_command)) {
-								$pattern = "";
+                                $last_unpbo           = $file_name;
+                                $command_description .= "Extract $file_name";
 
-								if (preg_match("/(\*|\?)/", $file_name_without_path)) {
-									$file_type = "files";
+                                $destination = count($args_for_this_command) >= 2 ? $args_for_this_command[1] : "";
+                                if (!empty($destination)) {
+                                    $last_unpbo = "$modname\\$destination\\" . GS_path_last_item($file_name);
+                                    $command_description .= " to the $modname\\$destination";
+                                } else
+                                    if ($game_source)
+                                        $command_description .= " to the $modname";
 
-									if (in_array("/match_dir", $switches_for_this_command))
-										$file_type = "files and folders";
-									
-									if ($file_name_without_path == "*") {
-										$pattern = "all $file_type from the ";
-										$file_name = $file_name_path_only;
-									} else                                         
-										if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
-											$pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
-											$file_name = $file_name_path_only;
-										}
-								}
+                                $last_unpbo = substr($last_unpbo, 0, -4);
+                            }
+                        } break;
 
-								$command_description = 
-									"Delete " . 
-									(!empty($pattern) ? $pattern : "") . 
-									"$modname\\$file_name";
-							}
-						} break;
+                        case 'makepbo' : {
+                            $source_dir = "";
 
-						case 'if_version' : {
-							if (!empty($args_for_this_command)) {
-								$operator = "=";
-								$version  = $args_for_this_command[0];
+                            if (empty($file_name)) {
+                                $command_description = "Create $last_unpbo.pbo";
+                                $source_dir          = $last_unpbo;
+                            } else {
+                                $source_dir = "$modname\\$file_name";
+                                $command_description = "Create $source_dir.pbo";
+                            }
 
-								if (count($args_for_this_command) >= 2) {
-									$operator = $args_for_this_command[0];
-									$version  = $args_for_this_command[1];
-								}
+                            if (!in_array("/keep_source", $switches_for_this_command))
+                                $command_description .= "\nand then delete folder $source_dir";
+                        } break;
 
-								$op_description = "is";
-								
-								switch($operator) {
-									case "=" :
-									case "==": $op_description="is"; break;
-									case "<" : $op_description="is older than"; break;
-									case "<=": $op_description="is the same or older than"; break;
-									case ">" : $op_description="is newer than"; break;
-									case ">=": $op_description="is the same or newer than"; break;
-									case "<>": 
-									case "!=": $op_description="is not"; break;
-								}
+                        case 'edit' : {
+                            if (count($args_for_this_command) >= 3) {
+                                $line_number = $args_for_this_command[1];
+                                $input_text  = $args_for_this_command[2];
 
-								$command_description = "If user's version of the game $op_description $version";
-							}
-						} break;
+                                if (substr($input_text,0,2)==">>")
+                                    $input_text = substr($input_text,3,-1);
+                                else
+                                    $input_text = trim($input_text, "\"");
 
-						case 'else' : {
-							$command_description = "For all other game versions";
-						} break;
+                                if (strlen($input_text) > 15)
+                                    $input_text = substr($input_text,0,15) . "...";
 
-						case 'endif' : {
-							$command_description = "End version condition";
-						} break;
+                                if (in_array("/newfile", $switches_for_this_command))
+                                    $command_description = "Create new file $modname\\$file_name with $input_text";
+                                else
+                                    if (in_array("/insert", $switches_for_this_command))
+                                        $command_description = "Insert new line $input_text as the line $line_number in the $modname\\$file_name";
+                                    else
+                                        if (in_array("/append", $switches_for_this_command))
+                                            $command_description .= "Add $input_text to the line $line_number in the $modname\\$file_name";
+                                        else
+                                            $command_description .= "Replace line $line_number with $input_text in the $modname\\$file_name";
+                            } else {
+                                $command_description = "Not enough arguments";
+                            }
+                        } break;
 
-						case 'alias' : {
-							if (!empty($args_for_this_command)) {
-								$command_description = "Treat folder".(count($args_for_this_command)!=1?"s":"")." named " . implode(",",$args_for_this_command) . " as if it's $modname";
-							} else {
-								$command_description = "Clear mod aliases";
-							}
-						} break;
+                        case 'delete' : {
+                            if (!empty($args_for_this_command)) {
+                                $pattern = "";
+                                $file_name_without_path = GS_path_last_item($file_name);
+                                $file_name_path_only    = GS_path_only($file_name);
 
-						case 'rename' : {
-							if (count($args_for_this_command) >= 2) {
-								$pattern = "";
+                                if (preg_match("/(\*|\?)/", $file_name_without_path)) {
+                                    $file_type = "files";
 
-								if (preg_match("/(\*|\?)/", $file_name_without_path)) {
-									$file_type = "files";
+                                    if (in_array("/match_dir", $switches_for_this_command))
+                                        $file_type = "files and folders";
+                                    
+                                    if ($file_name_without_path == "*") {
+                                        $pattern = "all $file_type from the ";
+                                        $file_name = $file_name_path_only;
+                                    } else                                         
+                                        if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
+                                            $pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
+                                            $file_name = $file_name_path_only;
+                                        }
+                                }
 
-									if (in_array("/match_dir", $switches_for_this_command))
-										$file_type = "files and folders";
+                                $command_description = 
+                                    "Delete " . 
+                                    (!empty($pattern) ? $pattern : "") . 
+                                    $modname .
+                                    (!empty($file_name) ? "\\$file_name" : "");
+                            }
+                        } break;
 
-									if (in_array("/match_dir_only", $switches_for_this_command))
-										$file_type = "folders";
-									
-									if ($file_name_without_path == "*") {
-										$pattern = "all $file_type from the ";
-										$file_name = $file_name_path_only;
-									} else                                         
-										if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
-											$pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
-											$file_name = $file_name_path_only;
-										}
-								}
+                        case 'if_version' : {
+                            if (!empty($args_for_this_command)) {
+                                $operator            = "=";
+                                $version             = $args_for_this_command[0];
+                                $command_description = "If user's version of the game ";
 
-								$command_description = 
-									"Rename " .
-									(!empty($pattern) ? $pattern : "") .
-									"$modname" .
-									(!empty($file_name) ? $file_name : "") .
-									" to {$args_for_this_command[1]}";
-							} else {
-								$command_description = "Not enough arguments";
-							}
-						} break;
+                                if (count($args_for_this_command) >= 2) {
+                                    $operator = $args_for_this_command[0];
+                                    $version  = $args_for_this_command[1];
+                                }
+                                
+                                switch($operator) {
+                                    case "=" :
+                                    case "==": $command_description.="is $version"; break;
+                                    case "<" : $command_description.="is older than $version"; break;
+                                    case "<=": $command_description.="is $version or older"; break;
+                                    case ">" : $command_description.="is newer than $version"; break;
+                                    case ">=": $command_description.="is $version or newer"; break;
+                                    case "<>": 
+                                    case "!=": $command_description.="is not"; break;
+                                }
+                            }
+                        } break;
 
-						case 'makedir' : {
-							if (!empty($args_for_this_command)) {
-								$command_description = "Create folders $modname\\$file_name";
-							} else {
-								$command_description = "Not enough arguments";
-							}
-						} break;
+                        case 'else' : {
+                            $command_description = "For all other game versions";
+                        } break;
 
-						case 'filedate' : {
-							if (count($args_for_this_command) >= 2) {
-								$input_date = $args_for_this_command[1];
-								$date = new DateTime();
+                        case 'endif' : {
+                            $command_description = "End version condition";
+                        } break;
 
-								if (strpos($input_date,"T") !== FALSE) {
-									$date = new DateTime($input_date);
-								} else {
-									$date = DateTime::createFromFormat('U', $input_date);
-								}
+                        case 'alias' : {
+                            if (!empty($args_for_this_command)) {
+                                foreach($args_for_this_command as $alias)
+                                    $mod_alias[] = strtolower($alias);
 
-								$command_description = "Change $modname\\$file_name last modification date to " . $date->format("Y-m-d H:i:s") . " GMT";
-							} else {
-								$command_description = "Not enough arguments";
-							}
-						} break;
+                                $command_description = "Treat folders named " . implode(",",$args_for_this_command) . " as if they are $modname";
+                            } else {
+                                $mod_alias = [];
+                                $command_description = "Clear mod aliases";
+                            }
+                        } break;
 
-						case 'ask_get' : {
-							$command_description = "Ask user to manually download $file_name";
-						} break;
+                        case 'rename' : {
+                            if (count($args_for_this_command) >= 2) {
+                                $pattern = "";
+                                $file_name_without_path = GS_path_last_item($file_name);
+                                $file_name_path_only    = GS_path_only($file_name);
 
-						case 'ask_run' : {
-							if (!empty($args_for_this_command)) {
-								$source_dir = "fwatch\\tmp";
+                                if (preg_match("/(\*|\?)/", $file_name_without_path)) {
+                                    $file_type = "files";
 
-								if (substr($file_name,0,12) == "&lt;mod&gt;\\") {
-									$source_dir = $modname;
-									$file_name  = substr($file_name, 12);
-								}
+                                    if (in_array("/match_dir", $switches_for_this_command))
+                                        $file_type = "files and folders";
 
-								$command_description = "Ask user to launch $source_dir\\$file_name";
-							} else {
-								$command_description = "Not enough arguments";
-							}
-						} break;
+                                    if (in_array("/match_dir_only", $switches_for_this_command))
+                                        $file_type = "folders";
+                                    
+                                    if ($file_name_without_path == "*") {
+                                        $pattern = "all $file_type from the ";
+                                        $file_name = $file_name_path_only;
+                                    } else                                         
+                                        if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
+                                            $pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
+                                            $file_name = $file_name_path_only;
+                                        }
+                                }
 
-						case 'exit' : {
-							$command_description = "Terminate installation";
-						} break;
-					}
+                                $destination         = trim($args_for_this_command[1], "\"");
+                                $command_description = 
+                                    "Rename " .
+                                    (!empty($pattern) ? $pattern : "") .
+                                    $modname .
+                                    (!empty($file_name) ? "\\$file_name" : "") .
+                                    "\nto $destination";
+                            } else {
+                                $command_description = "Not enough arguments";
+                            }
+                        } break;
 
-					
-					$output .= '<span class="whole_block" data-toggle="tooltip" data-placement="bottom" title="'.htmlspecialchars($command_description).'">' . $output_temp . '</span>';
-				}
+                        case 'makedir' : {
+                            if (!empty($args_for_this_command)) {
+                                $command_description = "Create folders $modname\\$file_name";
+                            } else {
+                                $command_description = "Not enough arguments";
+                            }
+                        } break;
 
-				$output_temp = "";
-			}
-		}
+                        case 'filedate' : {
+                            if (count($args_for_this_command) >= 2) {
+                                $input_date = $args_for_this_command[1];
+                                $date = new DateTime();
 
-		if ($i < strlen($code) && $word_begin==-1)
-			$output_temp .= $code[$i];
-	}
-	
-	return $output;
+                                if (strpos($input_date,"T") !== FALSE) {
+                                    $date = new DateTime($input_date);
+                                } else {
+                                    $date = DateTime::createFromFormat('U', $input_date);
+                                }
+
+                                $command_description = "Change $modname\\$file_name last modification date to " . $date->format("Y-m-d H:i:s") . " GMT";
+                            } else {
+                                $command_description = "Not enough arguments";
+                            }
+                        } break;
+
+                        case 'ask_get' : {
+                            if (count($args_for_this_command) >= 1) {
+                                $file_name = trim($args_for_this_command[0], "\"");
+                                $command_description = "Ask user to manually download $file_name";
+                            } else {
+                                $command_description = "Not enough arguments";
+                            }
+                        } break;
+
+                        case 'ask_run' : {
+                            $source_dir = "fwatch\\tmp";
+
+                            if (!empty($args_for_this_command) && GS_begins_with("<mod>\\",$file_name))
+                                $source_dir = $modname;
+
+                            $command_description .= "Ask user to launch $source_dir\\$file_name";
+                        } break;
+
+                        case 'exit' : {
+                            $command_description = "Terminate installation";
+                        } break;
+                    }
+
+                    $cut = -1;
+
+                    for ($j=0; $j<strlen($output_temp) && $cut<0; $j++)
+                        if (!ctype_space($output_temp[$j]))
+                            $cut = $j;
+
+                    if ($cut >= 0) {
+                        $output     .= substr($output_temp, 0, $cut);
+                        $output_temp = substr($output_temp, $cut);
+                    }
+
+                    $output .= '<span class="installation_script_tooltip" data-toggle="tooltip" data-placement="bottom" title="'.htmlspecialchars($command_description).'">' . $output_temp . '</span>';
+                }
+
+                $output_temp = "";
+            }
+        }
+
+        if ($i < strlen($code) && $word_begin==-1 && $code[$i]!="\r")
+            $output_temp .= $code[$i];
+    }
+    
+    return $output;
 }
 
 // Download

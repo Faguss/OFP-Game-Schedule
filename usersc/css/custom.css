@@ -1,3 +1,20 @@
+.tooltip-inner {
+	min-width: 100px;
+	max-width: 100%; 
+	white-space:pre-wrap;
+}
+
+@media (max-width: 320px) {
+	.tooltip-inner {
+		min-width: initial;
+		max-width: 320px;
+	}
+}
+
+.installation_script_tooltip:hover {
+	background: #ff00000f;
+}
+
 .faq_paragraph {
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 16px;

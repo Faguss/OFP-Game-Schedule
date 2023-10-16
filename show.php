@@ -265,6 +265,9 @@ if (!empty($js_addedon)) {
 		var GS_input_vers = ".json_encode(array_values($input["modver"])).";
 		var GS_input_url  = '".$build_url($url_tokens)."';
 		GS_convert_addedon_date('mod_addedon',".json_encode($js_addedon).");
+		$(function () {
+		  $('[data-toggle=\"tooltip\"]').tooltip()
+		})
 	</script>
 	";
 }
