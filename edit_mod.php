@@ -657,7 +657,7 @@ if ($form->hidden["display_form"] == "Update")
 			
 			$js_script_list["data"][] = [
 				"uniqueid"   => $update["uniqueid"],
-				"script"     => $update["script"],
+				"script"     => html_entity_decode($update["script"]),
 				"sizenumber" => $size[0],
 				"sizetype"   => $size[1]
 			];
@@ -731,7 +731,7 @@ if ($form->hidden["display_form"] == "Update")
 		if (!$already_on_the_list)
 				$js_script_list["data"][] = [
 					"uniqueid"   => $link["scriptUniqueID"],
-					"script"     => $link["script"],
+					"script"     => html_entity_decode($link["script"]),
 					"sizenumber" => $size[0],
 					"sizetype"   => $size[1]
 				];
@@ -806,6 +806,8 @@ if ($form->hidden["display_form"] == "Update")
 		<script type=\"text/javascript\">
 			var {$js_script_list["name"]} = ".json_encode($js_script_list["data"]).";
 			{$js_version_select} {$js_script_select} {$js_jump_select}
+			
+			var modfolder_name = ".json_encode($record_title).";
 			
 			var Update_List_Count        = Update_List.length;
 			var Update_List_Backup       = null;

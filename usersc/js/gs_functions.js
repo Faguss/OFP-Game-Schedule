@@ -916,6 +916,18 @@ function GS_get_server_list(master_server, list_id) {
 
 
 /* edit_mod.php */
+//https://stackoverflow.com/questions/1787322/what-is-the-htmlspecialchars-equivalent-in-javascript
+function GS_encode_entities(text) {
+	var map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	};
+	
+	return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
 
 // https://stackoverflow.com/questions/5796718/html-entity-decode#9609450
 var GS_decode_entities = (function() {
@@ -1635,41 +1647,71 @@ function GS_prepare_installation_data(input_version) {
 	return output;
 };
 
+// Trim beginning of a string
+function GS_begins_with(sequence, string) {
+	let length = sequence.length;
+	let match  = string.substr(0,length) == sequence;
+
+	if (match)
+		string = string.substr(length);
+
+	return {match:match, string:string};
+};
+
+// Trim beginning of a path
+function GS_path_last_item(path) {
+	last_slash = path.lastIndexOf("\\");
+	return last_slash>=0 ? path.substr(last_slash+1) : path;
+}
+
+// Trim ending of a path
+function GS_path_only(path) {
+	last_slash = path.lastIndexOf("\\");
+	return last_slash>=0 ? path.substr(0, last_slash) : "";
+}
+
+function GS_trim(str, ch) {
+    var start = 0, 
+        end = str.length;
+
+    while(start < end && str[start] === ch)
+        ++start;
+
+    while(end > start && str[end - 1] === ch)
+        --end;
+
+    return (start > 0 || end < str.length) ? str.substring(start, end) : str;
+}
+
+function GS_empty(text) {
+	return text.trim().length === 0;
+}
+
 // Code highlighting for addon installer scripting language
-function GS_scripting_highlighting(code) {
+function GS_scripting_highlighting(code, modname="modfolder") {
 	var all_commands = {
-		auto_install    : "auto_installation",
-		download        : "get",
-		get             : "get",
-		unpack          : "unpack",
-		extract         : "unpack",
-		move            : "move",
-		copy            : "move",
-		makedir         : "makedir",
-		newfolder       : "makedir",
-		ask_run         : "ask_run",
-		ask_execute     : "ask_run",
-		begin_mod       : "",
-		delete          : "delete",
-		remove          : "delete",
-		rename          : "rename",
-		ask_download    : "ask_get",
-		ask_get         : "ask_get",
-		if_version      : "if_version",
-		else            : "if_version",
-		endif           : "if_version",
-		makepbo         : "makepbo",
-		extractpbo      : "unpbo",
-		unpackpbo       : "unpbo",
-		unpbo           : "unpbo",
-		edit            : "edit",
-		begin_ver       : "",
-		alias           : "alias",
-		merge_with      : "alias",
-		filedate        : "filedate",
-		install_version : "",
-		exit            : "exit",
-		quit            : "exit"
+		auto_install: {names:["auto_installation"], url:"auto_installation"},
+		get: {names:["download","get"], url:"get"},
+		unpack: {names:["unpack","extract"], url:"unpack"},
+		move: {names:["move"], url:"move"},
+		copy: {names:["copy"], url:"move"},
+		makedir: {names:["makedir","newfolder"], url:"makedir"},
+		ask_run: {names:["ask_run","ask_execute"], url:"ask_run"},
+		begin_mod: {names:["begin_mod"], url:""},
+		delete: {names:["delete","remove"], url:"delete"},
+		rename: {names:["rename"], url:"rename"},
+		ask_get: {names:["ask_get","ask_download"], url:"ask_get"},
+		if_version: {names:["if_version"], url:"if_version"},
+		else: {names:["else"], url:"if_version"},
+		endif: {names:["endif"], url:"if_version"},
+		makepbo: {names:["makepbo"], url:"makepbo"},
+		unpbo: {names:["extractpbo","unpackpbo","unpbo"], url:"unpbo"},
+		edit: {names:["edit"], url:"edit"},
+		begin_ver: {names:["begin_ver"], url:""},
+		alias: {names:["alias","merge_with"], url:"alias"},
+		filedate: {names:["filedate"], url:"filedate"},
+		install_version: {names:["install_version"], url:""},
+		exit: {names:["exit","quit"], url:"exit"},
 	};
 	var command_switches_names = [
 		"/password:",
@@ -1692,48 +1734,51 @@ function GS_scripting_highlighting(code) {
 	var remove_quotes         = true;
 	var url_block             = false;
 	var url_line              = false;
-	var instruction_id        = [];
-	var instruction_line      = [];
-	var instruction_arg       = [];
-	var instruction_arg_id    = [];
-	var url_list              = [];
-	var url_list_id           = [];
+	var instruction_id        = {};
+	var instruction_arg       = {};
+	var url_list              = {};
+	var switch_list           = {};
 	var output                = "";
+	var output_temp           = "";
 	var is_url                = function (text) {return text.substr(0,7)=="http://" || text.substr(0,8)=="https://" || text.substr(0,6)=="ftp://" || text.substr(0,4)=="www.";};
-	const whitespace = /\s/;
+	var last_unpbo            = "";
+	var mod_alias             = [];
+	const whitespace          = /\s/;
 	
 	for(var i=0; i<=code.length; i++) {
-		var end_of_word = i==code.length || whitespace.test(code[i]);
+		var end_of_word = i==code.length || (i<code.length && whitespace.test(code[i]));
 		
 		// When quote
-		if (code[i]=="\""  ||  code.substr(i,6)=="&quot;")
+		if (i<code.length && (code[i]=="\""  ||  code.substr(i,6)=="&quot;"))
 			in_quote = !in_quote;
 		
 		// If beginning of an url block
-		if (code[i]=="{"  &&  word_begin<0) {
+		if (i<code.length && (code[i]=="{" && word_begin<0)) {
 			url_block = true;
 	
 			// if bracket is the first thing in the line then it's auto installation
 			if (word_count == 1) {
-				last_command_line_num = word_line_num;
-				instruction_id.push("auto_install");
-				instruction_line.push(word_line_num);
+				last_command_line_num          = word_line_num;
+				instruction_id[word_line_num]  = 'auto_install';
+				instruction_arg[word_line_num] = [];
+				url_list[word_line_num]        = [];
+				switch_list[word_line_num]     = [];
 			}
 			
-			output += "{";
+			output_temp += "{";
 			continue;
 		}
 		
 		// If ending of an url block
-		if (code[i]=="}"  &&  url_block) {
+		if (i<code.length && (code[i]=="}"  &&  url_block)) {
 			end_of_word = true;
 			
-			// If there's space between last word and the closing bracket
+			// If there's a space between the last word and the closing bracket
 			if (word_begin == -1) {	
 				url_block = false;
 				url_line  = false;
 				word_count++;
-				output += "}";
+				output_temp += "}";
 				continue;
 			}
 		}
@@ -1765,31 +1810,34 @@ function GS_scripting_highlighting(code) {
 				// Check if it's a valid command
 				if (is_url(word))
 					command_id = "auto_install";
-				else {
-					var getObjectKey = function (obj, value) {return Object.keys(obj).find(key => obj[key] === value);}
+				else {					
+					var getObjectKey = function (obj, value) {return Object.keys(obj).find(key => obj[key]["names"].includes(value));}
 					command_id = getObjectKey(all_commands, word.toLowerCase());
 				}
 
 				// If so then add it to database, otherwise skip this line
 				if (command_id != null) {
 					last_command_line_num = word_line_num;
-					instruction_id.push(command_id);
-					instruction_line.push(word_line_num);
+					instruction_arg[word_line_num] = [];
+					instruction_id[word_line_num]  = command_id;
+					url_list[word_line_num]        = [];
+					switch_list[word_line_num]     = [];
 					
 					// If command is an URL then add it to the url database
 					if (is_url(word)) {
-						url_line         = true;
-						last_url_list_id = url_list_id.length;
-						url_list.push(word);
-						url_list_id.push(last_command_line_num);
-						output += "<a class=\"scripting_command_url\" href=\""+word+"\" target=\"_blank\">"+word+"</a>";
+						url_line = true;
+						url_list[last_command_line_num].push(word);
+						last_url_list_id = url_list[last_command_line_num].length - 1;
+						output_temp += "<a class=\"scripting_command_url\" href=\""+word+"\" target=\"_blank\">"+GS_encode_entities(word)+"</a>";
 					} else
-						output += "<a class=\"scripting_command\" href=\"install_scripts#"+all_commands[command_id]+"\" target=\"_blank\">"+word+"</a>";
+						output_temp += "<a class=\"scripting_command\" href=\"install_scripts#"+all_commands[command_id]["url"]+"\" target=\"_blank\">"+GS_encode_entities(word)+"</a>";
 				} else {
-					end     = code.indexOf("\n", i);
-					i       = end==-1 ? code.length : end;
-					word    = code.substr(word_begin, i-word_begin);
-					output += "<span class=\"scripting_command_comment\">"+word+"</span>";
+					end          = code.indexOf("\n", i);
+					i            = end==-1 ? code.length : end;
+					word         = code.substr(word_begin, i-word_begin);
+					output_temp += "<span class=\"scripting_command_comment\">"+GS_encode_entities(word)+"</span>";
+					output      += output_temp;
+					output_temp  = "";
 				}
 			} else {
 				// Check if URL starts here
@@ -1807,27 +1855,28 @@ function GS_scripting_highlighting(code) {
 				// Add word to the URL database or the arguments database
 				if (!is_switch && url_line) {
 					if (last_url_list_id == -1) {
-						last_url_list_id = url_list_id.length;
-						url_list.push(word);
-						url_list_id.push(last_command_line_num);
-						output += "<a class=\"scripting_command_url\" href=\""+word+"\" target=\"_blank\">"+word+"</a>";
+						url_list[last_command_line_num].push(word);
+						last_url_list_id = url_list[last_command_line_num].length-1;
+						output_temp += "<a class=\"scripting_command_url\" href=\""+word+"\" target=\"_blank\">"+GS_encode_entities(word)+"</a>";
 					} else {
-						url_list[last_url_list_id] += " " + word;
-						output                     += word;
+						url_list[last_command_line_num][last_url_list_id] += " " + word;
+						output_temp                                       += word;
 					}
 				} else {
-					instruction_arg.push(word);
-					instruction_arg_id.push(last_command_line_num);
+					if (word.substr(0,1) == "/")
+						switch_list[last_command_line_num].push(word);
+					else
+						instruction_arg[last_command_line_num].push(word);
 					
 					if (is_switch)
-						output += "<span class=\"scripting_command_switch\">"+word+"</span>";
+						output_temp += "<span class=\"scripting_command_switch\">"+GS_encode_entities(word)+"</span>";
 					else
-						output += "<span class=\"scripting_command_arg"+(arg_count++)+"\">"+word+"</span>";
+						output_temp += "<span class=\"scripting_command_arg"+(arg_count++)+"\">"+GS_encode_entities(word)+"</span>";
 				}
 			}
 			
 			// If ending of an url block
-			if (code[i]=="}"  &&  url_block) {
+			if (i<code.length && (code[i]=="}"  &&  url_block)) {
 				url_block = false;
 				url_line  = false;
 			}
@@ -1837,16 +1886,442 @@ function GS_scripting_highlighting(code) {
 		}
 
 		// When new line			
-		if (!in_quote  &&  code[i]=="\n") {
+		if (!in_quote  &&  ((i<code.length  &&  code[i]=="\n") || i==code.length)) {
 			arg_count        = 1;
 			word_count       = 1;
 			url_line         = false;
 			last_url_list_id = -1;
 			word_line_num++;
+			
+			if (!url_block) {
+				if (output_temp.trim().length === 0)
+					output += output_temp;
+				else {
+					let last_key                  = Object.keys(instruction_id)[Object.keys(instruction_id).length-1];
+					let command_name              = instruction_id[last_key];
+					let file_name                 = "";
+					let urls_for_this_command     = url_list[last_key];
+					let args_for_this_command     = instruction_arg[last_key];
+					let switches_for_this_command = switch_list[last_key].map((x) => x.toLowerCase());
+					let command_description       = "";
+
+					if (urls_for_this_command.length > 0) {
+						let url   = urls_for_this_command[0];
+						let parts = url.match(/"(?:\\\\.|[^\\\\"])*"|\S+/g);
+						
+						if (parts.length == 1) {
+							let last_slash = url.lastIndexOf("/");
+							if (last_slash >= 0) {
+								file_name = url.substr(last_slash+1);
+							} else {
+								file_name = url;
+							}
+						} else {
+							file_name = parts[parts.length-1];
+						}
+
+						command_description = "Download " + GS_trim(file_name, "\"");
+
+						if (urls_for_this_command.length > 1)
+							command_description += " (" + urls_for_this_command.length + " mirrors)";
+
+						command_description += " to the fwatch\\tmp folder.\n";
+					}
+
+					if (GS_empty(file_name) && args_for_this_command.length>0) {
+						file_name = args_for_this_command[0];
+					}
+
+					file_name = GS_trim(file_name, "\"");
+
+					let archive_password = "";
+					for (const switch_name in switches_for_this_command) {
+						let result = GS_begins_with("/password:",switch_name);
+						if (result.match) {
+							archive_password = result.string;
+							break;
+						}
+					}
+
+					switch(command_name) {
+						case 'auto_install' : {
+							last_dot = command_description.lastIndexOf(".");
+							if (last_dot >= 0)
+								command_description = command_description.substr(0, last_dot);
+
+							if (!GS_empty(archive_password))
+								command_description += ", open it with "+archive_password+" password";
+
+							command_description += " and automatically install it.";
+						} break;
+						
+						case 'unpack' : {
+							if (!GS_empty(file_name)) {
+								let file_name_path_only = GS_path_only(file_name);
+								let destination         = file_name_path_only;
+
+								let result = GS_begins_with("_extracted\\",destination);
+								if (result.match)
+									destination = result.string + "\\_extracted";
+
+								command_description += 
+									"Extract fwatch\\tmp\\"+file_name+" " + 
+									(!GS_empty(archive_password)?("(with "+archive_password+" password) "):"") +
+									"\nto the fwatch\\tmp\\_extracted" + 
+									(!GS_empty(destination) ? ("\\"+destination) : "") +
+									" folder";
+							} else
+								command_description = "Extract last downloaded file";
+						} break;
+
+						case 'copy' : 
+						case 'move' : {
+							if (!GS_empty(file_name)) {
+								let destination = "";
+								let new_name    = "";
+								let offset      = urls_for_this_command.length==0 ? 0 : 1;
+								
+								destination = args_for_this_command.length >= (2-offset) ? args_for_this_command[1-offset] : "";
+								new_name    = args_for_this_command.length >= (3-offset) ? args_for_this_command[2-offset] : "";
+								destination = GS_trim(destination, "\"");
+								new_name    = GS_trim(new_name, "\"");
+
+								source_dir = "fwatch\\tmp\\_extracted";
+
+								let result = GS_begins_with("<mod>\\", file_name);
+								if (result.match) {
+									file_name  = result.string;
+									source_dir = modname;
+								}
+
+								result = GS_begins_with("<dl>\\", file_name);
+								if (result.match) {
+									file_name  = result.string;
+									source_dir = "";
+									file_name  = "last downloaded file";
+								}
+
+								result = GS_begins_with("<game>\\", file_name);
+								if (result.match) {
+									file_name  = result.string;
+									source_dir = "";
+								}
+
+								let pattern = "";
+								let file_name_without_path = GS_path_last_item(file_name);
+								let file_name_path_only    = GS_path_only(file_name);
+								const wildcard = /(\*|\?)/g;
+
+								if (wildcard.test(file_name_without_path)) {
+									file_type = "files";
+
+									if (switches_for_this_command.includes("/match_dir"))
+										file_type = "files and folders";
+
+									if (switches_for_this_command.includes("/match_dir_only"))
+										file_type = "folders";
+									
+									if (file_name_without_path == "*") {
+										pattern   = "all "+file_type+" from the ";
+										file_name = file_name_path_only;
+									} else     
+										if (file_name_without_path == "*.pa?") {
+											pattern   = "all paa and pac files from the ";
+											file_name = file_name_path_only;
+										} else {
+											const only_extension = /^\*\.[A-Za-z0-9]+$/g;
+											if (only_extension.test(file_name_without_path)) {
+												pattern   = "all " + file_name_without_path.substr(2) + " " +file_type+" from the ";
+												file_name = file_name_path_only;
+											}
+										}
+								}
+
+								let path_parts = file_name.split("\\");
+								let last_part  = path_parts[path_parts.length-1].toLowerCase();
+								if ((last_part == modname.toLowerCase() || mod_alias.includes(last_part)) && GS_empty(pattern))
+									destination = "game";
+								else
+									if (GS_empty(destination) || destination == ".")
+										destination = modname;
+									else
+										destination = modname+"\\"+destination;
+
+								file_type = file_name.indexOf(".") >= 0 ? "file" : "folder";
+								command_description += 
+									(command_name=="move" ? "Move " : "Copy ") + 
+									(!GS_empty(pattern) ? pattern : "") +
+									source_dir +
+									(!GS_empty(source_dir) && !GS_empty(file_name) ? "\\" : "") +
+									file_name +
+									(!GS_empty(new_name) ? ("\nas "+new_name) : "") +
+									"\nto the "+destination+" folder";
+
+								if (switches_for_this_command.includes("/no_overwrite"))
+									command_description += " without overwriting";
+							} else {
+								command_description = "Not enough arguments";
+							}
+						} break;
+
+						case 'unpbo' : {
+							if (!GS_empty(file_name)) {
+								let game_source = false;
+
+								let result = GS_begins_with("<game>\\", file_name);
+								if (result.match) {
+									file_name   = result.string;
+									source_dir  = "";
+									game_source = true;
+								} else
+									file_name = modname+"\\"+file_name;
+
+								last_unpbo           = file_name;
+								command_description += "Extract "+file_name;
+
+								let destination = args_for_this_command.length >= 2 ? args_for_this_command[1] : "";
+								if (!GS_empty(destination)) {
+									last_unpbo = modname+"\\"+destination+"\\" + GS_path_last_item(file_name);
+									command_description += " to the "+modname+"\\"+destination;
+								} else
+									if (game_source)
+										command_description += " to the "+modname;
+
+								last_unpbo = last_unpbo.substr(0, -4);
+							}
+						} break;
+
+						case 'makepbo' : {
+							let source_dir = "";
+
+							if (GS_empty(file_name)) {
+								command_description = "Create "+last_unpbo+".pbo";
+								source_dir          = last_unpbo;
+							} else {
+								source_dir          = modname+"\\"+file_name;
+								command_description = "Create "+source_dir+".pbo";
+							}
+
+							if (!switches_for_this_command.includes("/keep_source"))
+								command_description += "\nand then delete folder "+source_dir;
+						} break;
+
+						case 'edit' : {
+							if (args_for_this_command.length >= 3) {
+								let line_number = args_for_this_command[1];
+								let input_text  = args_for_this_command[2];
+
+								if (input_text.substr(0,2)==">>")
+									input_text = input_text.substr(3,-1);
+								else
+									input_text = GS_trim(input_text, "\"");
+
+								if (input_text.length > 15)
+									input_text = input_text.substr(0,15) + "...";
+
+								if (switches_for_this_command.includes("/newfile"))
+									command_description = "Create new file "+modname+"\\"+file_name+" with "+input_text;
+								else
+									if (switches_for_this_command.includes("/insert"))
+										command_description = "Insert new line "+input_text+" as the line "+line_number+" in the "+modname+"\\"+file_name;
+									else
+										if (switches_for_this_command.includes("/append"))
+											command_description += "Add "+input_text+" to the line "+line_number+" in the "+modname+"\\"+file_name;
+										else
+											command_description += "Replace line "+line_number+" with "+input_text+" in the "+modname+"\\"+file_name;
+							} else {
+								command_description = "Not enough arguments";
+							}
+						} break;
+
+						case 'delete' : {
+							if (args_for_this_command.length > 0) {
+								let pattern = "";
+								let file_name_without_path = GS_path_last_item(file_name);
+								let file_name_path_only    = GS_path_only(file_name);
+
+								const wildcard = /(\*|\?)/g
+								if (wildcard.test(file_name_without_path)) {
+									file_type = "files";
+
+									if (switches_for_this_command.includes("/match_dir"))
+										file_type = "files and folders";
+									
+									if (file_name_without_path == "*") {
+										pattern   = "all "+file_type+" from the ";
+										file_name = file_name_path_only;
+									} else {
+										const only_extension = /^\*\.[A-Za-z0-9]+$/g;
+										if (only_extension.test(file_name_without_path)) {
+											pattern   = "all " + substr(file_name_without_path, 2) + " " +file_type+" from the ";
+											file_name = file_name_path_only;
+										}
+									}
+								}
+
+								command_description = 
+									"Delete " + 
+									(!GS_empty(pattern) ? pattern : "") +
+									modname +
+									(!GS_empty(file_name) ? ("\\"+file_name) : "");
+							}
+						} break;
+
+						case 'if_version' : {
+							if (args_for_this_command.length > 0) {
+								let operator            = "=";
+								let version             = args_for_this_command[0];
+								let command_description = "If user's version of the game ";
+
+								if (args_for_this_command.length >= 2) {
+									operator = args_for_this_command[0];
+									version  = args_for_this_command[1];
+								}
+								
+								switch(operator) {
+									case "=" :
+									case "==": command_description+="is "+version; break;
+									case "<" : command_description+="is older than "+version; break;
+									case "<=": command_description+="is "+version+" or older"; break;
+									case ">" : command_description+="is newer than "+version; break;
+									case ">=": command_description+="is "+version+" or newer"; break;
+									case "<>": 
+									case "!=": command_description+="is not"; break;
+								}
+							}
+						} break;
+
+						case 'else' : {
+							command_description = "For all other game versions";
+						} break;
+
+						case 'endif' : {
+							command_description = "End version condition";
+						} break;
+
+						case 'alias' : {
+							if (args_for_this_command.length > 0) {
+								for (const alias of args_for_this_command)
+									mod_alias.push(alias.toLowerCase());
+
+								command_description = "Treat folders named " + args_for_this_command.join(",") + " as if they are "+modname;
+							} else {
+								mod_alias           = [];
+								command_description = "Clear mod aliases";
+							}
+						} break;
+
+						case 'rename' : {
+							if (args_for_this_command.length >= 2) {
+								let pattern                = "";
+								let file_name_without_path = GS_path_last_item(file_name);
+								let file_name_path_only    = GS_path_only(file_name);
+								
+								const wildcard = /(\*|\?)/g
+								if (wildcard.test(file_name_without_path)) {
+									file_type = "files";
+
+									if (switches_for_this_command.includes("/match_dir"))
+										file_type = "files and folders";
+
+									if (switches_for_this_command.includes("/match_dir_only"))
+										file_type = "folders";
+									
+									if (file_name_without_path == "*") {
+										pattern   = "all "+file_type+" from the ";
+										file_name = file_name_path_only;
+									} else {
+										const only_extension = /^\*\.[A-Za-z0-9]+$/g;
+										if (only_extension.test(file_name_without_path)) {
+											pattern   = "all " + file_name_without_path.substr(2) + " "+file_type+" from the ";
+											file_name = file_name_path_only;
+										}
+									}
+                                }
+
+								let destination     = GS_trim(args_for_this_command[1], "\"");
+								command_description = 
+									"Rename " +
+									(!GS_empty(pattern) ? pattern : "") +
+									modname +
+									(!GS_empty(file_name) ? ("\\"+file_name) : "") +
+									"\nto "+destination;
+							} else {
+								command_description = "Not enough arguments";
+							}
+						} break;
+
+						case 'makedir' : {
+							if (!GS_empty(args_for_this_command)) {
+								command_description = "Create folders "+modname+"\\"+file_name;
+							} else {
+								command_description = "Not enough arguments";
+							}
+						} break;
+
+						case 'filedate' : {
+							if (args_for_this_command.length >= 2) {
+								input_date = args_for_this_command[1];
+								date       = new Date();
+
+								if (input_date.indexOf("T") >= 0) {
+									date = new Date(input_date);
+								} else {
+									date = new Date(input_date * 1000);
+								}
+
+								command_description = "Change "+modname+"\\"+file_name+" last modification date to " + date.format("YYYY-MM-DD HH:mm:ss") + " GMT";
+							} else {
+								command_description = "Not enough arguments";
+							}
+						} break;
+
+						case 'ask_get' : {
+							if (args_for_this_command.length >= 1) {
+								file_name           = GS_trim(args_for_this_command[0], "\"");
+								command_description = "Ask user to manually download "+file_name;
+							} else {
+								command_description = "Not enough arguments";
+							}
+						} break;
+
+						case 'ask_run' : {
+							let source_dir = "fwatch\\tmp";
+
+							let result = GS_begins_with("<mod>\\",file_name);
+							if (args_for_this_command.length>0 && result.match) {
+								file_name  = result.string;
+								source_dir = modname;
+							}
+
+							command_description += "Ask user to launch "+source_dir+"\\"+file_name;
+						} break;
+
+						case 'exit' : {
+							command_description = "Terminate installation";
+						} break;
+					}
+
+					let cut = -1;
+
+					for (j=0; j<output_temp.length && cut<0; j++)
+						if (!whitespace.test(output_temp[j]))
+							cut = j;
+
+					if (cut >= 0) {
+						output     += output_temp.substr(0, cut);
+						output_temp = output_temp.substr(cut);
+					}
+
+					output += '<span class="installation_script_tooltip" data-toggle="tooltip" data-placement="bottom" title="'+GS_encode_entities(command_description)+'">' + output_temp + '</span>';
+				}
+
+				output_temp = "";
+			}
 		}
 
-		if (i < code.length && word_begin==-1)
-			output += code[i];
+		if (i < code.length && word_begin==-1 && code[i]!="\r")
+			output_temp += code[i];
 	}
 	
 	return output;
@@ -1991,7 +2466,7 @@ function GS_preview_installation(input_type) {
 		new_preview += "</span></strong></div>";
 		
 		// Show script
-		new_preview += "<pre style=\"margin:0;border:0;\"><code>" + GS_scripting_highlighting(update.script) + "</code></pre>";
+		new_preview += "<pre style=\"margin:0;border:0;\"><code>" + GS_scripting_highlighting(update.script, modfolder_name) + "</code></pre>";
 		
 		// Show changelog
 		var number_of_notes = 0;
@@ -2036,6 +2511,10 @@ function GS_preview_installation(input_type) {
 	
 	document.getElementById('preview_installation').innerHTML = new_preview;
 	document.getElementById('preview_installation_size').innerHTML = mod.size;
+	
+	$(function () {
+	  $('[data-toggle=\"tooltip\"]').tooltip()
+	})
 }
 
 

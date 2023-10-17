@@ -3188,18 +3188,18 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                         $file_name = $file_name_path_only;
                                     } else     
                                         if ($file_name_without_path == "*.pa?") {
-                                            $pattern = "all paa and pac files from the ";
+                                            $pattern   = "all paa and pac files from the ";
                                             $file_name = $file_name_path_only;
                                         } else
                                             if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
-                                                $pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
+                                                $pattern   = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
                                                 $file_name = $file_name_path_only;
                                             }
                                 }
 
                                 $path_parts = explode("\\", $file_name);
                                 $last_part  = strtolower(end($path_parts));
-                                if (strcasecmp($last_part,$modname) == 0 || in_array($last_part,$mod_alias))
+                                if ((strcasecmp($last_part,$modname) == 0 || in_array($last_part,$mod_alias)) && empty($pattern))
                                     $destination = "game";
                                 else
                                     if (empty($destination) || $destination == ".")
@@ -3256,7 +3256,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                 $command_description = "Create $last_unpbo.pbo";
                                 $source_dir          = $last_unpbo;
                             } else {
-                                $source_dir = "$modname\\$file_name";
+                                $source_dir          = "$modname\\$file_name";
                                 $command_description = "Create $source_dir.pbo";
                             }
 
@@ -3309,7 +3309,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                         $file_name = $file_name_path_only;
                                     } else                                         
                                         if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
-                                            $pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
+                                            $pattern   = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
                                             $file_name = $file_name_path_only;
                                         }
                                 }
@@ -3361,14 +3361,14 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
 
                                 $command_description = "Treat folders named " . implode(",",$args_for_this_command) . " as if they are $modname";
                             } else {
-                                $mod_alias = [];
+                                $mod_alias           = [];
                                 $command_description = "Clear mod aliases";
                             }
                         } break;
 
                         case 'rename' : {
                             if (count($args_for_this_command) >= 2) {
-                                $pattern = "";
+                                $pattern                = "";
                                 $file_name_without_path = GS_path_last_item($file_name);
                                 $file_name_path_only    = GS_path_only($file_name);
 
@@ -3386,7 +3386,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                         $file_name = $file_name_path_only;
                                     } else                                         
                                         if (preg_match("/^\*\.[A-Za-z0-9]+$/", $file_name_without_path)) {
-                                            $pattern = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
+                                            $pattern   = "all " . substr($file_name_without_path, 2) . " $file_type from the ";
                                             $file_name = $file_name_path_only;
                                         }
                                 }
@@ -3430,7 +3430,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
 
                         case 'ask_get' : {
                             if (count($args_for_this_command) >= 1) {
-                                $file_name = trim($args_for_this_command[0], "\"");
+                                $file_name           = trim($args_for_this_command[0], "\"");
                                 $command_description = "Ask user to manually download $file_name";
                             } else {
                                 $command_description = "Not enough arguments";
