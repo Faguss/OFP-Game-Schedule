@@ -1841,6 +1841,48 @@ function GS_get_current_url($add_https=true, $add_path=true) {
 	return "http" . ($add_https && isset($_SERVER['HTTPS']) ? "s" : "") . "://" . $_SERVER['HTTP_HOST'] . ($add_path ? "$path/" : "");
 }
 
+// Read json game server status and return array with relevant information
+function GS_parse_game_server_status($status) {
+	$output = [
+		"status"  => lang(GS_SERVER_STATUS[0]),
+		"mission" => "",
+		"players" => "",
+		"summary" => lang(GS_SERVER_STATUS[0]),
+		"online"  => false,
+	];
+	
+	$server_status = json_decode($status, true);
+	
+	if (isset($server_status)) {
+		if (isset($server_status["gstate"])) {
+			$output["status"]  = lang(GS_SERVER_STATUS[$server_status["gstate"]]);
+			$output["summary"] = $output["status"];
+			$output["online"]  = $server_status["gstate"] != 0;
+		}
+		
+		if (!empty($server_status["gametype"]) && !empty($server_status["mapname"])) {
+			$output["mission"]  = $server_status["gametype"] . "." . $server_status["mapname"];
+			$output["summary"] .= " - " . $output["mission"];
+		}
+		
+		if (isset($server_status["numplayers"]) && isset($server_status["players"])) {
+			$output["players"] = $server_status["numplayers"];
+			$player_list       = [];
+			
+			foreach($server_status["players"] as $player)
+				$player_list[] = $player["player"];
+									
+			if (!empty($player_list)) {
+				$output["summary"] .= " - " . implode(", ", $player_list);
+				$output["players"]  = implode("<br>", $player_list);
+			}
+			
+		}
+	}
+	
+	return $output;
+}
+
 // Read array with servers and output html
 function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTIONS, $server_order=[]) {
 	$html          = "";
@@ -1940,7 +1982,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 			</div><!--end media-->
 		';
 
-		$html .= "<dl class=\"row\" style=\"margin-bottom:0;\">";
+		$html .= '<dl class="row" style="margin-bottom:0;">';
 		
 		$keys = [
 			"version"           => lang("GS_STR_SERVER_VERSION"),
@@ -1972,7 +2014,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 						if (substr($domain,0,4) == "www." )
 							$domain = substr($domain,4);
 						
-						$value = "<a href=\"{$server[$key]}\" target=\"_blank\">$domain</a>";
+						$value = '<a href="'.$server[$key].'" target="_blank">'.$domain.'</a>';
 					}
 				} break;
 				
@@ -1981,7 +2023,9 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 					
 					foreach ($server["mods"] as $id) {
 						$version          = $mods["info"][$id]["version"]!=1 ? " &nbsp; v{$mods["info"][$id]["version"]}" : "";
-						$mod_list_links[] = "<a href=\"show.php?mod={$mods["info"][$id]["uniqueid"]}\" target=\"_blank\">{$mods["info"][$id]["name"]}</a> &nbsp; <span style=\"font-size:70%;\">{$mods["info"][$id]["size"]}{$version}</span>";
+						$mod_list_links[] = 
+							'<a href="show.php?mod='.$mods["info"][$id]["uniqueid"].'" target="_blank">'.$mods["info"][$id]["name"].'</a> &nbsp; 
+							<span style="font-size:70%;">'.$mods["info"][$id]["size"].$version.'</span>';
 					}
 					
 					$value = implode("<br>",$mod_list_links);
@@ -2003,14 +2047,14 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 				case "voice" : {
 					foreach(GS_VOICE as $program_name=>$program_info)
 						if (substr($server["voice"],0,strlen($program_info["url"])) == $program_info["url"])
-							$value = "<a href=\"{$program_info["download"]}\">$program_name</a>";
+							$value = '<a href="'.$program_info["download"].'">'.$program_name.'</a>';
 				} break;
 				
 				default: $value=$server[$key];
 			}
 			
 			if (!empty($value))
-				$html .= "<dt>{$name}:</dt><dd".($dd_class!="" ? " class=\"$dd_class\"" : "").">{$value}</dd>";
+				$html .= '<dt>'.$name.':</dt><dd'.($dd_class!="" ? ' class="'.$dd_class.'"' : "").'>'.$value.'</dd>';
 		}
 		
 		$js_event_data[] = $current_event_data;
@@ -2018,47 +2062,31 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		$js_expired[]    = strtotime("now") > strtotime($server["status_expires"]);
 		
 		// Add server status
-		$server_status_name    = lang(GS_SERVER_STATUS[0]);
-		$server_status_mission = "";
-		$server_status_players = "";
-		
-		$server_status = json_decode($server["status"], true);
-		
-		if (isset($server_status)) {
-			if (isset($server_status["gstate"]))
-				$server_status_name = lang(GS_SERVER_STATUS[$server_status["gstate"]]);
-			
-			if (isset($server_status["gametype"]) && isset($server_status["mapname"]))
-				$server_status_mission = $server_status["gametype"] . "." . $server_status["mapname"];
-			
-			if (isset($server_status["numplayers"]) && isset($server_status["players"])) {
-				$server_status_players = $server_status["numplayers"];
-				
-				foreach($server_status["players"] as $player)
-					$server_status_players .= "<br>" . $player["player"];
-			}
-		}
-		
-		$display_mission = $server_status_mission=="" || $server_status_mission=="." ? "none" : "block";
-		$display_players = empty($server_status_name!=lang(GS_SERVER_STATUS[0])) ? "none" : "block";
+		$server_now      = GS_parse_game_server_status($server["status"]);
+		$display_mission = empty($server_now["mission"]) ? "none" : "block";
+		$display_players = $server_now["online"] ? "block" : "none";
 	
-		$html .= "
-			<dt>".lang("GS_STR_SERVER_STATUS") .":</dt>
-			<dd id=\"query{$server["uniqueid"]}_status\">$server_status_name</dd>
+		$html .= '
+			<dt>'.lang("GS_STR_SERVER_STATUS") .':</dt>
+			<dd id="query'.$server["uniqueid"].'_status">'.$server_now["status"].'</dd>
 			
-			<dt id=\"query{$server["uniqueid"]}_mission_dt\" style=\"display:$display_mission;\">".lang("GS_STR_SERVER_MISSION").":</dt>
-			<dd id=\"query{$server["uniqueid"]}_mission\" style=\"display:$display_mission;\">$server_status_mission</dd>
+			<dt id="query'.$server["uniqueid"].'_mission_dt" style="display:'.$display_mission.';">'.lang("GS_STR_SERVER_MISSION").':</dt>
+			<dd id="query'.$server["uniqueid"].'_mission"    style="display:'.$display_mission.';">'.$server_now["mission"].'</dd>
 			
-			<dt id=\"query{$server["uniqueid"]}_players_dt\" style=\"display:$display_players;\">".lang("GS_STR_SERVER_PLAYERS").":</dt>
-			<dd id=\"query{$server["uniqueid"]}_players\" style=\"display:$display_players;\">$server_status_players</dd>
-		</dl>";
+			<dt id="query'.$server["uniqueid"].'_players_dt" style="display:'.$display_players.';">'.lang("GS_STR_SERVER_PLAYERS").':</dt>
+			<dd id="query'.$server["uniqueid"].'_players"    style="display:'.$display_players.';">'.$server_now["players"].'</dd>
+		</dl>';
 
 		if (isset($user_list[$server["createdby"]])) {
 			$js_addedon[] = date("c",strtotime($server["created"]));
-			$html .= "<span style=\"font-size:x-small;\">$uniqueid</span><small><span style=\"float:right;\">".lang("GS_STR_ADDED_BY_ON",[$user_list[$server["createdby"]],"<span class=\"server_addedon\">".date("jS M Y",strtotime($server["created"]))."</span>"])."</span></small>";
+			$html .= '
+				<span style="font-size:x-small;">'.$uniqueid.'</span>
+				<small><span style="float:right;">'.
+				lang("GS_STR_ADDED_BY_ON",[$user_list[$server["createdby"]],'<span class="server_addedon">'.date("jS M Y",strtotime($server["created"])).'</span>'])
+				."</span></small>";
 
 			if ($server["admin"] != $server["createdby"])
-				$html .= "<br><small><span style=\"float:right;\">".lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$server["admin"]], date("jS M Y",strtotime($server["adminsince"]))])."</small>";
+				$html .= '<br><small><span style="float:right;">'.lang("GS_STR_MANAGED_BY_SINCE", [$user_list[$server["admin"]], date("jS M Y",strtotime($server["adminsince"]))]).'</small>';
 		}
 		
 		$html .= '		
@@ -3030,7 +3058,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                     if ($last_url_list_id == -1) {
                         $url_list[$last_command_line_num][] = $word;
                         $last_url_list_id                   = array_key_last($url_list[$last_command_line_num]);
-                        $output_temp                       .= '<a class="scripting_command_url" href="$word" target="_blank">'.htmlspecialchars($word).'</a>';
+                        $output_temp                       .= '<a class="scripting_command_url" href="'.$word.'" target="_blank">'.htmlspecialchars($word).'</a>';
                     } else {
                         $url_list[$last_command_line_num][$last_url_list_id] .= " " . $word;
                         $output_temp                                         .= $word;
@@ -3534,5 +3562,19 @@ function GS_show_dropdown_controls($item, $record_type, $permission_to, $custom_
 			'.$html_controls.'
 		</ul>
 	</div><!--end dropdown-->';
+}
+
+// For sorting game servers in a list
+function GS_compare_names_with_trim($a,$b) {
+	return strnatcasecmp(
+		trim(
+			ltrim($a["name"],"@!"), 
+			"[]"
+		), 
+		trim(
+			ltrim($b["name"],"@!"), 
+			"[]"
+		)
+	);
 }
 ?>

@@ -64,13 +64,6 @@ class igsedb {
 	}
 }
 
-function packString(...$strings) {
-	$output = "";
-	foreach ($strings as $string)
-		$output .= pack("V",strlen($string)) . $string;
-	return $output;
-}
-
 $input      = GS_get_common_input();
 $input_mode = isset($_GET['mode']) ? $_GET['mode'] : "schedule";
 $db         = DB::getInstance();
@@ -321,7 +314,7 @@ switch($input_mode) {
 		$mods_that_user_doesnt_have = "";
 		$mods_update_count          = 0;
 		
-		uasort($mods["info"], function($a,$b){return strnatcasecmp(ltrim($a["name"],"@![]"), ltrim($b["name"],"@![]"));});
+		uasort($mods["info"], 'GS_compare_names_with_trim');
 		
 		foreach($mods["info"] as $id=>$mod) {
 			$mods_simple_array .= "]+[[\"{$mod["uniqueid"]}\",\"{$mod["name"]}\",{$mod["forcename"]}]";
@@ -425,6 +418,13 @@ switch($input_mode) {
 		define("GR_TAG_MOD_INFO", 8);
 		define("GR_TAG_EVENT_VACATION", 9);
 		
+		function packString(...$strings) {
+			$output = "";
+			foreach ($strings as $string)
+				$output .= pack("V",strlen($string)) . $string;
+			return $output;
+		}
+
 		$output .= 
 			"OFPGS" . pack("xxx") .
 			pack("V", GR_TAG_FWATCH_DATE) . packString(GS_FWATCH_LAST_UPDATE) .

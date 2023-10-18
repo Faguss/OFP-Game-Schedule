@@ -2753,11 +2753,13 @@ function GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, output_typ
 									str += ' - ' + server.gametype + '.' + server.mapname;
 								
 								if (server.players) {
-									if (server.players.length > 0)
-										str += ' -';
+									let player_list = [];
 									
 									for (var j=0; j<server.players.length; j++)
-										str += ' ' + server.players[j].player;
+										player_list.push(server.players[j].player);
+									
+									if (player_list.length > 0)
+										str += ' - ' + player_list.join(', ');
 								}
 							} else
 								str += GS_game_status[0];

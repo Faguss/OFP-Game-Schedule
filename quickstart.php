@@ -23,6 +23,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/UoT6sQQ6dLY",
 	"GS_STR_QUICKSTART_FORPLAYERS" => "How to join a server?",
 	"GS_STR_QUICKSTART_FORORGANIZERS" => "How to setup a server?",
+	"GS_STR_QUICKSTART_FWATCHMODMANAGER" => "Mod Manager",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "First you log in with your %m1% account",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Add a new server record. Fill the fields with information about the OFP server you're going to play on",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Now go to the \"Schedule\" section. Set the game start time",
@@ -50,6 +51,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/o0dPXTGngcQ",
 	"GS_STR_QUICKSTART_FORPLAYERS" => "Как подключиться?",
 	"GS_STR_QUICKSTART_FORORGANIZERS" => "Как устроить?",
+	"GS_STR_QUICKSTART_FWATCHMODMANAGER" => "Менеджер модов",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Для начала нужно войти в аккаунт %m1%",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Добавьте новый сервер. Заполните поля для информации о сервере, на котором будете играть.",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Перейдите в раздел \"Расписание\". Задайте время начала игры",
@@ -77,6 +79,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/UoT6sQQ6dLY",
 	"GS_STR_QUICKSTART_FORPLAYERS" => "Jak dołączyć do serwera?",
 	"GS_STR_QUICKSTART_FORORGANIZERS" => "Jak ustawić serwer?",
+	"GS_STR_QUICKSTART_FWATCHMODMANAGER" => "Menedżer Modów",
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Najpierw zaloguj się przy pomocy konta %m1%",
 	"GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV" => "Dodaj nowy wpis serwera. Wypełnij puste pola danymi o serwerze na którym będzieci grali",
 	"GS_STR_QUICKSTART_FORORGANIZERS_GOSCHEDULE" => "Przejdź do sekcji \"Harmonogram\". Ustaw czas rozpoczęcia gry",
@@ -99,6 +102,7 @@ echo '
 <ul id="quickstart_tabs" class="nav nav-tabs" role="tablist">
 	<li role="presentation" class="active"><a href="#players" aria-controls="players" role="tab" data-toggle="tab">'.lang("GS_STR_QUICKSTART_FORPLAYERS").'</a></li>
 	<li role="presentation"><a href="#organizers" aria-controls="organizers" role="tab" data-toggle="tab">'.lang("GS_STR_QUICKSTART_FORORGANIZERS").'</a></li>
+	<li><a href="../fwatch/modmanager/details">'.lang("GS_STR_QUICKSTART_FWATCHMODMANAGER").'</a></li>
 </ul>
 <div class="jumbotron">
 <div class="tab-content">
