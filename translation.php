@@ -108,7 +108,11 @@ if ($permissions["en-US"]) {
 	echo "<br>";
 }
 
-echo "<b>How to use:</b> click on the table cell to display text input. Edit it and then click elsewhere to close and save changes. Alternatively press TAB to save and move to the cell below. Press ESC to cancel.<br>";
+echo "<p><strong>How to use:</strong></p><ul>
+<li>If your account has the right to make changes then log in</li>
+<li>Click on the table cell to display text input.</li>
+<li>Edit it and then click elsewhere to close and save changes</li>
+<li>Alternatively press TAB to save and move to the cell below. Press ESC to cancel.</li></ul>";
 
 
 
@@ -146,6 +150,15 @@ $table_info = [
 			"Delete page"                                => "images/translation/delete_page_ru.png",
 			"Activity log"                               => "recent_activity"
 		],
+		"hide_rows"       => true,
+		"instructions"    => ""
+	], 
+	
+	"website_faq" => [
+		"name"            => "Website: faq",
+		"source"          => "index.php",
+		"context_key"     => [], 
+		"context_section" => [],
 		"hide_rows"       => true,
 		"instructions"    => ""
 	], 
@@ -337,7 +350,9 @@ $first_table_id = "";
 $default_table  = "";
 
 // Table selection control
-$output .=  "<label for=\"table_select\">Section: &nbsp; </label><select id=\"table_select\" onchange=\"display_table(this.options[this.selectedIndex].value); window.location.hash=this.options[this.selectedIndex].value; window.scrollTo(0, 0);\">";
+$output .=  '
+<label for="table_select">Current section: &nbsp; </label>
+<select id="table_select" onchange="display_table(this.options[this.selectedIndex].value); window.location.hash=this.options[this.selectedIndex].value; window.scrollTo(0, 0);">';
 
 forEach($table_info as $table_id=>$table_options) {
 	$output                 .= "<option value=\"$table_id\">{$table_options["name"]}</option>";
@@ -348,7 +363,11 @@ forEach($table_info as $table_id=>$table_options) {
 		$first_table_id = $table_id;
 }
 	
-$output .= "</select><br><p id=\"instructions\"></p><br>";
+$output .= '</select>
+<p><strong>Unfinished strings in this section:</strong> <span id="unfinished_count"></span></p>
+<p id="instructions"></p>
+<hr>
+';
 
 // Buttons for hiding table columns
 $output .= "<label>Show columns:</label> &nbsp; ";
@@ -464,8 +483,12 @@ function get_file_strings($file_name, $languages) {
 	$text                = file_get_contents($file_name);
 	$lines               = preg_split('/\r\n|\r|\n/', $text);
 	$language_key        = "";
+	$comment_count       = 0;
 	
 	foreach($lines as $line) {
+		if (strlen($line) == 0)
+			continue;
+			
 		$updated = !ctype_space($line[0]);
 		$line    = trim(trim($line), ",");
 		
@@ -479,7 +502,7 @@ function get_file_strings($file_name, $languages) {
 		$tokens = explode("=>", $line);
 		$hash   = strpos($line, "#");
 		
-		if (count($tokens) == 2) {
+		if (!empty($language_key) && count($tokens) == 2) {
 			$stringtable_key   = trim_single_quote($tokens[0]);
 			$stringtable_value = stripslashes(trim_single_quote($tokens[1]));
 			
@@ -508,8 +531,10 @@ function get_file_strings($file_name, $languages) {
 				$comment_count++;
 			}
 			
-		if ($line == "));")
+		if ($line == "));") {
 			$completed_languages++;
+			$language_key = "";
+		}
 		
 		if ($completed_languages == count($languages))
 			break;
@@ -751,13 +776,7 @@ function calculate_untranslated_cells(table) {
 			if (col.classList.contains('danger'))
 				number++;
 	
-	var paragraph = document.getElementById("instructions");
-	var pos       = paragraph.innerHTML.indexOf("<b>Unfinished:</b>");
-
-	if (pos >= 0)
-		paragraph.innerHTML = paragraph.innerHTML.substr(0, pos);
-
-	paragraph.innerHTML += " <b>Unfinished:</b> " + number;
+	$("#unfinished_count").html(number);
 }
 
 // Show or hide language column

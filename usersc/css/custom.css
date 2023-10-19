@@ -21,6 +21,11 @@
 	line-height: 26px;
 }
 
+.faq_paragraph_smaller {
+	font-size: 14px;
+	line-height: 20px;
+}
+
 .faq_image {
 	height: 100px;
 	transition: transform .2s;

@@ -81,11 +81,13 @@ function format_items($key_array, $items, $record_type, $record_column, $permiss
 	return $html;
 }
 		
-function compare_two_servers_by_status($a, $b) {
-	foreach(['date','players','status'] as $key) {
-		$cmp = strcmp($a[$key], $b[$key]);
-		if ($cmp !== 0)
-			return $cmp*-1;
+function compare_two_servers($a, $b) {
+	foreach(['date','players','status','name'] as $key) {
+		$func = $key=='name' ? "strnatcasecmp" : "strcmp";
+		$cmp  = $func($a[$key], $b[$key]);
+		
+		if ($cmp != 0)
+			return $cmp * ($key=='name' ? 1 : -1);
 	}
 	
 	return 0;
@@ -136,6 +138,7 @@ foreach($servers["info"] as $server_key=>$server) {
 	$player_count   = 0;
 	$current_status = 0;
 	$status_query   = json_decode($server["status"]);
+	$server_name    = GS_trim_servermod_name(empty($server["name"]) ? $server["uniqueid"] : $server["name"]);
 	
 	if (isset($status_query->gstate))
 		$current_status = intval($status_query->gstate);
@@ -144,11 +147,23 @@ foreach($servers["info"] as $server_key=>$server) {
 		$player_count = intval($status_query->numplayers);
 	
 	if ($server["persistent"]) {	
-		$persistent[] = ["date"=>0, "players"=>$player_count, "status"=>$current_status, "key"=>$server_key];
+		$persistent[] = [
+			"date"    => 0, 
+			"players" => $player_count, 
+			"status"  => $current_status, 
+			"name"    => $server_name, 
+			"key"     => $server_key
+		];
 	} else {		
 		foreach($server["events"] as $event_key=>$event) {
 			$event_date   = new DateTime($event["iso8601"]);
-			$all_events[] = ["date"=>$event_date->getTimestamp(), "players"=>$player_count, "status"=>$current_status, "key"=>["server"=>$server_key, "event"=>$event_key]];
+			$all_events[] = [
+				"date"    => $event_date->getTimestamp(), 
+				"players" => $player_count, 
+				"status"  => $current_status, 
+				"name"    => $server_name, 
+				"key"     => ["server"=>$server_key, "event"=>$event_key]
+			];
 		}
 	}
 	
@@ -158,7 +173,7 @@ foreach($servers["info"] as $server_key=>$server) {
 
 if (!empty($all_events)) {
 	$servers_html .= '<p><strong>'.lang("GS_STR_SERVER_EVENT_CURRENT").':</strong></p>';
-	usort($all_events, 'compare_two_servers_by_status');
+	usort($all_events, 'compare_two_servers');
 	$current_event_data = [];
 
 	foreach($all_events as $sorted_item) {
@@ -200,7 +215,7 @@ if (!empty($all_events)) {
 if (!empty($persistent)) {
 	$style         = !empty($all_events) ? 'style="margin-top: 2em;"' : '';
 	$servers_html .= '<p '.$style.'><strong>'.lang("GS_STR_INDEX_PERSISTENT").':</strong></p>';
-	usort($persistent, 'compare_two_servers_by_status');
+	usort($persistent, 'compare_two_servers');
 
 	foreach($persistent as $sorted_item) {
 		$key          = $sorted_item["key"];
@@ -436,14 +451,14 @@ if (isset($user) && $user->isLoggedIn()){
 			"GS_FAQ_SECTION3_PAR4" => "Mods can be updated and players will see a notification in the game's main menu",
 			
 			#Why use OFP Game Schedule?
-			"GS_FAQ_SECTION4_PAR1" => "<h4 class=\"media-heading\">Joining server with a single button</h4>No need to type ip address, password and mods",
-			"GS_FAQ_SECTION4_PAR2" => "<h4 class=\"media-heading\">Joining on time</h4>Players may add event to the Windows Task Scheduler so that they won't miss it",
-			"GS_FAQ_SECTION4_PAR3" => "<h4 class=\"media-heading\">Joining with voice</h4>Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
-			"GS_FAQ_SECTION4_PAR4" => "<h4 class=\"media-heading\">Automatic mod installation</h4>No need to send links and instructions",
-			"GS_FAQ_SECTION4_PAR5" => "<h4 class=\"media-heading\">Custom mod faces</h4>Face texture may be stored in a modfolder and it will be automatically activated",
-			"GS_FAQ_SECTION4_PAR6" => "<h4 class=\"media-heading\">Disabling custom files when necessary</h4>Players don't have to worry about their custom files preventing them from joining a server",
-			"GS_FAQ_SECTION4_PAR7" => "<h4 class=\"media-heading\">Faster loading</h4>Modfolders can now store the missions so that players don't have to download them during the game",
-			"GS_FAQ_SECTION4_PAR8" => "<h4 class=\"media-heading\">Server security</h4>If the server is behind password then the only way to connect is through the Game Schedule menu. Website encrypts the password. This way users with wrong mods won't crash the server by joining it",
+			"GS_FAQ_SECTION4_PAR1" => "Joining server with a single button. No need to type ip address, password and mods",
+			"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may add event to the Windows Task Scheduler so that they won't miss it",
+			"GS_FAQ_SECTION4_PAR3" => "Joining with voice. Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
+			"GS_FAQ_SECTION4_PAR4" => "Automatic mod installation. No need to send links and instructions to players",
+			"GS_FAQ_SECTION4_PAR5" => "Custom mod faces. Face texture may be stored in a modfolder and it will be automatically activated",
+			"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
+			"GS_FAQ_SECTION4_PAR7" => "Faster loading. Modfolders can now store the missions so that players don't have to download them during the game",
+			"GS_FAQ_SECTION4_PAR8" => "Server security. If the server is behind password then the only way to connect is through the Game Schedule menu. Website encrypts the password. This way users with wrong mods won't crash the server by joining it",
 		));
 	}
 
@@ -471,49 +486,49 @@ if (isset($user) && $user->isLoggedIn()){
 			"GS_FAQ_SECTION3_PAR4" => "Mody mogą być aktualizowane i gracze zobaczą powiadomienie w menu głównym gry",
 			
 			#Why use OFP Game Schedule?
-			"GS_FAQ_SECTION4_PAR1" => "<h4 class=\"media-heading\">Dołączanie do serwera jednym przyciskiem</h4>Nie trzeba pisać adresu ip, hasła i linii modów",
-			"GS_FAQ_SECTION4_PAR2" => "<h4 class=\"media-heading\">Dołączanie o czasie</h4>Gracze mogą dodać sesję do Harmonogramu Windows dzięki czemu jej nie przegapią",
-			"GS_FAQ_SECTION4_PAR3" => "<h4 class=\"media-heading\">Dołączanie z czatem głosowym</h4>Automatyczne podłączanie się do serwera TeamSpeak3 lub Mumble przy dołączaniu do serwera OFP",
-			"GS_FAQ_SECTION4_PAR4" => "<h4 class=\"media-heading\">Automatyczna instalacja modów</h4>Nie ma potrzeby rozsyłania linków do ściągnięcia modu i instrukcji",
-			"GS_FAQ_SECTION4_PAR5" => "<h4 class=\"media-heading\">Twarze w modach</h4>Własna tekstura twarzy może być przechowywana w modfolderze i będzie aktywowana automatycznie",
-			"GS_FAQ_SECTION4_PAR6" => "<h4 class=\"media-heading\">Disabling custom files when necessary</h4>Players don't have to worry about their custom files preventing them from joining a server",
-			"GS_FAQ_SECTION4_PAR7" => "<h4 class=\"media-heading\">Szybsze ładowanie</h4>Modfoldery mogą teraz przechowywać misje dzięki czemu gracze nie będą musieli ich ściągać podczas rozgrywki",
-			"GS_FAQ_SECTION4_PAR8" => "<h4 class=\"media-heading\">Bezpieczeństwo serwera</h4>Jeśli serwer jest na hasło to można się do niego podłączyć jedynie poprzez menu Rozkład Rozgrywek. Strona szyfruje hasło. W ten sposób użytkownicy z nieprawidłowymi modami nie wejdą do serwera i go nie zawieszą",
+			"GS_FAQ_SECTION4_PAR1" => "Dołączanie do serwera jednym przyciskiem. Nie trzeba pisać adresu ip, hasła i linii modów",
+			"GS_FAQ_SECTION4_PAR2" => "Dołączanie o czasie. Gracze mogą dodać sesję do Harmonogramu Windows dzięki czemu jej nie przegapią",
+			"GS_FAQ_SECTION4_PAR3" => "Dołączanie z czatem głosowym. Automatyczne podłączanie się do serwera TeamSpeak3 lub Mumble przy dołączaniu do serwera OFP",
+			"GS_FAQ_SECTION4_PAR4" => "Automatyczna instalacja modów. Nie ma potrzeby rozsyłania graczom linków do ściągnięcia modu i instrukcji",
+			"GS_FAQ_SECTION4_PAR5" => "Twarze w modach. Własna tekstura twarzy może być przechowywana w modfolderze i będzie aktywowana automatycznie",
+			"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
+			"GS_FAQ_SECTION4_PAR7" => "Szybsze ładowanie. Modfoldery mogą teraz przechowywać misje dzięki czemu gracze nie będą musieli ich ściągać podczas rozgrywki",
+			"GS_FAQ_SECTION4_PAR8" => "Bezpieczeństwo serwera. Jeśli serwer jest na hasło to można się do niego podłączyć jedynie poprzez menu Rozkład Rozgrywek. Strona szyfruje hasło. W ten sposób użytkownicy z nieprawidłowymi modami nie wejdą do serwera i go nie zawieszą",
 		));
 	}
 
 	if ($lang["THIS_CODE"] == "ru-RU") {
 		$lang = array_merge($lang, array(
 			#Section titles
-			"GS_FAQ_SECTION1_TITLE" => "What is OFP Game Schedule?",
-			"GS_FAQ_SECTION2_TITLE" => "How does it work?",
-			"GS_FAQ_SECTION3_TITLE" => "How do the mods work?",
-			"GS_FAQ_SECTION4_TITLE" => "Why use OFP Game Schedule?",
+"GS_FAQ_SECTION1_TITLE" => "What is OFP Game Schedule?",
+"GS_FAQ_SECTION2_TITLE" => "How does it work?",
+"GS_FAQ_SECTION3_TITLE" => "How do the mods work?",
+"GS_FAQ_SECTION4_TITLE" => "Why use OFP Game Schedule?",
 			
 			#What is OFP Game Schedule? 
-			"GS_FAQ_SECTION1_PAR1" => "OFP Game Schedule is a system facilitating arrangement of multiplayer sessions for the 2001 video game Operation Flashpoint (made by Bohemia Interactive) and its 2011 re-release ARMA: Cold War Assault",
-			"GS_FAQ_SECTION1_PAR2" => "The OFP GS website is a database of servers and mods. Players, after installing required game extensions, can browse them in the OFP's main menu, download mods and connect to the servers",
+"GS_FAQ_SECTION1_PAR1" => "OFP Game Schedule is a system facilitating arrangement of multiplayer sessions for the 2001 video game Operation Flashpoint (made by Bohemia Interactive) and its 2011 re-release ARMA: Cold War Assault",
+"GS_FAQ_SECTION1_PAR2" => "The OFP GS website is a database of servers and mods. Players, after installing required game extensions, can browse them in the OFP's main menu, download mods and connect to the servers",
 			
 			#How does it work?
-			"GS_FAQ_SECTION2_PAR1" => "Person organizing an event logs in to the website. They can do it via Steam so the entire setup can be done from the Steam game overlay",
-			"GS_FAQ_SECTION2_PAR2" => "They add information about the server that the game will take place on (IP address, game time, mods)",
-			"GS_FAQ_SECTION2_PAR3" => "Players install Fwatch 1.16 with OFP Aspect Ratio pack 2.07. Server will show up in the Game Schedule menu. From there they'll be able to download required mods and join the server",
+"GS_FAQ_SECTION2_PAR1" => "Person organizing an event logs in to the website. They can do it via Steam so the entire setup can be done from the Steam game overlay",
+"GS_FAQ_SECTION2_PAR2" => "They add information about the server that the game will take place on (IP address, game time, mods)",
+"GS_FAQ_SECTION2_PAR3" => "Players install Fwatch 1.16 with OFP Aspect Ratio pack 2.07. Server will show up in the Game Schedule menu. From there they'll be able to download required mods and join the server",
 			
 			#How do the mods work?
-			"GS_FAQ_SECTION3_PAR1" => "OFP Game Schedule is also a package manager for OFP mods. Users may register new mods on the website",
-			"GS_FAQ_SECTION3_PAR2" => "They submit instructions on how to install their mod. It may be as simple as a single download link or they might micromanage specific files using scripting commands",
-			"GS_FAQ_SECTION3_PAR3" => "Players install mods from the game using <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a> menu or the Game Schedule menu (when a mod is assigned to a server)",
-			"GS_FAQ_SECTION3_PAR4" => "Mods can be updated and players will see a notification in the game's main menu",
+"GS_FAQ_SECTION3_PAR1" => "OFP Game Schedule is also a package manager for OFP mods. Users may register new mods on the website",
+"GS_FAQ_SECTION3_PAR2" => "They submit instructions on how to install their mod. It may be as simple as a single download link or they might micromanage specific files using scripting commands",
+"GS_FAQ_SECTION3_PAR3" => "Players install mods from the game using <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a> menu or the Game Schedule menu (when a mod is assigned to a server)",
+"GS_FAQ_SECTION3_PAR4" => "Mods can be updated and players will see a notification in the game's main menu",
 			
 			#Why use OFP Game Schedule?
-			"GS_FAQ_SECTION4_PAR1" => "<h4 class=\"media-heading\">Joining server with a single button</h4>No need to type ip address, password and mods",
-			"GS_FAQ_SECTION4_PAR2" => "<h4 class=\"media-heading\">Joining on time</h4>Players may add event to the Windows Task Scheduler so that they won't miss it",
-			"GS_FAQ_SECTION4_PAR3" => "<h4 class=\"media-heading\">Joining with voice</h4>Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
-			"GS_FAQ_SECTION4_PAR4" => "<h4 class=\"media-heading\">Automatic mod installation</h4>No need to send links and instructions",
-			"GS_FAQ_SECTION4_PAR5" => "<h4 class=\"media-heading\">Custom mod faces</h4>Face texture may be stored in a modfolder and it will be automatically activated",
-			"GS_FAQ_SECTION4_PAR6" => "<h4 class=\"media-heading\">Disabling custom files if necessary</h4>Players won't have to worry about their custom files preventing them from joining a server",			
-			"GS_FAQ_SECTION4_PAR7" => "<h4 class=\"media-heading\">Faster loading</h4>Modfolders can now store the missions so that players don't have to download them during the game",
-			"GS_FAQ_SECTION4_PAR8" => "<h4 class=\"media-heading\">Server security</h4>If the server is behind password then the only way to connect is through the Game Schedule menu. Website encrypts the password. This way users with wrong mods won't crash the server by joining it",
+"GS_FAQ_SECTION4_PAR1" => "Joining server with a single button. No need to type ip address, password and mods",
+"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may add event to the Windows Task Scheduler so that they won't miss it",
+"GS_FAQ_SECTION4_PAR3" => "Joining with voice. Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
+"GS_FAQ_SECTION4_PAR4" => "Automatic mod installation. No need to send links and instructions to players",
+"GS_FAQ_SECTION4_PAR5" => "Custom mod faces. Face texture may be stored in a modfolder and it will be automatically activated",
+"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
+"GS_FAQ_SECTION4_PAR7" => "Faster loading. Modfolders can now store the missions so that players don't have to download them during the game",
+"GS_FAQ_SECTION4_PAR8" => "Server security. If the server is behind password then the only way to connect is through the Game Schedule menu. Website encrypts the password. This way users with wrong mods won't crash the server by joining it",
 		));
 	}
 	
@@ -589,16 +604,26 @@ if (isset($user) && $user->isLoggedIn()){
 			$paragraph_number = $pkey + 1;
 			$left             = $paragraph_number % 2;
 			$thumbnail        = substr_replace($paragraph["image"], "_300", -4, 0);
+			$paragraph_text   = lang("GS_FAQ_SECTION".$section_number."_PAR".$paragraph_number);
+			
+			if ($section_number == 4) {
+				$heading_end = strpos($paragraph_text, ".");
+				if ($heading_end !== FALSE) {
+					$paragraph_text = '<h4 class="media-heading">' . substr($paragraph_text,0,$heading_end) . '</h4><p class="faq_paragraph faq_paragraph_smaller">' . substr($paragraph_text,$heading_end+2) . '</p>';
+				}
+			} else {
+				$paragraph_text = '<p class="faq_paragraph">'.$paragraph_text.'</p>';
+			}
 
 			$html_img = '<a target="_blank" href="images/index/'.$paragraph["image"].'"><img class="media-object faq_image" src="images/index/'.$thumbnail.'" alt="'.$paragraph["alt"].'"></a>';
-			$html_p   = '<div class="media-body media-middle"><p class="faq_paragraph">'.lang("GS_FAQ_SECTION".$section_number."_PAR".$paragraph_number).'</p></div>';
+			$html_txt = '<div class="media-body media-middle">'.$paragraph_text.'</div>';
 			
 			echo '<div class="media '.($left?"":"text-right").'">';
 			
 			if ($left)
-				echo '<div class="media-left">'.$html_img.'</div>'.$html_p;
+				echo '<div class="media-left">'.$html_img.'</div>'.$html_txt;
 			else
-				echo $html_p.'<div class="media-right">'.$html_img.'</div>';
+				echo $html_txt.'<div class="media-right">'.$html_img.'</div>';
 			
 			echo '</div><!-- end media -->';
 		}

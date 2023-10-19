@@ -3125,7 +3125,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                         if (count($urls_for_this_command) > 1)
                             $command_description .= " (" . count($urls_for_this_command) . " mirrors)";
 
-                        $command_description .= " to the fwatch\\tmp folder.\n";
+                        $command_description .= "\nto the fwatch\\tmp folder.\n";
                     }
 
                     if (empty($file_name) && !empty($args_for_this_command)) {
@@ -3564,17 +3564,19 @@ function GS_show_dropdown_controls($item, $record_type, $permission_to, $custom_
 	</div><!--end dropdown-->';
 }
 
-// For sorting game servers in a list
-function GS_compare_names_with_trim($a,$b) {
+// Remove special characters surrounding server/mod name
+function GS_trim_servermod_name($name) {
+	return trim(
+		ltrim($name, "@!"), 
+		"[]"
+	);
+}
+
+// Comparison for sorting server/mods in a list
+function GS_compare_names_with_trim($a, $b) {
 	return strnatcasecmp(
-		trim(
-			ltrim($a["name"],"@!"), 
-			"[]"
-		), 
-		trim(
-			ltrim($b["name"],"@!"), 
-			"[]"
-		)
+		GS_trim_servermod_name($a["name"]), 
+		GS_trim_servermod_name($b["name"])
 	);
 }
 ?>

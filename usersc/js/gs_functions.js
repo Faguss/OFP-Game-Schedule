@@ -1925,7 +1925,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 						if (urls_for_this_command.length > 1)
 							command_description += " (" + urls_for_this_command.length + " mirrors)";
 
-						command_description += " to the fwatch\\tmp folder.\n";
+						command_description += "\nto the fwatch\\tmp folder.\n";
 					}
 
 					if (GS_empty(file_name) && args_for_this_command.length>0) {

@@ -77,43 +77,49 @@ if (!$permissions[$languages[$input["language"]]])
 // Find which file is going to be edited
 $file_name    = null;
 $to_find_list = [];
-$add_tab      = false;
+$add_tab      = 0;
 
 switch($input["area"]) {
 	case "website" : 
 		$file_name    = "usersc/lang/" . $languages[$input["language"]] . ".php"; 
 		$to_find_list = ["\"{$input["stringtable_key"]}\""]; 
-		$add_tab      = true;
+		$add_tab      = 1;
+		break;
+		
+	case "website_faq" : 
+		$file_name    = "index.php";
+		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 		
+		$add_tab      = 2;
 		break;
 		
 	case "website_quickstart" : 
 		$file_name    = "quickstart.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
-		$add_tab      = true;
+		$add_tab      = 1;
 		break;
 		
 	case "website_modupdates" : 
 		$file_name    = "modupdates.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
-		$add_tab      = true;
+		$add_tab      = 1;
 		break;
 		
 	case "website_dedicated" : 
 		$file_name    = "installdedicated.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
-		$add_tab      = true;
+		$add_tab      = 1;
 		break;
 		
 	case "website_api" : 
 		$file_name    = "api_documentation.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
-		$add_tab      = true;
+		$add_tab      = 1;
 		break;
 		
 	case "website_installationscripts" : 
 		$file_name    = "installationscripts.php";
 		$to_find_list = ["if (\$lang[\"THIS_CODE\"] == \"{$languages[$input["language"]]}\")", "\"{$input["stringtable_key"]}\""]; 
-		$add_tab      = true;
+		$add_tab      = 1;
 		break;
 		
 	case "mainmenu" : 
@@ -172,10 +178,10 @@ while (!feof($file)) {
 							$replaced          = true;
 							
 							// Indicate that the data has been changed
-							if ($add_tab) {
+							if ($add_tab > 0) {
 								// for website strings by adding tabulator at the beginning
 								if ($line[0] != "\t")
-									$line = "\t" . $line;
+									$line = str_repeat("\t",$add_tab) . $line;
 							} else {
 								// for game and installer by changing the php array
 								$contents2 = file_get_contents('translation_strings.php');								
