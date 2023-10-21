@@ -197,7 +197,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	
 	#Example script (WW4)
 	"GS_IS_EXAMPLE_PAR1" => "This is a script for installing WW4 2.5 mod",
-	"GS_IS_EXAMPLE_PAR2" => "Download archive from one of these three sources and then extract it to a temporary location",
+	"GS_IS_EXAMPLE_PAR2" => "Download archive from one of these two sources and then extract it to a temporary location",
 	"GS_IS_EXAMPLE_PAR3" => "Move all the unpacked content (including folders) to the modfolder in the game directory (will be created if it doesn't exist)",
 	"GS_IS_EXAMPLE_PAR4" => "Download and extract",
 	"GS_IS_EXAMPLE_PAR5" => "Move text files (from the directory with extracted files) to the modfolder root",
@@ -209,7 +209,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	#Example script (FDF)
 	"GS_IS_EXAMPLE_PAR10" => "This is a script for installing Finnish Defence Forces 1.4 mod",
 	"GS_IS_EXAMPLE_PAR11" => "Download base version of the mod from one of these five sources and then run automatic installation",
-	"GS_IS_EXAMPLE_PAR12" => "Download update from one of these six sources and then run automatic installation",
+	"GS_IS_EXAMPLE_PAR12" => "Download update from one of these five sources and then run automatic installation",
 	"GS_IS_EXAMPLE_PAR13" => "Download and extract desert pack",
 	"GS_IS_EXAMPLE_PAR14" => "Move extracted readme file to the modfolder\\readme_addons",
 	"GS_IS_EXAMPLE_PAR15" => "Move all remaining extracted files and folders to the modfolder",
@@ -457,7 +457,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	
 	#Example script (WW4)
 "GS_IS_EXAMPLE_PAR1" => "Это скрипт для установки мода WW4 2.5",
-"GS_IS_EXAMPLE_PAR2" => "Загрузите архив из одного из этих трех источников, а затем распакуйте его во временное место",
+"GS_IS_EXAMPLE_PAR2" => "Загрузите архив из одного из этих двух источников, а затем извлеките его во временное место",
 "GS_IS_EXAMPLE_PAR3" => "Переместите весь распакованный контент (включая папки) в папку с модами в директории с игрой (будет создана, если она не существует)",
 "GS_IS_EXAMPLE_PAR4" => "Скачать и извлечь",
 "GS_IS_EXAMPLE_PAR5" => "Переместите текстовые файлы (из каталога с извлеченными файлами) в корень папки модов.",
@@ -469,7 +469,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	#Example script (FDF)
 "GS_IS_EXAMPLE_PAR10" => "Это скрипт для установки мода Силы обороны Финляндии 1.4.",
 "GS_IS_EXAMPLE_PAR11" => "Загрузите базовую версию мода из одного из этих пяти источников, а затем запустите автоматическую установку",
-"GS_IS_EXAMPLE_PAR12" => "Загрузите обновление из одного из этих шести источников, а затем запустите автоматическую установку",
+"GS_IS_EXAMPLE_PAR12" => "Загрузите обновление из одного из этих пяти источников, а затем запустите автоматическую установку.",
 "GS_IS_EXAMPLE_PAR13" => "Загрузите и распакуйте пакет пустыни",
 "GS_IS_EXAMPLE_PAR14" => "Переместите извлеченный файл readme в папку мода\\readme_addons",
 "GS_IS_EXAMPLE_PAR15" => "Переместите все оставшиеся извлеченные файлы и папки в папку мода",
@@ -729,7 +729,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	#Example script (FDF)
 	"GS_IS_EXAMPLE_PAR10" => "Ten skrypt zainstaluje mod Finnish Defence Forces 1.4",
 	"GS_IS_EXAMPLE_PAR11" => "Ściągnij wersję bazową moda z jednego z pięciu źródeł i zainstaluj automatycznie",
-	"GS_IS_EXAMPLE_PAR12" => "Ściągnij aktualizację z jednego z sześciu źródeł i zainstaluj automatycznie",
+	"GS_IS_EXAMPLE_PAR12" => "Ściągnij aktualizację z jednego z pięciu źródeł i zainstaluj automatycznie",
 	"GS_IS_EXAMPLE_PAR13" => "Ściągnij i wypakuj dodatek pustynny",
 	"GS_IS_EXAMPLE_PAR14" => "Przenieś wypakowany plik readme do modfolder\\readme_addons",
 	"GS_IS_EXAMPLE_PAR15" => "Przenieś wszystkie pozostałe wypakowane pliki i foldery do katalogu z modem",
@@ -1050,17 +1050,17 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<br>
 
 	<p><?=lang("GS_IS_MOVE_PAR13", ["&lt;mod&gt;"])?></p>	
-	<pre><code><?=GS_scripting_highlighting("MOVE  &lt;mod&gt;\\addons\\example.pbo  obsolete")?></code></pre>
+	<pre><code><?=GS_scripting_highlighting("MOVE  <mod>\\addons\\example.pbo  obsolete")?></code></pre>
 	<br>
 	<br>
 
 	<p><?=lang("GS_IS_MOVE_PAR14", ["&lt;download&gt;", "&lt;dl&gt;"])?></p>
-	<pre><code><?=GS_scripting_highlighting("MOVE  &lt;dl&gt;  addons")?></code></pre>
+	<pre><code><?=GS_scripting_highlighting("MOVE  <dl>  addons")?></code></pre>
 	<br>
 	<br>
 
 	<p><?=lang("GS_IS_MOVE_PAR15", ["&lt;game&gt;"])?></p>	
-	<pre><code><?=GS_scripting_highlighting("COPY  &lt;game&gt;\\bin\\Resource.cpp  bin")?></code></pre>
+	<pre><code><?=GS_scripting_highlighting("COPY  <game>\\bin\\Resource.cpp  bin")?></code></pre>
 
 
 
@@ -1084,7 +1084,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<br>
 	
 	<p><?=lang("GS_IS_UNPBO_PAR4", ["&lt;game&gt;"])?></p>
-	<pre><code><?=GS_scripting_highlighting("UNPBO  &lt;game&gt;\\addons\\kozl.pbo  addons")?></code></pre>
+	<pre><code><?=GS_scripting_highlighting("UNPBO  <game>\\addons\\kozl.pbo  addons")?></code></pre>
 
 
 
@@ -1174,7 +1174,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	
 	<p><?=lang("GS_IS_EXAMPLE")?></p>
 	<pre><code><?=GS_scripting_highlighting("IF_VERSION  <=  1.96\n\tUNPACK	https://www.mediafire.com/download/86d97zspupnjk9c  ://download  \"WW4 Extended OFP patch v111.zip\"\n\tMOVE	v196_patch\\ww4ext_inf_cfg.pbo.OFP  addons  ww4ext_inf_cfg.pbo\nENDIF")?></code></pre>
-	<pre><code><?=GS_scripting_highlighting("IF_VERSION  >=  1.99\n\tCOPY	&lt;game&gt;\\bin\\Config.cpp  bin\nELSE\n\tCOPY	&lt;game&gt;\\Res\\bin\\Config.cpp  bin\nENDIF")?></code></pre>
+	<pre><code><?=GS_scripting_highlighting("IF_VERSION  >=  1.99\n\tCOPY	<game>\\bin\\Config.cpp  bin\nELSE\n\tCOPY	<game>\\Res\\bin\\Config.cpp  bin\nENDIF")?></code></pre>
 
 
 
@@ -1284,7 +1284,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<br>
 	
 	<p><?=lang("GS_IS_ASK_RUN_PAR3", ["&lt;mod&gt;"])?></p>
-	<pre><code><?=GS_scripting_highlighting("ASK_RUN  &lt;mod&gt;\\Install_win2k_XP.bat")?></code></pre>
+	<pre><code><?=GS_scripting_highlighting("ASK_RUN  <mod>\\Install_win2k_XP.bat")?></code></pre>
 	<br>
 	<br>
 	
@@ -1375,9 +1375,8 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 <pre><code><?php
 echo GS_scripting_highlighting("; ".lang("GS_IS_EXAMPLE_PAR2")."
 UNPACK {
+	https://files.ofpisnotdead.com/files/ofpd/unofaddons2/ww4mod25rel.rar 
 	ftp://ftp.armedassault.info/ofpd/unofaddons2/ww4mod25rel.rar
-	https://www.moddb.com/downloads/start/36064  /downloads/mirror/  ww4mod25rel.rar
-	https://ofp.today/download/unofaddons2/ww4mod25rel.7z
 }
 
 ; ".lang("GS_IS_EXAMPLE_PAR3")."
@@ -1386,7 +1385,6 @@ MOVE    *  /match_dir
 ; ".lang("GS_IS_EXAMPLE_PAR4")."
 UNPACK {
 	ftp://ftp.armedassault.info/ofpd/unofaddons2/ww4mod25patch1.rar
-	https://ofp.today/download/unofaddons2/ww4mod25patch1.7z
 }
 
 ; ".lang("GS_IS_EXAMPLE_PAR5")."
@@ -1435,7 +1433,6 @@ echo GS_scripting_highlighting("; ".lang("GS_IS_EXAMPLE_PAR11")."
 	http://fdfmod.dreamhosters.com/ofp/fdfmod14_ww2.rar
 	ftp://ftp.armedassault.info/ofpd/mods/fdfmod14_ww2.rar
 	https://www.gamefront.com/games/operation-flashpoint/file/fdf-mod fdf-mod/download expires= fdfmod14_ww2.rar
-	https://ofp.today/download/mods/fdfmod14_ww2.7z
 	http://pulverizer.pp.fi/ewe/mods/fdfmod14_ww2.rar
 }
 
@@ -1445,7 +1442,6 @@ UNPACK {
 	http://files.ofpisnotdead.com/files/ofpd/mods/FDF_desert_pack.rar
 	http://fdfmod.dreamhosters.com/ofp/FDF_desert_pack.rar
 	ftp://ftp.armedassault.info/ofpd/mods/FDF_desert_pack.rar
-	https://ofp.today/download/mods/FDF_desert_pack.7z
 }
 
 ; ".lang("GS_IS_EXAMPLE_PAR14")."
@@ -1460,7 +1456,6 @@ UNPACK {
 	http://files.ofpisnotdead.com/files/ofpd/islands2/fdf_winter_maldevic.rar
 	http://fdfmod.dreamhosters.com/ofp/fdf_winter_maldevic.rar
 	ftp://ftp.armedassault.info/ofpd/islands2/fdf_winter_maldevic.rar
-	https://ofp.today/file/islands2/fdf_winter_maldevic.7z
 }
 
 ; ".lang("GS_IS_EXAMPLE_PAR17")."
@@ -1475,7 +1470,6 @@ UNPACK {
 	http://files.ofpisnotdead.com/files/ofpd/islands/Suursaari_release_v10.zip
 	http://fdfmod.dreamhosters.com/ofp/Suursaari_release_v10.zip
 	ftp://ftp.armedassault.info/ofpd/islands/Suursaari_release_v10.zip
-	https://ofp.today/download/islands/Suursaari_release_v10.7z
 }
 
 ; ".lang("GS_IS_EXAMPLE_PAR20")."
@@ -1511,8 +1505,8 @@ MOVE    KEGnoecainS_anim  IslandCutscenes
 ; ".lang("GS_IS_EXAMPLE_PAR27")."
 UNPACK {
 	http://fdfmod.dreamhosters.com/ofp/mt-lb22.zip
-	http://ofp-faguss.com/addon/finmod/mt-lb22.7z
-	http://faguss.paradoxstudio.uk/addon/finmod/mt-lb22.7z
+	http://ofp-faguss.com/addon/finmod/mt-lb22.zip
+	http://faguss.paradoxstudio.uk/addon/finmod/mt-lb22.zip
 }
 
 ; ".lang("GS_IS_EXAMPLE_PAR28")."
@@ -1527,7 +1521,6 @@ UNPACK {
 	http://files.ofpisnotdead.com/files/ofpd/unofaddons/RussianWeaponsPack11.zip
 	http://fdfmod.dreamhosters.com/ofp/RussianWeaponsPack11.zip 
 	ftp://ftp.armedassault.info/ofpd/unofaddons/RussianWeaponsPack11.zip
-	https://ofp.today/download/unofaddons/RussianWeaponsPack11.7z
 }
 
 ; ".lang("GS_IS_EXAMPLE_PAR31")."
@@ -1588,19 +1581,19 @@ echo GS_scripting_highlighting("
 ; ".lang("GS_IS_EXAMPLE_PAR40")."
 IF_VERSION  <=  1.96
 	; ".lang("GS_IS_EXAMPLE_PAR41")."
-	UNPBO  &lt;game&gt;\\Res\\Dta\\HWTL\\data.pbo  dta\\HWTL
+	UNPBO  <game>\\Res\\Dta\\HWTL\\data.pbo  dta\\HWTL
 	
 	; ".lang("GS_IS_EXAMPLE_PAR42")."
-	COPY   &lt;mod&gt;\\newdata\\*.pa?           dta\\HWTL\\Data
+	COPY   <mod>\\newdata\\*.pa?           dta\\HWTL\\Data
 	
 	; ".lang("GS_IS_EXAMPLE_PAR43")."
 	MAKEPBO
 	
 	; ".lang("GS_IS_EXAMPLE_PAR44")."
-	UNPBO  &lt;game&gt;\\Res\\Dta\\HWTL\\data3d.pbo  dta\\HTWL
+	UNPBO  <game>\\Res\\Dta\\HWTL\\data3d.pbo  dta\\HWTL
 	
 	; ".lang("GS_IS_EXAMPLE_PAR45")."
-	COPY   &lt;mod&gt;\\newdata\\*.p3d             dta\\HWTL\\data3d
+	COPY   <mod>\\newdata\\*.p3d             dta\\HWTL\\data3d
 	
 	; ".lang("GS_IS_EXAMPLE_PAR46")."
 	MAKEPBO
@@ -1608,19 +1601,19 @@ IF_VERSION  <=  1.96
 ; ".lang("GS_IS_EXAMPLE_PAR47")."
 ELSE
 	; ".lang("GS_IS_EXAMPLE_PAR48")."
-	UNPBO  &lt;game&gt;\\DTA\\Data.pbo  dta
+	UNPBO  <game>\\DTA\\Data.pbo  dta
 	
 	; ".lang("GS_IS_EXAMPLE_PAR49")."
-	COPY   &lt;mod&gt;\\newdata\\*.pa?  dta\\Data
+	COPY   <mod>\\newdata\\*.pa?  dta\\Data
 	
 	; ".lang("GS_IS_EXAMPLE_PAR50")."
 	MAKEPBO
 	
 	; ".lang("GS_IS_EXAMPLE_PAR51")."
-	UNPBO  &lt;game&gt;\\DTA\\Data3D.pbo  dta
+	UNPBO  <game>\\DTA\\Data3D.pbo  dta
 	
 	; ".lang("GS_IS_EXAMPLE_PAR52")."
-	COPY   &lt;mod&gt;\\newdata\\*.p3d    dta\\Data3D
+	COPY   <mod>\\newdata\\*.p3d    dta\\Data3D
 	
 	; ".lang("GS_IS_EXAMPLE_PAR53")."
 	MAKEPBO
@@ -1889,6 +1882,10 @@ First release.<br>
 </div>
 
 <!-- Place any per-page javascript here -->
-
+<script>
+$(function () {
+  $('[data-toggle=\"tooltip\"]').tooltip()
+})
+</script>
 
 <?php require_once $abs_us_root . $us_url_root . 'usersc/templates/' . $settings->template . '/footer.php'; //custom template footer ?>

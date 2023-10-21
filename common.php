@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,10,13,5,20,17,42,501,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,10,20,5,23,21,8,548,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -2919,7 +2919,8 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
         "/insert",
         "/newfile",
         "/append",
-        "/match_dir_only"
+        "/match_dir_only",
+		"/timestamp:",
     ];
     $word_begin            = -1;
     $word_count            = 1;
@@ -3047,7 +3048,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                 
                 // Check if it's a valid command switch
                 $is_switch   = false;
-                $colon       = strrpos($word, ":");
+                $colon       = strpos($word, ":");
                 $switch_name = $colon!==FALSE ? substr($word,0,$colon+1) : $word;
                 
                 for ($j=0; $j<count($command_switches_names) && !$is_switch; $j++)
@@ -3064,15 +3065,13 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                         $output_temp                                         .= $word;
                     }
                 } else {
-                    if (substr($word,0,1) == "/")
+                    if ($is_switch) {
                         $switch_list[$last_command_line_num][] = $word;
-                    else
-                        $instruction_arg[$last_command_line_num][] = $word;
-                    
-                    if ($is_switch)
                         $output_temp .= '<span class="scripting_command_switch">'.htmlspecialchars($word).'</span>';
-                    else
+                    } else {
+                        $instruction_arg[$last_command_line_num][] = $word;
                         $output_temp .= '<span class="scripting_command_arg'.($arg_count++).'">'.htmlspecialchars($word).'</span>';
+					}
                 }
             }
             
@@ -3102,7 +3101,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                     $file_name                 = "";
                     $urls_for_this_command     = end($url_list);
                     $args_for_this_command     = end($instruction_arg);
-                    $switches_for_this_command = array_map('strtolower', end($switch_list));
+                    $switches_for_this_command = end($switch_list);
                     $command_description       = "";
 
                     if (!empty($urls_for_this_command)) {
@@ -3135,9 +3134,15 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                     $file_name = trim($file_name, "\"");
 
                     $archive_password = "";
+					$timestamp        = "";
                     foreach ($switches_for_this_command as $switch) {
                         if (GS_begins_with("/password:",$switch)) {
                             $archive_password = $switch;
+                            break;
+                        }
+						
+                        if (GS_begins_with("/timestamp:",$switch)) {
+                            $timestamp = $switch;
                             break;
                         }
                     }
@@ -3225,7 +3230,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                             }
                                 }
 
-                                $path_parts = explode("\\", $file_name);
+                                $path_parts = preg_split('~[\\\\/]~', $file_name);
                                 $last_part  = strtolower(end($path_parts));
                                 if ((strcasecmp($last_part,$modname) == 0 || in_array($last_part,$mod_alias)) && empty($pattern))
                                     $destination = "game";
@@ -3287,6 +3292,18 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                 $source_dir          = "$modname\\$file_name";
                                 $command_description = "Create $source_dir.pbo";
                             }
+							
+							if (!empty($timestamp)) {
+                                $date = new DateTime();
+
+                                if (strpos($timestamp,"T") !== FALSE) {
+                                    $date = new DateTime($timestamp);
+                                } else {
+                                    $date = DateTime::createFromFormat('U', $timestamp);
+                                }
+								
+								$command_description .= "\nand set its last modification date to " . $date->format("Y-m-d H:i:s") . " GMT";
+							}
 
                             if (!in_array("/keep_source", $switches_for_this_command))
                                 $command_description .= "\nand then delete folder $source_dir";

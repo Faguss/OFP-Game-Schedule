@@ -1004,7 +1004,7 @@ function GS_installation_script_select(version_select_id, script_select_id, form
 				
 				for (var j=0; j<form_inputs.length; j++) {
 					var input   = document.getElementById(form_inputs[j]);
-					input.value = GS_decode_entities(data[i][data_keys[j+1]]);
+					input.value = data[i][data_keys[j+1]];
 					
 					if (j == 0) {
 						input.style.height = 'auto';
@@ -1041,14 +1041,14 @@ function GS_jump_select(link_list_id, submit_button_array, form_inputs, data) {
 	var link_list     = document.getElementById(link_list_id);
 	var submit_button = document.getElementById(submit_button_array[0]);
 	var delete_button = document.getElementById(submit_button_array[1]);
-	var current_link  = link_list.options[link_list.selectedIndex].value;
-	var data_keys     = Object.keys(data[0]);
 	
 	if (link_list.options[0].selected) {
 		submit_button.innerHTML     = submit_button_array[2];
 		delete_button.style.display = "none";
 		document.getElementById("DeleteLink_0_input").checked = false;
 	} else {
+		var current_link            = link_list.options[link_list.selectedIndex].value;
+		var data_keys               = Object.keys(data[0]);
 		submit_button.innerHTML     = submit_button_array[3];
 		delete_button.style.display = "block";
 
@@ -1721,7 +1721,8 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 		"/insert",
 		"/newfile",
 		"/append",
-		"/match_dir_only"
+		"/match_dir_only",
+		"/timestamp:",
 	];
 	var word_begin            = -1;
 	var word_count            = 1;
@@ -1846,7 +1847,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 				
 				// Check if it's a valid command switch
 				is_switch   = false;
-				colon       = word.lastIndexOf(":");
+				colon       = word.indexOf(":");
 				switch_name = colon>=0 ? word.substr(0,colon+1) : word;
 				
 				for (var j=0; j<command_switches_names.length && !is_switch; j++)
@@ -1862,16 +1863,14 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 						url_list[last_command_line_num][last_url_list_id] += " " + word;
 						output_temp                                       += word;
 					}
-				} else {
-					if (word.substr(0,1) == "/")
+				} else {					
+					if (is_switch) {
 						switch_list[last_command_line_num].push(word);
-					else
-						instruction_arg[last_command_line_num].push(word);
-					
-					if (is_switch)
 						output_temp += "<span class=\"scripting_command_switch\">"+GS_encode_entities(word)+"</span>";
-					else
+					} else {
+						instruction_arg[last_command_line_num].push(word);
 						output_temp += "<span class=\"scripting_command_arg"+(arg_count++)+"\">"+GS_encode_entities(word)+"</span>";
+					}
 				}
 			}
 			
@@ -1902,7 +1901,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 					let file_name                 = "";
 					let urls_for_this_command     = url_list[last_key];
 					let args_for_this_command     = instruction_arg[last_key];
-					let switches_for_this_command = switch_list[last_key].map((x) => x.toLowerCase());
+					let switches_for_this_command = switch_list[last_key];
 					let command_description       = "";
 
 					if (urls_for_this_command.length > 0) {
@@ -1935,10 +1934,17 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 					file_name = GS_trim(file_name, "\"");
 
 					let archive_password = "";
+					let timestamp        = "";
 					for (const switch_name in switches_for_this_command) {
 						let result = GS_begins_with("/password:",switch_name);
 						if (result.match) {
 							archive_password = result.string;
+							break;
+						}
+						
+						result = GS_begins_with("/timestamp:",switch_name);
+						if (result.match) {
+							timestamp = result.string;
 							break;
 						}
 					}
@@ -2037,7 +2043,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 										}
 								}
 
-								let path_parts = file_name.split("\\");
+								let path_parts = file_name.split(/[\\\/]/);
 								let last_part  = path_parts[path_parts.length-1].toLowerCase();
 								if ((last_part == modname.toLowerCase() || mod_alias.includes(last_part)) && GS_empty(pattern))
 									destination = "game";
@@ -2100,6 +2106,18 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 							} else {
 								source_dir          = modname+"\\"+file_name;
 								command_description = "Create "+source_dir+".pbo";
+							}
+							
+							if (!GS_empty(timestamp)) {
+                                date = new Date();
+
+								if (timestamp.indexOf("T") >= 0) {
+									date = new Date(timestamp);
+								} else {
+									date = new Date(timestamp * 1000);
+								}
+								
+								command_description += "\nand set its last modification date to " + date.format("YYYY-MM-DD HH:mm:ss") + " GMT";
 							}
 
 							if (!switches_for_this_command.includes("/keep_source"))
