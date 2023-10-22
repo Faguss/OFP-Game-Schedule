@@ -94,26 +94,27 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	if ($form->hidden["display_form"] == "Edit")
 		$form->add_text("subtitle", lang("GS_STR_MOD_SUBTITLE"), lang("GS_STR_MOD_SUBTITLE_HINT"), "Sanctuary");
 	
-	$form->add_text("description", lang("GS_STR_MOD_DESCRIPTION")        , $description_hint                  , lang("GS_STR_MOD_DESCRIPTION_EXAMPLE"));
-	$form->add_text("website"    , lang("GS_STR_SERVER_WEBSITE")         , ""                                 , GS_get_current_url(true, false));
-	$form->add_select("type"     , lang("GS_STR_MOD_TYPE")               , ""                                 , $mod_type_select, "0");
+	$form->add_text("description"  , lang("GS_STR_MOD_DESCRIPTION"), $description_hint, lang("GS_STR_MOD_DESCRIPTION_EXAMPLE"));
+	$form->add_text("website"      , lang("GS_STR_SERVER_WEBSITE") , ""               , GS_get_current_url(true, false));
+	$form->add_select("type"       , lang("GS_STR_MOD_TYPE")       , ""               , $mod_type_select, "0");
+	$form->add_select("req_version", lang("GS_STR_MOD_REQ_VERSION"), ""               , GS_GAME_VERSIONS, "1.99");
 	
 	if ($form->hidden["display_form"] == "Edit")
 		$form->add_text("alias", lang("GS_STR_MOD_ALIAS"), lang("GS_STR_MOD_ALIAS_DESC",["<a target=\"_blank\" href=\"install_scripts#alias\">","</a>"]), "@ww4mod21 @ww4mod");
 	
-	$form->add_text("access"     , lang("GS_STR_MOD_ACCESS")             , lang("GS_STR_MOD_ACCESS_HINT"));
-	$form->add_select("forcename", lang("GS_STR_MOD_FORCENAME")          , lang("GS_STR_MOD_FORCENAME_HINT")  , [[lang("GS_STR_DISABLED"),"0"], [lang("GS_STR_ENABLED"),"1"]], "0", "radio");
+	$form->add_text("access"     , lang("GS_STR_MOD_ACCESS")   , lang("GS_STR_MOD_ACCESS_HINT"));
+	$form->add_select("forcename", lang("GS_STR_MOD_FORCENAME"), lang("GS_STR_MOD_FORCENAME_HINT"), [[lang("GS_STR_DISABLED"),"0"], [lang("GS_STR_ENABLED"),"1"]], "0", "radio");
 	
 	if ($form->hidden["display_form"] == "Add New")
 		$form->add_text("version", lang("GS_STR_MOD_VERSION"), lang("GS_STR_MOD_VERSION_HINT"), "1", "1");
 	
-	$form->add_text("scripttext" , lang("GS_STR_MOD_INSTALLATION_SCRIPT"), $install_hint                      , $install_example, "", -1);
+	$form->add_text("scripttext" , lang("GS_STR_MOD_INSTALLATION_SCRIPT"), $install_hint, $install_example, "", -1);
 	$form->add_emptyspan("convertlink_field", "id=\"convertlink_field_group\"");
-	$form->add_text("size"       , lang("GS_STR_MOD_DOWNLOADSIZE")       , "", "128");
-	$form->add_select("sizetype" , ""                                    , "", GS_SIZE_TYPES, "MB");
+	$form->add_text("size"      , lang("GS_STR_MOD_DOWNLOADSIZE"), "", "128");
+	$form->add_select("sizetype", ""                             , "", GS_SIZE_TYPES, "MB");
 	
-	$form->add_select("is_mp"    , lang("GS_STR_MOD_MPCOMP")             , lang("GS_STR_MOD_MPCOMP_HINT")     , [[lang("GS_STR_MOD_MPCOMP_YES"),"1"], [lang("GS_STR_MOD_MPCOMP_NO"),"0"]], "1", "radio");
-	$form->add_imagefile("logo"  , lang("GS_STR_SERVER_LOGO")            , lang("GS_STR_SERVER_LOGO_HINT")    , GS_LOGO_FOLDER, 10240*2.5);
+	$form->add_select("is_mp"  , lang("GS_STR_MOD_MPCOMP") , lang("GS_STR_MOD_MPCOMP_HINT") , [[lang("GS_STR_MOD_MPCOMP_YES"),"1"], [lang("GS_STR_MOD_MPCOMP_NO"),"0"]], "1", "radio");
+	$form->add_imagefile("logo", lang("GS_STR_SERVER_LOGO"), lang("GS_STR_SERVER_LOGO_HINT"), GS_LOGO_FOLDER, 10240*2.5);
 	
 	if ($form->hidden["display_form"] == "Add New") {
 		$form->include_file("usersc/js/gs_functions.js");

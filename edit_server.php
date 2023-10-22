@@ -63,7 +63,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->add_text("password"         , lang("GS_STR_SERVER_PASSWORD")     , lang("GS_STR_SERVER_PASSWORD_HINT")  , "123", "", 0, "");
 	$form->add_select("persistent"     , lang("GS_STR_SERVER_PERSISTENT")   , lang("GS_STR_SERVER_PERSISTENT_HINT"), [[lang("GS_STR_MOD_MPCOMP_YES"),0], [lang("GS_STR_SERVER_PERSISTENT_OFF"),1]]);
 	$form->add_text("access"           , lang("GS_STR_SERVER_ACCESSCODE")   , lang("GS_STR_SERVER_ACCESSCODE_HINT"), "", "", 0, "");
-	$form->add_select("version"        , lang("GS_STR_SERVER_VERSION")      , lang("GS_STR_SERVER_VERSION_HINT")   , [["1.99",1.99], ["1.96",1.96], ["2.01",2.01]]);
+	$form->add_select("version"        , lang("GS_STR_SERVER_VERSION")      , lang("GS_STR_SERVER_VERSION_HINT")   , GS_GAME_VERSIONS, "1.99");
 	$form->add_select("equalmodreq"    , lang("GS_STR_SERVER_EQUALMODS")    , lang("GS_STR_SERVER_EQUALMODS_HINT") , [[lang("GS_STR_DISABLED"),0], [lang("GS_STR_ENABLED"),1]]);	
 	$form->add_text("maxcustomfilesize", lang("GS_STR_SERVER_CUSTOMFILE")   , lang("GS_STR_SERVER_CUSTOMFILE_HINT"), "102400");
 	$form->add_text("languages"        , lang("GS_STR_SERVER_LANGUAGES")    , lang("GS_STR_SERVER_LANGUAGES_HINT") , "English, Polski");
@@ -491,6 +491,7 @@ if ($form->hidden["display_form"] == "Mods")
 			$form->alert(lang("GS_STR_SERVER_MOD_NOSEL_ERROR"));
 	}
 
+	$server_version = $db->cell("gs_serv.version",["id","=",$id]);
 
 	// Get all records
 	$sql_allmods = "
@@ -502,6 +503,7 @@ if ($form->hidden["display_form"] == "Mods")
 			gs_mods.removed,
 			gs_mods.access,
 			gs_mods.type,
+			gs_mods.req_version,
 			gs_mods.createdby,
 			users.username AS addedby,
 			gs_serv_mods.id AS gs_serv_mods_id,
@@ -527,6 +529,7 @@ if ($form->hidden["display_form"] == "Mods")
 					ON gs_mods.createdby = users.id
 					   
 		WHERE
+			gs_mods.req_version <= $server_version AND
 			gs_mods.is_mp = 1 AND 
 			gs_mods.removed = 0 AND (
 				gs_mods.access              = '' OR 

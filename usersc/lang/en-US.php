@@ -233,6 +233,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MOD_MPCOMP_YES" => "Yes",
 	"GS_STR_MOD_MPCOMP_NO" => "No",
 	"GS_STR_MOD_SUBMIT" => "Change Details",
+	"GS_STR_MOD_REQ_VERSION" => "Required game version",
 
 	#Convert download link modal
     "GS_STR_MOD_CONVERTLINK" => "Convert Download Link",

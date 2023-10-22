@@ -172,11 +172,12 @@ switch($input_mode) {
 					}
 					
 					case "languages" : {
-						$temp_array = explode(", ", $row["languages"]);
+						$temp_array = preg_split('/[\s|\,]/', $value);
 						$new_value  = "[";
 						
 						foreach($temp_array as $item)
-							$new_value .= "]+[\"".trim($item)."\"";
+							if (!empty($item))
+								$new_value .= "]+[\"".trim($item)."\"";
 							
 						$new_value .= "]";
 						break;
@@ -335,7 +336,7 @@ switch($input_mode) {
 			
 			$mod_info = "";
 			
-			foreach(["name","type","version","forcename","size","sizearray","is_mp","addedby","description","website","logo","logohash"] as $property) {
+			foreach(["name","type","version","forcename","size","sizearray","is_mp","addedby","description","website","logo","logohash","req_version"] as $property) {
 				$property_name  = $property;
 				$property_value = $mod[$property];
 				

@@ -1,7 +1,7 @@
 <?php
 $mainmenu_updated = [	
 	"en-US" => [],
-	"ru-RU" => [85,86,87,88,89,88,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111],
+	"ru-RU" => [85,86,87,88,89,88,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,114],
 	"pl-PL" => [],
 ];
 $mainmenu = [
@@ -120,6 +120,7 @@ $mainmenu = [
 		111 => "Select mods for the shortcut",
 		112 => "[Pause]",
 		113 => "Optionally type in extra game startup parameters",
+		114 => "Game ver:",
 	],
 
 	"ru-RU" => [
@@ -237,6 +238,7 @@ $mainmenu = [
 		111 => "выбрать моды для ярлыка",
 		112 => "[Пауза]",
 		113 => "Введите дополнительные параметры запуска",
+		114 => "Версия игры:",
 	],
 
 	"pl-PL" => [
@@ -354,6 +356,7 @@ $mainmenu = [
 		111 => "Wybierz mody dla skrótu",
 		112 => "[Wstrzymaj]",
 		113 => "Opcjonalnie wpisz dodatkowe parametry uruchamiania gry",
+		114 => "Wersja gry:",
 	]
 ];
 

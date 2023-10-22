@@ -86,7 +86,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 		"description" => lang("GS_STR_MOD_DESCRIPTION"),
 		"website"     => lang("GS_STR_SERVER_WEBSITE"),
 		"type"        => lang("GS_STR_MOD_TYPE"),
-		"version"     => lang("GS_STR_SERVER_VERSION"),
+		"req_version" => lang("GS_STR_MOD_REQ_VERSION"),
 		"size"        => lang("GS_STR_MOD_DOWNLOADSIZE"),
 		"forcename"   => lang("GS_STR_MOD_FORCENAME"),
 		"is_mp"       => lang("GS_STR_MOD_MPCOMP"),
@@ -101,6 +101,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 			case "description" : $value=$Parsedown->line($mod[$key]); break;
 			case "is_mp"       : if($mod[$key]=="0")$value=lang("GS_STR_MOD_MPCOMP_NO");else $value=""; break;
 			case "forcename"   : if($mod[$key]=="true")$value=lang("GS_STR_ENABLED");else $value=""; break;			
+			case "req_version" : if($mod[$key]=="1.96")$value="";else $value=$mod[$key]; break;
 			
 			case "website" : {
 				if (!empty($mod[$key])) {

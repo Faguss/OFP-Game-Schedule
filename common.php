@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,10,20,5,23,21,8,548,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,10,22,0,23,36,37,538,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -167,6 +167,8 @@ define("GS_SERVER_STATUS", [
 	"GS_STR_SERVER_BRIEFING",
 	"GS_STR_SERVER_PLAY"
 ]);
+
+define("GS_GAME_VERSIONS", [["1.96",1.96], ["1.99",1.99], ["2.01",2.01]]);
 
 
 
@@ -1391,6 +1393,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				gs_mods.subtitle,
 				gs_mods.description,
 				gs_mods.uniqueid,
+				gs_mods.req_version,
 				gs_mods.type,
 				gs_mods.forcename,
 				gs_mods.modified AS modified1,
@@ -1547,16 +1550,17 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				if ($last_id != $id) {
 					switch($request_type) {
 						case GS_REQTYPE_GAME :
-							$output["info"][$id]["name"]      = $row["name"];
-							$output["info"][$id]["type"]      = $row["type"];
-							$output["info"][$id]["createdby"] = $row["createdby"];
-							$output["info"][$id]["created"]   = $row["created"];
-							$output["info"][$id]["forcename"] = $row["forcename"] ? "true" : "false";
-							$output["info"][$id]["is_mp"]     = $row["is_mp"] ? "true" : "false";
-							$output["info"][$id]["website"]   = $row["website"];
-							$output["info"][$id]["logo"]      = $row["logo"];
-							$output["info"][$id]["logohash"]  = $row["logohash"];
-							$output["info"][$id]["uniqueid"]  = $row["uniqueid"];
+							$output["info"][$id]["name"]        = $row["name"];
+							$output["info"][$id]["type"]        = $row["type"];
+							$output["info"][$id]["createdby"]   = $row["createdby"];
+							$output["info"][$id]["created"]     = $row["created"];
+							$output["info"][$id]["forcename"]   = $row["forcename"] ? "true" : "false";
+							$output["info"][$id]["is_mp"]       = $row["is_mp"] ? "true" : "false";
+							$output["info"][$id]["website"]     = $row["website"];
+							$output["info"][$id]["logo"]        = $row["logo"];
+							$output["info"][$id]["logohash"]    = $row["logohash"];
+							$output["info"][$id]["uniqueid"]    = $row["uniqueid"];
+							$output["info"][$id]["req_version"] = $row["req_version"];
 							
 							if (!in_array($row["createdby"], $output["userlist"]))
 								$output["userlist"][] = $row["createdby"];
@@ -1625,6 +1629,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					$output["info"][$id]["firstversion"] = $first_version;
 					$output["info"][$id]["website"]      = $row["website"];
 					$output["info"][$id]["logo"]         = $row["logo"];
+					$output["info"][$id]["req_version"]  = $row["req_version"];
 					
 					if (!in_array($row["createdby"], $output["userlist"]))
 						$output["userlist"][] = $row["createdby"];
