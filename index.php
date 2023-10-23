@@ -553,29 +553,41 @@ if (isset($user) && $user->isLoggedIn()){
 	
 	$faq = [
 		[
-			["image"=>"ofp_cwa_logo.jpg","alt"=>"Game Logo"],
-			["image"=>"ofp_extra_menu.jpg","alt"=>"Main Menu"],
+			"id"=>"whatisofpgs",
+			"paragraphs"=>[
+				["image"=>"ofp_cwa_logo.jpg","alt"=>"Game Logo"],
+				["image"=>"ofp_extra_menu.jpg","alt"=>"Main Menu"]
+			],
 		],
 		[
-			["image"=>"ofp_steam_login.jpg","alt"=>"Steam Login"],
-			["image"=>"website_server_options.png","alt"=>"Server details"],
-			["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
+			"id"=>"howdoesitwork",
+			"paragraphs"=>[
+				["image"=>"ofp_steam_login.jpg","alt"=>"Steam Login"],
+				["image"=>"website_server_options.png","alt"=>"Server details"],
+				["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
+			],
 		],
 		[
-			["image"=>"website_add_new_mod.png","alt"=>"Add Mod"],
-			["image"=>"website_installation_scripts.png","alt"=>"Installation script"],
-			["image"=>"ofp_mod_menu.jpg","alt"=>"Mod menu"],
-			["image"=>"ofp_available_mod_updates.jpg","alt"=>"Available updates"],
+			"id"=>"howdothemodswork",
+			"paragraphs"=>[
+				["image"=>"website_add_new_mod.png","alt"=>"Add Mod"],
+				["image"=>"website_installation_scripts.png","alt"=>"Installation script"],
+				["image"=>"ofp_mod_menu.jpg","alt"=>"Mod menu"],
+				["image"=>"ofp_available_mod_updates.jpg","alt"=>"Available updates"],
+			],
 		],
 		[
-			["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
-			["image"=>"windows_task_scheduler.png","alt"=>"Scheduler"],
-			["image"=>"ofp_with_ts3.jpg","alt"=>"VOIP"],
-			["image"=>"ofp_mod_installation.jpg","alt"=>"Mod installation"],
-			["image"=>"custom_mod_face.jpg","alt"=>"Face"],
-			["image"=>"custom_sounds.png","alt"=>"Custom sounds"],
-			["image"=>"ofp_briefing.jpg","alt"=>"Briefing"],
-			["image"=>"ofp_locked_server.jpg","alt"=>"Locked server"],
+			"id"=>"whyuseofpgs",
+			"paragraphs"=>[
+				["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
+				["image"=>"windows_task_scheduler.png","alt"=>"Scheduler"],
+				["image"=>"ofp_with_ts3.jpg","alt"=>"VOIP"],
+				["image"=>"ofp_mod_installation.jpg","alt"=>"Mod installation"],
+				["image"=>"custom_mod_face.jpg","alt"=>"Face"],
+				["image"=>"custom_sounds.png","alt"=>"Custom sounds"],
+				["image"=>"ofp_briefing.jpg","alt"=>"Briefing"],
+				["image"=>"ofp_locked_server.jpg","alt"=>"Locked server"],
+			],
 		]
 	];
 
@@ -584,23 +596,27 @@ if (isset($user) && $user->isLoggedIn()){
 	<div class="col-lg-8 col-lg-offset-2">
 	<div class="collapse" id="FAQ">
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">';
+	
+	$js_faq_sections = [];
 
 	foreach($faq as $key => $section) {
-		$section_number = $key + 1;
+		$section_number    = $key + 1;
+		$js_faq_sections[] = $section["id"];
+		
 		echo '
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="FAQ_section'.$section_number.'">
 				<h4 class="panel-title">
-				<a '.($section_number!=1?'class="collapsed"':'').' role="button" data-toggle="collapse" data-parent="#accordion" href="#FAQ_section'.$section_number.'_collapse" aria-expanded="'.($section_number==1 ? "true" : "false").'" aria-controls="FAQ_section'.$section_number.'_collapse">
+				<a '.($section_number!=1?'class="collapsed"':'').' role="button" data-toggle="collapse" data-parent="#accordion" href="#'.$section["id"].'" aria-expanded="'.($section_number==1 ? "true" : "false").'" aria-controls="'.$section["id"].'">
 				'.lang("GS_FAQ_SECTION".$section_number."_TITLE").'
 				</a>
 			</h4>
 			</div>
-			<div id="FAQ_section'.$section_number.'_collapse" class="panel-collapse collapse '.($section_number==1?'in':'').'" role="tabpanel" aria-labelledby="FAQ_section'.$section_number.'">
+			<div id="'.$section["id"].'" class="panel-collapse collapse '.($section_number==1?'in':'').'" role="tabpanel" aria-labelledby="FAQ_section'.$section_number.'">
 				<div class="panel-body">
 		';
 		
-		foreach($section as $pkey => $paragraph) {
+		foreach($section["paragraphs"] as $pkey => $paragraph) {
 			$paragraph_number = $pkey + 1;
 			$left             = $paragraph_number % 2;
 			$thumbnail        = substr_replace($paragraph["image"], "_300", -4, 0);
@@ -643,7 +659,7 @@ if (isset($user) && $user->isLoggedIn()){
 
 	echo '
 	<div class="index_section">
-		<ul class="nav nav-tabs" role="tablist">
+		<ul id="main_info_tabs" class="nav nav-tabs" role="tablist">
 			<li role="presentation" class="active"><a href="#currentevents" aria-controls="currentevents" role="tab" data-toggle="tab">'.lang("GS_STR_INDEX_SCHEDULE").'</a></li>
 			<li role="presentation"><a href="#allmods" aria-controls="all'.$record_type.'" role="tab" data-toggle="tab">'.lang("GS_STR_INDEX_ALLMODS").'</a></li>
 		</ul>
@@ -763,6 +779,36 @@ GS_convert_server_events('.json_encode($js_event_data).','.json_encode($localize
 $(document).ready(function() {
 	GS_query_game_server('.json_encode($js_serv_id).', '.json_encode($server_status_list).', '.json_encode($js_expired).', "summary");
 	GS_localize_date(\'recentactivity\');
+	
+	let url = location.href.replace(/\/$/, "");
+	let faq_sections = '.json_encode($js_faq_sections).'
+	
+	if (location.hash) {
+		const hash   = url.split("#");
+		let scrollto = "";
+
+		if (faq_sections.includes(hash[1])) {
+			$(\'#FAQ\').collapse(\'show\');
+			$(\'#whatisofpgs\').collapse(\'hide\');
+			$(\'#\'+hash[1]).collapse(\'show\');
+			scrollto = "FAQ";
+		}
+		
+		if (hash[1] == "allmods") {
+			$(\'#main_info_tabs a[href="#allmods"]\').tab("show");
+			scrollto = "main_info_tabs";
+		}
+		
+		if (hash[1] == "recent_activity") {
+			scrollto = "recent_activity";
+		}
+		
+		if (scrollto != "") {
+			let element = document.getElementById(scrollto);
+			const y = element.getBoundingClientRect().top + window.scrollY;
+			window.scroll({top:y, behavior:\'smooth\'});
+		}
+	} 
 });
 </script>';
 ?>

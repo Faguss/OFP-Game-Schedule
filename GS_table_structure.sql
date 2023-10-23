@@ -28,7 +28,8 @@ INSERT INTO `pages` (`id`, `page`, `title`, `private`, `re_auth`) VALUES
 (142, 'modupdates.php', 'Mod Updates', 0, 0),
 (159, 'translation.php', 'Translation Editor', 0, 0),
 (161, 'translation_request.php', '', 1, 0),
-(162, 'translation_strings.php', '', 1, 0);
+(162, 'translation_strings.php', '', 1, 0),
+(167, 'allservers.php', '', 0, 0);
 
 INSERT INTO `permissions` (`id`, `name`) VALUES
 (3, 'Unlimited User'),
@@ -146,7 +147,7 @@ INSERT INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 22, 2023 at 11:45 PM
+-- Generation Time: Oct 23, 2023 at 11:32 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 7.4.33
 
@@ -219,6 +220,25 @@ CREATE TABLE `gs_mods` (
   `website` text NOT NULL,
   `logo` text NOT NULL,
   `logohash` text NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gs_mods_admins`
+--
+
+CREATE TABLE `gs_mods_admins` (
+  `id` int(11) NOT NULL,
+  `modid` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `isowner` tinyint(1) NOT NULL DEFAULT 0,
+  `right_edit` tinyint(1) NOT NULL DEFAULT 0,
+  `right_update` tinyint(1) NOT NULL DEFAULT 0,
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `createdby` int(11) NOT NULL DEFAULT 0,
+  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modifiedby` int(11) NOT NULL DEFAULT 0
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -395,6 +415,14 @@ ALTER TABLE `gs_mods`
   ADD UNIQUE KEY `uniqueID` (`uniqueid`);
 
 --
+-- Indexes for table `gs_mods_admins`
+--
+ALTER TABLE `gs_mods_admins`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `modid` (`modid`),
+  ADD KEY `userid` (`userid`);
+
+--
 -- Indexes for table `gs_mods_links`
 --
 ALTER TABLE `gs_mods_links`
@@ -472,6 +500,12 @@ ALTER TABLE `gs_log`
 -- AUTO_INCREMENT for table `gs_mods`
 --
 ALTER TABLE `gs_mods`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `gs_mods_admins`
+--
+ALTER TABLE `gs_mods_admins`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
