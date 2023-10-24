@@ -316,7 +316,7 @@ for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 }
 
 
-
+$js_faq_sections = [];
 
 if (isset($user) && $user->isLoggedIn()){
 	$uid          = $user->data()->id;
@@ -408,19 +408,21 @@ if (isset($user) && $user->isLoggedIn()){
 		
 		$all_tab_title = $record_type == "server" ? lang("GS_STR_INDEX_SCHEDULE") : lang("GS_STR_INDEX_ALLMODS") ;
 		
+		$tab_all_id = $record_type=="mod" ? "allmods" : "currentevents";
+		
 		// Display
 		echo '
 		<div class="index_section">
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#my'.$record_type.'" aria-controls="my'.$record_type.'" role="tab" data-toggle="tab">'.$my_tab_title.'</a></li>
 				<li role="presentation"><a href="#our'.$record_type.'" aria-controls="our'.$record_type.'" role="tab" data-toggle="tab">'.$our_tab_title.'</a></li>
-				<li role="presentation"><a href="#all'.$record_type.'" aria-controls="all'.$record_type.'" role="tab" data-toggle="tab">'.$all_tab_title.'</a></li>
+				<li role="presentation"><a href="#'.$tab_all_id.'" aria-controls="'.$tab_all_id.'" role="tab" data-toggle="tab">'.$all_tab_title.'</a></li>
 			</ul>
 
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane '.$record_type.'s_background active" id="my'.$record_type.'">'.$my_tab.$button_html.'</div>
 				<div role="tabpanel" class="tab-pane '.$record_type.'s_background" id="our'.$record_type.'">'.$our_tab.'</div>
-				<div role="tabpanel" class="tab-pane '.$record_type.'s_background" id="all'.$record_type.'">'.($record_type=="server"?$servers_html:$mods_html).'</div>
+				<div role="tabpanel" class="tab-pane '.$record_type.'s_background" id="'.$tab_all_id.'">'.($record_type=="server"?$servers_html:$mods_html).'</div>
 			</div>
 
 		</div>';
@@ -596,8 +598,6 @@ if (isset($user) && $user->isLoggedIn()){
 	<div class="col-lg-8 col-lg-offset-2">
 	<div class="collapse" id="FAQ">
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">';
-	
-	$js_faq_sections = [];
 
 	foreach($faq as $key => $section) {
 		$section_number    = $key + 1;
@@ -784,27 +784,27 @@ $(document).ready(function() {
 	let faq_sections = '.json_encode($js_faq_sections).'
 	
 	if (location.hash) {
-		const hash   = url.split("#");
-		let scrollto = "";
+		const hash  = url.split("#");
+		let element = "";
 
 		if (faq_sections.includes(hash[1])) {
-			$(\'#FAQ\').collapse(\'show\');
+			element = $(\'#FAQ\')[0];
+			element.collapse(\'show\');
 			$(\'#whatisofpgs\').collapse(\'hide\');
 			$(\'#\'+hash[1]).collapse(\'show\');
-			scrollto = "FAQ";
 		}
 		
 		if (hash[1] == "allmods") {
-			$(\'#main_info_tabs a[href="#allmods"]\').tab("show");
-			scrollto = "main_info_tabs";
+			let item = $(\'a[href="#allmods"]\');
+			item.tab("show");
+			element = item[0];
 		}
 		
 		if (hash[1] == "recent_activity") {
-			scrollto = "recent_activity";
+			element = $(\'#recent_activity\')[0];
 		}
 		
-		if (scrollto != "") {
-			let element = document.getElementById(scrollto);
+		if (element) {
 			const y = element.getBoundingClientRect().top + window.scrollY;
 			window.scroll({top:y, behavior:\'smooth\'});
 		}

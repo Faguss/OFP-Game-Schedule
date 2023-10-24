@@ -3115,14 +3115,15 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                         
                         if (count($parts[0]) == 1) {
                             $last_slash = strrpos($url, "/");
-                            if ($last_slash !== FALSE) {
+							
+                            if ($last_slash !== FALSE)
                                 $file_name = substr($url, $last_slash+1);
-                            } else {
+                            else
                                 $file_name = $url;
-                            }
-                        } else {
+							
+							$file_name = urldecode($file_name);
+                        } else
                             $file_name = end($parts[0]);
-                        }
 
                         $command_description = "Download " . trim($file_name, "\"");
 
@@ -3278,10 +3279,12 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                 $destination = count($args_for_this_command) >= 2 ? $args_for_this_command[1] : "";
                                 if (!empty($destination)) {
                                     $last_unpbo = "$modname\\$destination\\" . GS_path_last_item($file_name);
-                                    $command_description .= " to the $modname\\$destination";
+                                    $command_description .= "\nto the $modname\\$destination\\" . substr(GS_path_last_item($file_name),0,-4);
                                 } else
                                     if ($game_source)
-                                        $command_description .= " to the $modname";
+                                        $command_description .= "\nto the $modname\\" . substr(GS_path_last_item($file_name),0,-4);
+                                    else
+                                        $command_description .= "\nto the " . substr($file_name,0,-4);
 
                                 $last_unpbo = substr($last_unpbo, 0, -4);
                             }

@@ -53,8 +53,8 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_URL_PAR2" => "2. If a website requires you to go through intermediate pages in order to receive a direct link then write address to each page.",
 	"GS_IS_URL_STARTING_URL" => "starting url",
 	"GS_IS_URL_INTERMEDIATE_URL" => "optionally intermediate links",
-	"GS_IS_URL_FILE_NAME" => "file name",
-	"GS_IS_URL_PAR3" => "You don't actually have to type in full intermediary URL but only the unique part that's easy to find in the page's source code. Last item is the name of the file that's going to be downloaded. If it contains spaces then put it in quotation marks.",
+	"GS_IS_URL_FILE_NAME" => "output file name",
+	"GS_IS_URL_PAR3" => "You don't actually have to type in full intermediary URL but only the unique part that's easy to find in the page's source code. The last item is the name under which the file will be saved. If it contains spaces then put it in quotation marks.",
 	"GS_IS_URL_PAR4" => "In the above example installer will:",
 	"GS_IS_URL_PAR5" => "Download page https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25",
 	"GS_IS_URL_PAR6" => "Find URL containing phrase <span class=\"courier\">/downloads/start/</span> and download web page behind that link",
@@ -62,7 +62,8 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_URL_PAR8" => "On the mod update page, below the script input field you'll find a tool that automatically writes intermediate links (for a few selected sites). More information on how to find such links yourself you'll find <a href=\"#testing\">below</a>.",
 	"GS_IS_URL_PAR9" => "3. If you have <b>backup links</b> then place all of them between a pair of curly brackets. Example:",
 	"GS_IS_URL_PAR10" => "If the first one fails then the installer will try the second one and so on. The files have to be identical because interrupted downloads will be continued from the last position.",
-	"GS_IS_URL_PAR11" => "4. To save disk space downloaded file is deleted as soon as the next download starts. To keep the files use <a href=\"#get\">GET</a> command.",
+	"GS_IS_URL_PAR11" => "Download file names also should be identical. Example:",
+	"GS_IS_URL_PAR12" => "4. To save disk space downloaded file is deleted as soon as the next download starts. To keep the files use <a href=\"#get\">GET</a> command.",
 	
 	#Manual installation
 	"GS_IS_MANUAL_PAR1" => "There are commands to make the installer do exactly what you want:",
@@ -313,8 +314,8 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_URL_PAR2" => "2. Если сайт требует прохождения промежуточных страниц для получения прямой ссылки, то пишите адрес каждой страницы.",
 "GS_IS_URL_STARTING_URL" => "начальный URL",
 "GS_IS_URL_INTERMEDIATE_URL" => "опционально промежуточные звенья",
-"GS_IS_URL_FILE_NAME" => "имя файла",
-"GS_IS_URL_PAR3" => "На самом деле вам не нужно вводить полный промежуточный URL-адрес, а только уникальную часть, которую легко найти в исходном коде страницы. Последний элемент — это имя файла, который будет загружен. Если он содержит пробелы, то поместите его в кавычки.",
+"GS_IS_URL_FILE_NAME" => "имя выходного файла",
+"GS_IS_URL_PAR3" => "На самом деле вам не нужно вводить полный промежуточный URL-адрес, а только уникальную часть, которую легко найти в исходном коде страницы. Последний пункт — имя, под которым будет сохранен файл. Если он содержит пробелы, то поместите его в кавычки.",
 "GS_IS_URL_PAR4" => "В приведенном выше примере установщик:",
 "GS_IS_URL_PAR5" => "Страница загрузки https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25",
 "GS_IS_URL_PAR6" => "Найдите URL-адрес, содержащий фразу <span class=\"courier\">/downloads/start/</span>, и загрузите веб-страницу по этой ссылке.",
@@ -322,7 +323,8 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_URL_PAR8" => "На странице обновления мода под полем ввода скрипта вы найдете инструмент, который автоматически записывает промежуточные ссылки (для нескольких выбранных сайтов). Дополнительную информацию о том, как самостоятельно найти такие ссылки, вы найдете <a href=\"#testing\">ниже</a>.",
 "GS_IS_URL_PAR9" => "3. Если у вас есть <b>резервные ссылки</b>, поместите их все между парой фигурных скобок. Пример:",
 "GS_IS_URL_PAR10" => "Если с первым не получится, установщик попытается установить второй и так далее. Файлы должны быть идентичными, поскольку прерванная загрузка будет продолжена с последней позиции.",
-"GS_IS_URL_PAR11" => "4. Для экономии места на диске загруженный файл удаляется, как только начинается следующая загрузка. Чтобы сохранить файлы, используйте команду <a href=\"#get\">GET</a>.",
+"GS_IS_URL_PAR11" => "Имена файлов загрузки также должны быть идентичными. Пример:",
+"GS_IS_URL_PAR12" => "4. Для экономии места на диске загруженный файл удаляется, как только начинается следующая загрузка. Чтобы сохранить файлы, используйте команду <a href=\"#get\">GET</a>.",
 	
 	#Manual installation
 "GS_IS_MANUAL_PAR1" => "Есть команды, чтобы заставить установщик делать именно то, что вы хотите:",
@@ -573,8 +575,8 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_URL_PAR2" => "2. Jeśli serwis wymaga przejścia przez pośrednie strony zanim udostępni bezpośredni link to napisz adres do każdej podstrony.",
 	"GS_IS_URL_STARTING_URL" => "startowy url",
 	"GS_IS_URL_INTERMEDIATE_URL" => "opcjonalnie linki do przejściowych stron",
-	"GS_IS_URL_FILE_NAME" => "nazwa pliku",
-	"GS_IS_URL_PAR3" => "Nie musisz pisać pełnych odsyłaczy do stron przejściowych. Wystarczy ich unikatowy fragment który łatwo jest znaleźć w źródle strony. Ostatnie wyrażenie to nazwa pliku który zostanie ściągnięty. Jeśli ma odstępy to zamknij je w cudzysłów.",
+	"GS_IS_URL_FILE_NAME" => "nazwa zapisanego pliku",
+	"GS_IS_URL_PAR3" => "Nie musisz pisać pełnych odsyłaczy do stron przejściowych. Wystarczy ich unikatowy fragment który łatwo jest znaleźć w źródle strony. Ostatnie wyrażenie to nazwa pod jaką plik zostanie zapisany. Jeśli ma odstępy to zamknij je w cudzysłów.",
 	"GS_IS_URL_PAR4" => "W powyższym przykładzie instalator:",
 	"GS_IS_URL_PAR5" => "Ściągnie stronę https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25",
 	"GS_IS_URL_PAR6" => "Znajdzie URL zawierający wyrażenie <span class=\"courier\">/downloads/start/</span> i ściągnię stronę pod tym linkiem.",
@@ -582,7 +584,8 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_URL_PAR8" => "Na stronie edycji instalacji modu, pod polem do wpisywaniu skryptu znajdziesz narzędzie, które automatycznie doda pośrednie linki (do kilku wybranych stron). Więcej informacji jak samemu szukać takowych odsyłaczy znajdziesz <a href=\"#testing\">poniżej</a>.",
 	"GS_IS_URL_PAR9" => "3. Jeśli masz <b>zapasowe linki</b> to umieść je wszystkie w nawiasie klamrowym. Na przykład:",
 	"GS_IS_URL_PAR10" => "Jeśli pierwszy zawiedzie to instalator przejdzie do drugiego i tak dalej. Pliki muszą być identyczne ponieważ przerwane ściąganie będzie kontynuowane od ostatniego miejsca.",
-	"GS_IS_URL_PAR11" => "4. Dla zaoszczędzenia miejsca na dysku instalator kasuje ostatni ściągnięty plik jak tylko zacznie się pobieranie następnego. Aby zachować pliki użyj komendy <a href=\"#get\">GET</a>.",
+	"GS_IS_URL_PAR11" => "Nazwy plików  also should be identical. Example:",
+	"GS_IS_URL_PAR12" => "4. Dla zaoszczędzenia miejsca na dysku instalator kasuje ostatni ściągnięty plik jak tylko zacznie się pobieranie następnego. Aby zachować pliki użyj komendy <a href=\"#get\">GET</a>.",
 	
 	#Manual installation
 	"GS_IS_MANUAL_PAR1" => "Dostępne są komendy dzięki którym możesz kontrolować zachowanie instalatora:",
@@ -901,9 +904,12 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 		<pre><code><?=GS_scripting_highlighting("{\n\thttp://files.ofpisnotdead.com/files//ofpd/mods/fdfmod14_ww2.rar\n\thttp://fdfmod.dreamhosters.com/ofp/fdfmod14_ww2.rar\n\thttps://www.gamefront.com/games/operation-flashpoint/file/fdf-mod  fdf-mod/download  expires=  fdfmod14_ww2.rar\n}")?></code></pre>
 		
 		<p><?=lang("GS_IS_URL_PAR10")?></p>
-		<br>
 		
 		<p><?=lang("GS_IS_URL_PAR11")?></p>
+		<pre><code><?=GS_scripting_highlighting("{\n\thttps://docs.google.com/uc?export=download&id=17oRbO4tnrXSFQgCPYCJ48b7dDF0TfIPx sandy.zip\n\thttp://files.ofpisnotdead.com/files/ofpd/unofaddons2/footsandy.zip sandy.zip\n}")?></code></pre>
+		<br>
+		
+		<p><?=lang("GS_IS_URL_PAR12")?></p>
 	</div>
 </div>
 	

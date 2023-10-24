@@ -1910,14 +1910,15 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 						
 						if (parts.length == 1) {
 							let last_slash = url.lastIndexOf("/");
-							if (last_slash >= 0) {
+							
+							if (last_slash >= 0)
 								file_name = url.substr(last_slash+1);
-							} else {
+							else
 								file_name = url;
-							}
-						} else {
+							
+							file_name = decodeURI(file_name);
+						} else
 							file_name = parts[parts.length-1];
-						}
 
 						command_description = "Download " + GS_trim(file_name, "\"");
 
@@ -2088,10 +2089,12 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 								let destination = args_for_this_command.length >= 2 ? args_for_this_command[1] : "";
 								if (!GS_empty(destination)) {
 									last_unpbo = modname+"\\"+destination+"\\" + GS_path_last_item(file_name);
-									command_description += " to the "+modname+"\\"+destination;
+									command_description += "\nto the "+modname+"\\"+destination+"\\"+GS_path_last_item(file_name).substr(,0,-4);
 								} else
 									if (game_source)
-										command_description += " to the "+modname;
+										command_description += "\nto the "+modname+"\\"+GS_path_last_item(file_name).substr(0,-4);
+                                    else
+                                        command_description += "\nto the " . file_name.substr(0,-4);
 
 								last_unpbo = last_unpbo.substr(0, -4);
 							}
