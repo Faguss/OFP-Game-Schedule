@@ -176,7 +176,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 // If user wants to add/remove playing times
 if ($form->hidden["display_form"] == "Schedule") 
 {
-	$form->title = lang("GS_STR_SERVER_EVENT_PAGE_TITLE", ["<B>$record_title</B>"]);
+	$form->title = lang("GS_STR_SERVER_EVENT_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 	$form->size  = 9;
 	
 	// If user wants to remove entries
@@ -203,6 +203,7 @@ if ($form->hidden["display_form"] == "Schedule")
 			$form->alert(lang("GS_STR_SERVER_EVENT_NONE_ERROR"));
 	}
 	
+	$persistent = $db->cell("gs_serv.persistent",["id","=",$id]);
 	
 	// Query to get all records
 	$sql = "
@@ -269,28 +270,35 @@ if ($form->hidden["display_form"] == "Schedule")
 
 	$form->include_file("usersc/js/gs_functions.js");
 
-	$form->add_datetime("starttime" , lang("GS_STR_SERVER_EVENT_DATE"));
-	$form->add_select("timezone"    , lang("GS_STR_SERVER_EVENT_TIMEZONE"), "", $timezone_select_list, $user_time_zone);
-	$form->add_select("type"        , lang("GS_STR_SERVER_EVENT_REPEAT")  , "", [[lang("GS_STR_SERVER_EVENT_REPEAT_SINGLE"),GS_EVENT_SINGLE], [lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY"),GS_EVENT_WEEKLY], [lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"),GS_EVENT_DAILY]], 0);
-	$form->add_text("duration"      , lang("GS_STR_SERVER_EVENT_LENGTH")  , lang("GS_STR_SERVER_EVENT_MINUTES"), "60", 60);
-	$form->add_datetime("breakstart", lang("GS_STR_SERVER_EVENT_BREAKSTART"), date('Y-m-d',strtotime("-1 days")), "jS F (l) Y", "Y-m-d");
-	$form->add_datetime("breakend"  , lang("GS_STR_SERVER_EVENT_BREAKEND"), date('Y-m-d',strtotime("-1 days")), "jS F (l) Y", "Y-m-d");	
-	$form->add_button("action"      , $form->hidden["display_form"]       , lang("GS_STR_SERVER_EVENT_SUBMIT"), "btn-primary",  "SubmitButton");
-	$form->add_button("action"      , "Edit"                              , lang("GS_STR_SERVER_EVENT_EDIT"), "btn-info", "EditButton", "STYLE=\"display:none\"");
-	$form->add_space();
-	$form->add_select("schedulelist", lang("GS_STR_SERVER_EVENT_CURRENT") , "", [], "", GS_PERMISSION_MAX_SERV_SCHEDULE[$gs_my_permission_level]);
+	if (!$persistent) {
+		$form->add_datetime("starttime" , lang("GS_STR_SERVER_EVENT_DATE"));
+		$form->add_select("timezone"    , lang("GS_STR_SERVER_EVENT_TIMEZONE"), "", $timezone_select_list, $user_time_zone);
+		$form->add_select("type"        , lang("GS_STR_SERVER_EVENT_REPEAT")  , "", [[lang("GS_STR_SERVER_EVENT_REPEAT_SINGLE"),GS_EVENT_SINGLE], [lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY"),GS_EVENT_WEEKLY], [lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"),GS_EVENT_DAILY]], 0);
+		$form->add_text("duration"      , lang("GS_STR_SERVER_EVENT_LENGTH")  , lang("GS_STR_SERVER_EVENT_MINUTES"), "60", 60);
+		$form->add_datetime("breakstart", lang("GS_STR_SERVER_EVENT_BREAKSTART"), date('Y-m-d',strtotime("-1 days")), "jS F (l) Y", "Y-m-d");
+		$form->add_datetime("breakend"  , lang("GS_STR_SERVER_EVENT_BREAKEND"), date('Y-m-d',strtotime("-1 days")), "jS F (l) Y", "Y-m-d");	
+		$form->add_button("action"      , $form->hidden["display_form"]       , lang("GS_STR_SERVER_EVENT_SUBMIT"), "btn-primary",  "SubmitButton");
+		$form->add_button("action"      , "Edit"                              , lang("GS_STR_SERVER_EVENT_EDIT"), "btn-info", "EditButton", "STYLE=\"display:none\"");
+		$form->add_space();
+		$form->add_select("schedulelist", lang("GS_STR_SERVER_EVENT_CURRENT") , "", [], "", GS_PERMISSION_MAX_SERV_SCHEDULE[$gs_my_permission_level]);
 	
-	$form->change_control(["ID"=>["SubmitButton","EditButton"]], ["Inline"=>3]);
-	$form->change_control("breakstart", ["Group"=>"id=\"breakstart_group\""]);
-	$form->change_control("breakend", ["Group"=>"id=\"breakend_group\""]);
-	$form->change_control("type", ["Property"=>"onChange=\"GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])\""]);
+		$form->change_control(["ID"=>["SubmitButton","EditButton"]], ["Inline"=>3]);
+		$form->change_control("breakstart", ["Group"=>"id=\"breakstart_group\""]);
+		$form->change_control("breakend", ["Group"=>"id=\"breakend_group\""]);
+		$form->change_control("type", ["Property"=>"onChange=\"GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])\""]);
+	}
 
-	
-	
-	
-	
-	
 	// Save new entry
+	if ($form->hidden["action"] == "persistent") {
+		$new_persistent = Input::get('persistent');
+	
+		if (in_array($new_persistent,["0","1"]) && $new_persistent != $persistent) {
+			$result = $db->update("gs_serv", $id, ["persistent"=>$new_persistent]);
+			
+			if (!$result && $gs_my_permission_level == GS_PERM_ADMIN)
+				echo $sql . $db->errorString();
+		}
+	} else 
 	if ($form->hidden["action"] != "") {
 		if ($events_count < GS_PERMISSION_MAX_SERV_SCHEDULE[$gs_my_permission_level]) {
 			$data = &$form->save_input();
@@ -372,79 +380,81 @@ if ($form->hidden["display_form"] == "Schedule")
 			$form->alert(lang("GS_STR_SERVER_EVENT_MAX_ERROR"));
 	}
 	
-	
-	
-	// If schedule is full after insertion then remove controls to add new playing time
-	if ($events_count >= GS_PERMISSION_MAX_SERV_SCHEDULE[$gs_my_permission_level]) {
-		$form->controls[] = [];
-		$form->add_heading(lang("GS_STR_SERVER_EVENT_MAX_ERROR"));
-	}
-
-	
-	
-	
-	// Display list of playing times to remove
-	if ($events_count > 0) {
-		$schedule          = $db->results(true);
-		$schedule_select   = [];
-		$js_curr_schedule  = ["name"=>"Current_Schedule", "data"=>[]];
-		$js_new_array      = "New_Schedule";
-		$description_field = "SelectOptionDetails";
-		$localized_strings = [
-			"Now"     => lang("GS_STR_SERVER_EVENT_NOW"),
-			"Expired" => lang("GS_STR_SERVER_EVENT_EXPIRED"),
-		];
-
-		// Make a list of options for select
-		foreach ($schedule as $item) {
-			$start_date = new DateTime($item["starttime"], new DateTimeZone($item["timezone"]));
-			$start_day  = $start_date->format("Y.m.d");
-			$start_hour = $start_date->format("H:i");
-			$iso8601    = $start_date->format('c');
-			$for_js     = $start_date->format("jS F (l) Y H:i");
-			
-			$start_date->add(new DateInterval('PT' . $item["duration"] . 'M'));
-			$end_hour   = $start_date->format("H:i");
-			
-			$typename = lang(["GS_STR_SERVER_EVENT_REPEAT_SINGLE", "GS_STR_SERVER_EVENT_REPEAT_WEEKLY", "GS_STR_SERVER_EVENT_REPEAT_DAILY"][$item["type"]]);
-			
-			$description       = "$start_day &nbsp;&nbsp; $start_hour - $end_hour &nbsp;&nbsp; $type {$item["username"]} {$item["timezone"]}";
-			$schedule_select[] = [$description, $item["uniqueid"]];
-			$user_info         = lang("GS_STR_ADDED_BY")." {$item["username"]}";
-			
-			$js_curr_schedule["data"][] = [
-				"type"       => $item["type"], 
-				"typename"   => $typename,
-				"starttime"  => $iso8601, 
-				"duration"   => $item["duration"], 
-				"uniqueid"   => $item["uniqueid"],
-				"timezone"   => $item["timezone"], 
-				"user"       => $user_info,
-				"breakstart" => $item["breakstart"],
-				"breakend"   => $item["breakend"]
-			];
+	if (!$persistent) {
+		// If schedule is full after insertion then remove controls to add new playing time
+		if ($events_count >= GS_PERMISSION_MAX_SERV_SCHEDULE[$gs_my_permission_level]) {
+			$form->controls[] = [];
+			$form->add_heading(lang("GS_STR_SERVER_EVENT_MAX_ERROR"));
 		}
-
-		$vacation_js = "GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])";
 		
-		$form->change_control("schedulelist", [
-			"Options"=>$schedule_select, 
-			"Property"=>"onChange=\"
-				GS_display_info_when_selected(this,'{$form->hidden["display_form"]}',$js_new_array,'$description_field'); 
-				GS_make_event_editable(this,$js_new_array,['starttime_input','timezone','type','duration','breakstart_input','breakend_input'],'EditButton');
-				$vacation_js\""
-		]);
-		$form->add_button("action", "Cancel", lang("GS_STR_SERVER_EVENT_REMOVE"), "btn-warning");
-		$form->add_emptyspan($description_field);
-		$form->include_file("usersc/js/ru.js");
-		$form->add_html("
-			<script type=\"text/javascript\">
-				var {$js_curr_schedule["name"]} = ".json_encode($js_curr_schedule["data"])."
-				var $js_new_array = GS_format_event_list({$js_curr_schedule["name"]},'schedulelist',".json_encode($localized_strings).",".json_encode(["GS_EVENT_SINGLE"=>GS_EVENT_SINGLE,"GS_EVENT_WEEKLY"=>GS_EVENT_WEEKLY,"GS_EVENT_DAILY"=>GS_EVENT_DAILY]).");
-				$vacation_js
-			</script>");
-	} else
-		$form->remove_controls_until(["Name"=>"action"]);
+		// Display list of playing times to remove
+		if ($events_count > 0) {
+			$schedule          = $db->results(true);
+			$schedule_select   = [];
+			$js_curr_schedule  = ["name"=>"Current_Schedule", "data"=>[]];
+			$js_new_array      = "New_Schedule";
+			$description_field = "SelectOptionDetails";
+			$localized_strings = [
+				"Now"     => lang("GS_STR_SERVER_EVENT_NOW"),
+				"Expired" => lang("GS_STR_SERVER_EVENT_EXPIRED"),
+			];
+
+			// Make a list of options for select
+			foreach ($schedule as $item) {
+				$start_date = new DateTime($item["starttime"], new DateTimeZone($item["timezone"]));
+				$start_day  = $start_date->format("Y.m.d");
+				$start_hour = $start_date->format("H:i");
+				$iso8601    = $start_date->format('c');
+				$for_js     = $start_date->format("jS F (l) Y H:i");
+				
+				$start_date->add(new DateInterval('PT' . $item["duration"] . 'M'));
+				$end_hour   = $start_date->format("H:i");
+				
+				$typename = lang(["GS_STR_SERVER_EVENT_REPEAT_SINGLE", "GS_STR_SERVER_EVENT_REPEAT_WEEKLY", "GS_STR_SERVER_EVENT_REPEAT_DAILY"][$item["type"]]);
+				
+				$description       = "$start_day &nbsp;&nbsp; $start_hour - $end_hour &nbsp;&nbsp; $type {$item["username"]} {$item["timezone"]}";
+				$schedule_select[] = [$description, $item["uniqueid"]];
+				$user_info         = lang("GS_STR_ADDED_BY")." {$item["username"]}";
+				
+				$js_curr_schedule["data"][] = [
+					"type"       => $item["type"], 
+					"typename"   => $typename,
+					"starttime"  => $iso8601, 
+					"duration"   => $item["duration"], 
+					"uniqueid"   => $item["uniqueid"],
+					"timezone"   => $item["timezone"], 
+					"user"       => $user_info,
+					"breakstart" => $item["breakstart"],
+					"breakend"   => $item["breakend"]
+				];
+			}
+
+			$vacation_js = "GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])";
+			
+			$form->change_control("schedulelist", [
+				"Options"=>$schedule_select, 
+				"Property"=>"onChange=\"
+					GS_display_info_when_selected(this,'{$form->hidden["display_form"]}',$js_new_array,'$description_field'); 
+					GS_make_event_editable(this,$js_new_array,['starttime_input','timezone','type','duration','breakstart_input','breakend_input'],'EditButton');
+					$vacation_js\""
+			]);
+			$form->add_button("action", "Cancel", lang("GS_STR_SERVER_EVENT_REMOVE"), "btn-warning");
+			$form->add_emptyspan($description_field);
+			$form->include_file("usersc/js/ru.js");
+			$form->add_html("
+				<script type=\"text/javascript\">
+					var {$js_curr_schedule["name"]} = ".json_encode($js_curr_schedule["data"])."
+					var $js_new_array = GS_format_event_list({$js_curr_schedule["name"]},'schedulelist',".json_encode($localized_strings).",".json_encode(["GS_EVENT_SINGLE"=>GS_EVENT_SINGLE,"GS_EVENT_WEEKLY"=>GS_EVENT_WEEKLY,"GS_EVENT_DAILY"=>GS_EVENT_DAILY]).");
+					$vacation_js
+				</script>");
+		} else
+			$form->remove_controls_until(["Name"=>"action"]);
+		
+		$form->add_space();	
+	}
+	
+	$form->add_select("persistent", lang("GEN_ENABLE")."?", lang("GS_STR_SERVER_PERSISTENT_HINT"), [[lang("GEN_YES"),0], [lang("GEN_NO"),1]], $persistent);
+	$form->add_button("action", "persistent", lang("GEN_UPDATE"), "btn-primary",  "SubmitButton2");
 }
 
 
