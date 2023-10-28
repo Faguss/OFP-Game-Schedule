@@ -911,6 +911,18 @@ function GS_get_server_list(master_server, list_id) {
 	}
 }
 
+function GS_schedule_toggle(form_id, current_setting) {
+	document.getElementById("action").value = "persistent";
+	
+	let input = document.createElement("input");
+	input.setAttribute("type", "hidden");
+	input.setAttribute("name", "persistent");
+	input.setAttribute("value", current_setting==1 ? 0 : 1);
+
+	let my_form = document.getElementById(form_id);
+	my_form.appendChild(input);
+	my_form.submit();
+}
 
 
 
@@ -2089,7 +2101,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 								let destination = args_for_this_command.length >= 2 ? args_for_this_command[1] : "";
 								if (!GS_empty(destination)) {
 									last_unpbo = modname+"\\"+destination+"\\" + GS_path_last_item(file_name);
-									command_description += "\nto the "+modname+"\\"+destination+"\\"+GS_path_last_item(file_name).substr(,0,-4);
+									command_description += "\nto the "+modname+"\\"+destination+"\\"+GS_path_last_item(file_name).substr(0,-4);
 								} else
 									if (game_source)
 										command_description += "\nto the "+modname+"\\"+GS_path_last_item(file_name).substr(0,-4);

@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,10,22,0,23,36,37,538,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,10,25,3,20,38,5,91,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1370,6 +1370,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 	$where_condition = "";
 	$argument_list   = [];
 	$Parsedown       = new Parsedown();
+	$is_admin        = isset($user) && isAdmin();
 
 	if (!empty($mods_id_list)) {
 		$argument_list    = $mods_id_list;
@@ -1377,11 +1378,13 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 	}
 	
 	if (!empty($mods_uniqueid_list)) {
-		if (in_array("all",$mods_uniqueid_list))
-			$where_condition = "gs_mods.removed=0";
-		else {
+		if (in_array("all",$mods_uniqueid_list)) {
+			$where_condition = !$is_admin ? "gs_mods.removed=0" : "gs_mods.removed=0 OR gs_mods.removed=1";
+		} else {
 			$argument_list    = array_merge($argument_list, $mods_uniqueid_list);
-			$where_condition .= ($where_condition!="" ? " OR " : "") . "gs_mods.uniqueid IN (".substr( str_repeat(",?",count($mods_uniqueid_list)), 1).") AND gs_mods.removed=0";
+			$where_condition .= ($where_condition!="" ? " OR " : "") . "gs_mods.uniqueid IN (".substr( str_repeat(",?",count($mods_uniqueid_list)), 1).")";
+			if (!$is_admin)
+				$where_condition .= " AND gs_mods.removed=0";
 		}
 	}
 	
@@ -1464,7 +1467,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 			foreach($table_rows as $row) {
 				$all_id[] = $row["id"];
 				
-				if ($row["access"]!="" && !in_array($row["id"],$mods_id_list) && !in_array($row["id"],$private_mods) && array_search($row["access"],$password)===FALSE)
+				if (!$is_admin && $row["access"]!="" && !in_array($row["id"],$mods_id_list) && !in_array($row["id"],$private_mods) && array_search($row["access"],$password)===FALSE)
 					$private_mods[] = $row["id"];
 			}
 			
@@ -1484,7 +1487,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					gs_mods.id = gs_serv_mods.modid AND 
 					gs_serv.access IN (''".substr( str_repeat(",?",count($password)), 1).") AND
 					gs_mods.id IN (".substr( str_repeat(",?",count($private_mods)), 1).") AND
-					gs_serv.removed = 0 AND
+					gs_serv.removed = 0 AND 
 					gs_mods.removed = 0 AND
 					gs_serv_mods.removed = 0
 				";
@@ -1497,41 +1500,54 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				
 			// Check if logged-in user can preview these mods
 			if ($request_type==GS_REQTYPE_WEBSITE && isset($user) && $user->isLoggedIn()) {
-				$sql = "
-				SELECT 
-					gs_mods_admins.modid,
-					gs_mods_admins.right_edit,
-					gs_mods_admins.right_update,
-					gs_mods_admins.isowner
-					
-				FROM 
-					gs_mods, 
-					gs_mods_admins
-					
-				WHERE 
-					gs_mods.id            = gs_mods_admins.modid AND
-					gs_mods_admins.userid = ".$user->data()->id." AND
-					gs_mods.id in (". implode(',',$all_id) .") AND
-					(gs_mods_admins.isowner=1 OR gs_mods_admins.right_edit=1 OR gs_mods_admins.right_update=1)
-				";
-
-				// If so then allow to display it
-				if (!$db->query($sql)->error())
-					foreach($db->results(true) as $row) {
+				if ($is_admin) {
+					foreach ($table_rows as $row) {
 						$permission_to = [];
 						
 						foreach (GS_FORM_ACTIONS_BY_PAGE["mod"] as $name) {
-							$column_name = "right_".strtolower($name);
-							
-							if ($row["isowner"] == "1")
-								$permission_to[$name] = true;
-							else
-								$permission_to[$name] = isset($row[$column_name]) ? intval($row[$column_name]) : false;
+							$permission_to[$name] = true;
 						}
-
-						$output["rights"][$row["modid"]] = $permission_to;
-						$private_mods                    = array_diff($private_mods, [$row["modid"]]);
+						
+						$output["rights"][$row["id"]] = $permission_to;
 					}
+				} else {
+					$sql = "
+					SELECT 
+						gs_mods_admins.modid,
+						gs_mods_admins.right_edit,
+						gs_mods_admins.right_update,
+						gs_mods_admins.isowner
+						
+					FROM 
+						gs_mods, 
+						gs_mods_admins
+						
+					WHERE 
+						gs_mods.id            = gs_mods_admins.modid AND
+						gs_mods_admins.userid = ".$user->data()->id." AND
+						gs_mods.id in (". implode(',',$all_id) .") AND
+						(gs_mods_admins.isowner=1 OR gs_mods_admins.right_edit=1 OR gs_mods_admins.right_update=1)
+					";
+
+					// If so then allow to display it
+					if (!$db->query($sql)->error())
+						foreach($db->results(true) as $row) {
+							$permission_to = [];
+							
+							foreach (GS_FORM_ACTIONS_BY_PAGE["mod"] as $name) {
+								$column_name = "right_".strtolower($name);
+								
+								if ($row["isowner"] == "1")
+									$permission_to[$name] = true;
+								else
+									$permission_to[$name] = isset($row[$column_name]) ? intval($row[$column_name]) : false;
+							}
+
+							$output["rights"][$row["modid"]] = $permission_to;
+							$private_mods                    = array_diff($private_mods, [$row["modid"]]);
+						}
+				}
+				
 			}
 
 
@@ -1982,7 +1998,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 					'.GS_output_item_logo("server", $server["logo"], 128).'
 				</div>
 				<div class="media-body media-middle">
-					'.GS_show_dropdown_controls($server, "server", $servers["rights"][$id]).'
+					'.GS_show_dropdown_controls($server, "server", $servers["rights"][$id], $gs_my_permission_level).'
 				</div><!--end media-body-->
 			</div><!--end media-->
 		';
@@ -3560,12 +3576,32 @@ function GS_output_item_logo($record_type, $filename, $size=32) {
 }
 
 // Show drop-down menu for server/mod if user has the right to edit it
-function GS_show_dropdown_controls($item, $record_type, $permission_to, $custom_title="") {
+function GS_show_dropdown_controls($item, $record_type, $permission_to, $gs_my_permission_level=GS_PERM_NOUSER, $title_wrap=[]) {
 	$html_controls = "";
-	$title = empty($custom_title) ? '<span class="gs_servermod_title">'.($item["name"]!="" ? $item["name"] : $item["uniqueid"]).'</span>' : $custom_title;
+	$title = ($item["name"]!="" ? $item["name"] : $item["uniqueid"]);
+	
+	if (!empty($title_wrap))
+		$title = $title_wrap[0] . $title . $title_wrap[1];
 			
-	foreach ($permission_to as $permission=>$value)
-		if ($value && $permission!="Add New") {
+	foreach ($permission_to as $permission=>$value)	
+		if (
+			(
+				$value && 
+				$permission != "Add New"
+			) 
+			||
+			(
+				$gs_my_permission_level == GS_PERM_ADMIN || 
+				$item["isowner"] == "1"
+			) 
+			||
+			(
+				isset($item["right_".strtolower($permission)]) &&  
+				$item["right_".strtolower($permission)] && 
+				!in_array($permission,GS_FORM_ACTIONS_NON_SHAREABLE)
+			)
+		)
+		{
 			if ($permission == "Delete")
 				$html_controls .= '<li role="separator" class="divider"></li>';
 			
@@ -3574,11 +3610,12 @@ function GS_show_dropdown_controls($item, $record_type, $permission_to, $custom_
 		
 	if (empty($html_controls))
 		return $title;
-			
+
 	return 
 	'<div class="dropdown">
 		<p id="dropdownMenu'.$item["uniqueid"].'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			'.$title.'
+			'.(!empty($item["access"]) ? '<span class="fa fa-lock"></span>' : '').'
 			<span class="caret"></span>
 		</p>
 		<ul class="dropdown-menu" aria-labelledby="dropdownMenu'.$item["uniqueid"].'">

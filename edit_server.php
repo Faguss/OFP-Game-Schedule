@@ -233,6 +233,7 @@ if ($form->hidden["display_form"] == "Schedule")
 	if ($db->query($sql,[$id])->error())
 		$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));
 
+	$schedule     = $db->results(true);
 	$events_count = $db->count();
 	
 	
@@ -270,6 +271,24 @@ if ($form->hidden["display_form"] == "Schedule")
 
 	$form->include_file("usersc/js/gs_functions.js");
 
+	if ($form->hidden["action"] == "persistent") {
+		$new_persistent = Input::get('persistent');
+	
+		if (in_array($new_persistent,["0","1"]) && $new_persistent != $persistent) {
+			$result = $db->update("gs_serv", $id, ["persistent"=>$new_persistent]);
+			
+			if ($result) {
+				$persistent = $new_persistent;
+			} else {
+				if (!$result && $gs_my_permission_level == GS_PERM_ADMIN)
+					echo $sql . $db->errorString();
+			}
+			
+		}
+	}
+	
+	$form->title .= " &nbsp; <a style='font-size:70%;float:right' onclick=\"GS_schedule_toggle('{$form->id}','$persistent')\">" . ($persistent ? lang("GEN_ENABLE") : lang("GEN_DISABLE")) . "</a>";
+	
 	if (!$persistent) {
 		$form->add_datetime("starttime" , lang("GS_STR_SERVER_EVENT_DATE"));
 		$form->add_select("timezone"    , lang("GS_STR_SERVER_EVENT_TIMEZONE"), "", $timezone_select_list, $user_time_zone);
@@ -289,17 +308,7 @@ if ($form->hidden["display_form"] == "Schedule")
 	}
 
 	// Save new entry
-	if ($form->hidden["action"] == "persistent") {
-		$new_persistent = Input::get('persistent');
-	
-		if (in_array($new_persistent,["0","1"]) && $new_persistent != $persistent) {
-			$result = $db->update("gs_serv", $id, ["persistent"=>$new_persistent]);
-			
-			if (!$result && $gs_my_permission_level == GS_PERM_ADMIN)
-				echo $sql . $db->errorString();
-		}
-	} else 
-	if ($form->hidden["action"] != "") {
+	if (in_array($form->hidden["action"],["Edit","Schedule"])) {
 		if ($events_count < GS_PERMISSION_MAX_SERV_SCHEDULE[$gs_my_permission_level]) {
 			$data = &$form->save_input();
 			
@@ -374,6 +383,7 @@ if ($form->hidden["display_form"] == "Schedule")
 				if ($db->query($sql,[$id])->error())
 					$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));
 				
+				$schedule     = $db->results(true);
 				$events_count = $db->count();
 			}
 		} else
@@ -389,7 +399,6 @@ if ($form->hidden["display_form"] == "Schedule")
 		
 		// Display list of playing times to remove
 		if ($events_count > 0) {
-			$schedule          = $db->results(true);
 			$schedule_select   = [];
 			$js_curr_schedule  = ["name"=>"Current_Schedule", "data"=>[]];
 			$js_new_array      = "New_Schedule";
@@ -430,7 +439,7 @@ if ($form->hidden["display_form"] == "Schedule")
 			}
 
 			$vacation_js = "GS_show_vacation_controls('type', ['breakstart_group','breakend_group'])";
-			
+
 			$form->change_control("schedulelist", [
 				"Options"=>$schedule_select, 
 				"Property"=>"onChange=\"
@@ -449,12 +458,7 @@ if ($form->hidden["display_form"] == "Schedule")
 				</script>");
 		} else
 			$form->remove_controls_until(["Name"=>"action"]);
-		
-		$form->add_space();	
 	}
-	
-	$form->add_select("persistent", lang("GEN_ENABLE")."?", lang("GS_STR_SERVER_PERSISTENT_HINT"), [[lang("GEN_YES"),0], [lang("GEN_NO"),1]], $persistent);
-	$form->add_button("action", "persistent", lang("GEN_UPDATE"), "btn-primary",  "SubmitButton2");
 }
 
 

@@ -39,6 +39,7 @@ $form             = new Generated_Form(["uniqueid", "action", "display_form", "d
 $form->size       = 8;
 $form->label_size = 3;
 $form->input_size = 9;
+$form->action     = $_SERVER[PHP_SELF] . "?" . $_SERVER['QUERY_STRING'];
 
 if ($form->hidden["display_subform"] == "")
 	$form->hidden["display_subform"] = array_keys(GS_FORM_ACTIONS_MODUPDATE)[0];

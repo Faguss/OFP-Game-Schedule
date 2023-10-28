@@ -33,19 +33,17 @@ function format_items($key_array, $items, $record_type, $record_column, $permiss
 				break;
 			
 			// Determine user's rights to edit the item
-			$item          = $items[$key];
-			$owner         = $gs_my_permission_level == GS_PERM_ADMIN  ||  $item["isowner"] == "1";
-			$html_controls = "";
+			$item    = $items[$key];
+			$owner   = $gs_my_permission_level == GS_PERM_ADMIN  ||  $item["isowner"] == "1";
+			$include = false;
 			
 			foreach ($permission_to as $permission=>$value)
 				if ($owner || isset($item["right_".strtolower($permission)]) &&  $item["right_".strtolower($permission)] && !in_array($permission,GS_FORM_ACTIONS_NON_SHAREABLE)) {
-					if ($permission == "Delete")
-						$html_controls .= '<li role="separator" class="divider"></li>';
-					
-					$html_controls .= '<li><a href="edit_'.$record_type.'.php?uniqueid='.$item["uniqueid"].'&display_form='.$permission.'">'.lang(GS_FORM_ACTIONS[$permission]).'</a></li>';
+					$include = true;
+					break;
 				}
 				
-			if (empty($html_controls))
+			if (!$include)
 				continue;
 			
 			$total_items++;
@@ -56,17 +54,7 @@ function format_items($key_array, $items, $record_type, $record_column, $permiss
 						'.GS_output_item_logo($record_type, $item["logo"]).'
 					</div>
 					<div class="media-body media-middle">
-						<div class="dropdown">
-							<p id="dropdownMenu'.$item["uniqueid"].'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-								'.($item["name"]!="" ? $item["name"] : $item["uniqueid"]).'
-								<span class="caret"></span>
-							</p>
-							<ul class="dropdown-menu" aria-labelledby="dropdownMenu'.$item["uniqueid"].'">
-								<li><a href="show.php?'.$record_column.'='.$item["uniqueid"].'">'.lang("GS_STR_INDEX_SHOW").'</a></li>
-								<li role="separator" class="divider"></li>
-								'.$html_controls.'
-							</ul>
-						</div><!--end dropdown-->
+						'.GS_show_dropdown_controls($item, $record_type, $permission_to, $gs_my_permission_level).'
 					</div><!--end media-body-->
 				</div><!--end media-->
 			</div><!--end col-->';
@@ -331,6 +319,7 @@ if (isset($user) && $user->isLoggedIn()){
 				gs_{$record_table}.uniqueid,
 				gs_{$record_table}.name,
 				gs_{$record_table}.logo,
+				gs_{$record_table}.access,
 				gs_{$record_table}_admins.*
 				
 			FROM 
@@ -351,7 +340,8 @@ if (isset($user) && $user->isLoggedIn()){
 			SELECT 
 				gs_{$record_table}.uniqueid,
 				gs_{$record_table}.name,
-				gs_{$record_table}.logo
+				gs_{$record_table}.logo,
+				gs_{$record_table}.access
 				
 			FROM 
 				gs_{$record_table}

@@ -97,7 +97,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->add_text("description"  , lang("GS_STR_MOD_DESCRIPTION"), $description_hint, lang("GS_STR_MOD_DESCRIPTION_EXAMPLE"));
 	$form->add_text("website"      , lang("GS_STR_SERVER_WEBSITE") , ""               , GS_get_current_url(true, false));
 	$form->add_select("type"       , lang("GS_STR_MOD_TYPE")       , ""               , $mod_type_select, "0");
-	$form->add_select("req_version", lang("GS_STR_MOD_REQ_VERSION"), ""               , GS_GAME_VERSIONS, "1.99");
+	$form->add_select("req_version", lang("GS_STR_MOD_REQ_VERSION"), ""               , GS_GAME_VERSIONS, "1.96");
 	
 	if ($form->hidden["display_form"] == "Edit")
 		$form->add_text("alias", lang("GS_STR_MOD_ALIAS"), lang("GS_STR_MOD_ALIAS_DESC",["<a target=\"_blank\" href=\"install_scripts#alias\">","</a>"]), "@ww4mod21 @ww4mod");

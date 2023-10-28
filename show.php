@@ -67,7 +67,6 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 
 	// Logo, name and edit controls
 	$subtitle = !empty($mod["subtitle"]) ? " &nbsp; <span class=\"gs_mod_subtitle\">({$mod["subtitle"]})</span>" : "";
-	$title    = '<span class="gs_servermod_title">'.$mod["name"].$subtitle.'</span>';
 	
 	echo '
 		<div class="media">
@@ -75,7 +74,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 				'.GS_output_item_logo("mod", $mod["logo"], 128).'
 			</div>
 			<div class="media-body media-middle">
-				'.GS_show_dropdown_controls($mod, "mod", $mods["rights"][$id], $title).'
+				'.GS_show_dropdown_controls($mod, "mod", $mods["rights"][$id], $gs_my_permission_level, ['<span class="gs_servermod_title">',$subtitle.'</span>']).'
 			</div><!--end media-body-->
 		</div><!--end media-->
 	';
