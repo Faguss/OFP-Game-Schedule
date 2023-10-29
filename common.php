@@ -1998,7 +1998,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 					'.GS_output_item_logo("server", $server["logo"], 128).'
 				</div>
 				<div class="media-body media-middle">
-					'.GS_show_dropdown_controls($server, "server", $servers["rights"][$id], $gs_my_permission_level).'
+					'.GS_show_dropdown_controls($server, "server", $servers["rights"][$id], $gs_my_permission_level, ['<span class="gs_servermod_title">','</span>']).'
 				</div><!--end media-body-->
 			</div><!--end media-->
 		';

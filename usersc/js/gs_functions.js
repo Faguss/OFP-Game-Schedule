@@ -2550,6 +2550,19 @@ function GS_preview_installation(input_type) {
 	})
 }
 
+function GS_verify_installation_script() {
+	const regex = /(drive\.google\.com|moddb\.com|mediafire\.com|gamefront\.com|mediafire\.com|ds-servers\.com|ofpec\.com|sendspace\.com|lonebullet\.com|dropbox\.com)\S*([\n]|$)/gm;
+	const found = scripttext.val().match(regex);
+	
+	if (found) {
+		let slash   = found[0].indexOf("/");
+		let domain  = found[0].substring(0, slash);
+		let warning = link_warning_string.replace('%m1%', domain);
+		$("#warning_field").html(warning);
+	} else {
+		$("#warning_field").html("");
+	}
+}
 
 
 /* common.php */

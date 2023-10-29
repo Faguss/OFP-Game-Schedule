@@ -14,7 +14,6 @@ $js_modal = "
 			<li><b>Mediafire</b> - <span style=\"font-size:x-small;\">http://www.mediafire.com/file/4rm6uf16ihe36ce/wgl512_2006-11-12.rar/file</span></li>
 			<li><b>GameFront</b> - <span style=\"font-size:x-small;\">https://www.gamefront.com/games/operation-flashpoint/file/fdf-mod</span></li>
 			<li><b>DSServers</b> - <span style=\"font-size:x-small;\">https://ds-servers.com/gf/operation-flashpoint/modifications/miscellaneous/fdf-mod-v1-4.html</span></li>
-			<li><b>ArmaHolic</b> - <span style=\"font-size:x-small;\">https://www.armaholic.com/page.php?id=34273</span></li>
 			<li><b>OFPEC</b> - <span style=\"font-size:x-small;\">https://www.ofpec.com/addons_depot/index.php?action=details&id=69</span></li>
 			<li><b>SendSpace</b> - <span style=\"font-size:x-small;\">https://www.sendspace.com/file/8r9g4z</span></li>
 			<li><b>LoneBullet</b> - <span style=\"font-size:x-small;\">https://www.lonebullet.com/mods/download-ecp-1085e-tgs-operation-flashpoint-resistance-mod-free-52029.htm</span></li>
@@ -65,6 +64,28 @@ $js_modal = "
 	GS_activate_convertlink_modal();
 </script>";
 
+$js_verify_installation_script = "
+<script>
+	var typingTimer;
+	var scripttext;
+	var link_warning_string = '".lang("GS_STR_MOD_WARNING_LINK")."';
+	
+	$( document ).ready(function() {
+		scripttext = $('#scripttext');
+		$('#warning_field').addClass('text-danger');
+
+		scripttext.on('keyup', function () {
+			clearTimeout(typingTimer);
+			typingTimer = setTimeout(GS_verify_installation_script, 1000);
+		});
+
+		scripttext.on('keydown', function () {
+			clearTimeout(typingTimer);
+		});
+	});
+</script>
+";
+
 $install_hint    = lang("GS_STR_MOD_INSTALLATION_HINT",["<a target=\"_blank\" href=\"install_scripts\">","</a>","<a target=\"_blank\" href=\"install_scripts#testing\">","</a>"]);
 $install_example = "ftp://ftp.armedassault.info/ofpd/unofaddons2/ww4mod25rel.rar";
 
@@ -109,6 +130,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 		$form->add_text("version", lang("GS_STR_MOD_VERSION"), lang("GS_STR_MOD_VERSION_HINT"), "1", "1");
 	
 	$form->add_text("scripttext" , lang("GS_STR_MOD_INSTALLATION_SCRIPT"), $install_hint, $install_example, "", -1);
+	$form->add_emptyspan("warning_field");
 	$form->add_emptyspan("convertlink_field", "id=\"convertlink_field_group\"");
 	$form->add_text("size"      , lang("GS_STR_MOD_DOWNLOADSIZE"), "", "128");
 	$form->add_select("sizetype", ""                             , "", GS_SIZE_TYPES, "MB");
@@ -119,6 +141,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	if ($form->hidden["display_form"] == "Add New") {
 		$form->include_file("usersc/js/gs_functions.js");
 		$form->add_html($js_modal);
+		$form->add_html($js_verify_installation_script);
 	}
 
 	$form->change_control(["size","sizetype"], ["Inline"=>3]);
