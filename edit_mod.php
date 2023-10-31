@@ -89,6 +89,72 @@ $js_verify_installation_script = "
 $install_hint    = lang("GS_STR_MOD_INSTALLATION_HINT",["<a target=\"_blank\" href=\"install_scripts\">","</a>","<a target=\"_blank\" href=\"install_scripts#testing\">","</a>"]);
 $install_example = "ftp://ftp.armedassault.info/ofpd/unofaddons2/ww4mod25rel.rar";
 
+// Installation scripts faq
+$faq = [
+["GS_STR_MOD_FAQ_HOWTOWRITE", [
+	["GS_STR_MOD_FAQ_PAR1"],
+	["GS_STR_MOD_FAQ_CONVERT_Q1", [
+		["GS_STR_MOD_FAQ_CONVERT_A1"]
+	]],
+	["GS_STR_MOD_FAQ_CONVERT_Q2", [
+		["GS_STR_MOD_FAQ_CONVERT_A2"]
+	]],
+	["GS_STR_MOD_FAQ_LINKS_Q", [
+		["GS_STR_MOD_FAQ_LINKS_A1"],
+		["GS_STR_MOD_FAQ_LINKS_A2", "install_scripts#links"]
+	]],
+	["GS_STR_MOD_FAQ_AUTO_Q", [
+		["GS_STR_MOD_FAQ_AUTO_A"],
+		["GS_STR_MOD_FAQ_AUTO_A2", "install_scripts#auto_installation"]
+	]],
+	["GS_STR_MOD_FAQ_MANUAL_Q", [
+		["GS_STR_MOD_FAQ_MANUAL_A"],
+		["Unpack", [
+			["GS_STR_MOD_FAQ_UNPACK_A1"],
+			["GS_STR_MOD_FAQ_UNPACK_A2","install_scripts#unpack"],
+		]],
+		["Move", [
+			["GS_STR_MOD_FAQ_MOVE_A1"],
+			["GS_STR_MOD_FAQ_MOVE_A2", "install_scripts#move"],
+		]],
+		["GS_STR_MOD_FAQ_MANUAL_Q2", [
+			["GS_STR_MOD_FAQ_MANUAL_A2"],
+			["GS_STR_MOD_FAQ_MANUAL_A3", "install_scripts#manual_installation"]
+		]],
+		["GS_STR_MOD_FAQ_MISSION_Q", [
+			["GS_STR_MOD_FAQ_MISSION_A1"],
+			["GS_STR_MOD_FAQ_MISSION_A2", "install_scripts#missions"]
+		]],
+		["GS_STR_MOD_FAQ_DTA_Q", [
+			["GS_STR_MOD_FAQ_DTA_A1"],
+			["GS_STR_MOD_FAQ_DTA_A2", "install_scripts#installation_examples_wgl"]
+		]],
+	]],
+	["GS_STR_MOD_FAQ_TEST_Q", "install_scripts#testing"]
+]]
+];
+
+$dta_code_template = "
+IF_VERSION  <=  1.96
+	UNPBO <game>\Res\Dta\HWTL\data.pbo  dta\HWTL
+	MOVE new_textures\*.pa?  dta\HWTL\Data
+	MAKEPBO
+	
+	UNPBO <game>\Res\Dta\HWTL\data3d.pbo  dta\HWTL
+	MOVE new_models\*.p3d  dta\HWTL\data3d
+	MAKEPBO
+ELSE
+	UNPBO <game>\DTA\Data.pbo  dta
+	MOVE new_textures\*.pa?  dta\Data
+	MAKEPBO
+	
+	UNPBO <game>\DTA\Data3D.pbo  dta
+	MOVE new_models\*.p3d  dta\Data3D
+	MAKEPBO
+ENDIF";
+
+$install_hint = GS_format_collapse($faq);
+
 
 
 // If user wants to add new mod or edit existing
@@ -275,7 +341,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				$form->fail(lang("GS_STR_ERROR_GET_DB_RECORD"));
 		
 	if ($form->hidden["display_form"] == "Edit") {
-		$fields_to_remove = ["convertlink_field", "scripttext", "size", "sizetype", "subtitle"];
+		$fields_to_remove = ["warning_field", "convertlink_field", "scripttext", "size", "sizetype", "subtitle"];
 		
 		// If public duplicates of a mod exist then keep the "subtitle" input field; otherwise hide it
 		if ($db->query("SELECT COUNT(name) AS duplicates FROM gs_mods WHERE name=? AND gs_mods.removed=0 AND gs_mods.access='' GROUP BY name",[$form->data["name"]]))
@@ -348,11 +414,13 @@ if ($form->hidden["display_form"] == "Update")
 	$form->add_space(1);
 	$form->add_select("script", lang("GS_STR_MOD_INSTALLATION_SCRIPT"), "", []);
 	$form->add_text("scripttext", "", $install_hint, $install_example, "", -1);
+	$form->add_emptyspan("warning_field");
 	$form->add_emptyspan("convertlink_field", "id=\"convertlink_field_group\"");
 	$form->add_text("size", lang("GS_STR_MOD_DOWNLOADSIZE"), "", "128");
 	$form->add_select("sizetype", "", "", GS_SIZE_TYPES, "MB");
 	$form->change_control(["size", "sizetype"], ["Inline"=>3]);
 	$form->add_html($js_modal);
+	$form->add_html($js_verify_installation_script);
 		
 	// Preview button
 	$form->add_space(1);

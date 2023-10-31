@@ -3641,4 +3641,59 @@ function GS_compare_names_with_trim($a, $b) {
 		GS_trim_servermod_name($b["name"])
 	);
 }
+
+function GS_format_collapse($list, $nesting=0) {
+    $nesting++;
+    $output       = '';
+    $margin_title = 10*($nesting-1);
+	
+	if ($nesting > 1)
+		$output .= '<ul>';
+    
+    foreach($list as $key=>$item) {
+        if ($nesting > 1)
+			$output .= '<li style="color:#666;margin-left:'.$margin_title.'px">';
+		
+		$text    = substr($item[0],0,2)=="GS" ? lang($item[0]) : $item[0];
+		$id      = $nesting.$key;
+		$type    = "paragraph";
+		$content = null;
+		
+		if (count($item) > 1) {
+			$content = $item[1];
+			$type    = is_array($content) ? "collapse" : "link";
+		}
+
+        switch($type) {
+            case "collapse" : {
+                $output .= '
+                <a role="button" data-toggle="collapse" href="#collapse'.$id.'" aria-expanded="false" aria-controls="collapse'.$id.'">
+                '.$text.'
+                </a>
+                <div class="collapse" id="collapse'.$id.'">
+                '.GS_format_collapse($content, $nesting).'
+                </div>';
+            } break;
+
+            case "paragraph" : {
+				$output .= $text; 
+				if ($item[0] == "GS_STR_MOD_FAQ_DTA_A1") {
+					global $dta_code_template;
+					$output .= "<pre>".htmlspecialchars($dta_code_template)."</pre>";
+				}
+			} break;
+			
+            case "link" : $output.='<a target="_blank" href="'.$content.'">'.$text.'</a>'; break;
+        }
+
+		if ($nesting > 1)
+			$output .= '</li>';
+    }
+	
+	if ($nesting > 1)
+		$output .= '</ul>';
+	
+    $nesting--;
+    return $output;
+}
 ?>
