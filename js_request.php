@@ -65,13 +65,6 @@ function get_filename_from_page($url) {
 			$keywords = ["<div class=\"filename\">", "</div>"];
 			break;
 		}
-
-		case "www.gamefront.com" : {
-			if (stripos($url_tokens["path"], "/download") !== FALSE)
-				$page_content = url_get_contents(get_text_between($page_content, "Redirecting to ", "</title>"));
-			$keywords = ["<i class=\"fa fa-download\"></i> Download '", "'"];
-			break;
-		}
 		
 		case "ds-servers.com" : {
 			if (stripos($url_tokens["path"], "/files/gf/") !== FALSE)

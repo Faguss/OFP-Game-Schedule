@@ -977,6 +977,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<br>
 	
 	<p><?=lang("GS_IS_UNPACK_PAR4")?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1067,6 +1068,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 
 	<p><?=lang("GS_IS_MOVE_PAR15", ["&lt;game&gt;"])?></p>	
 	<pre><code><?=GS_scripting_highlighting("COPY  <game>\\bin\\Resource.cpp  bin")?></code></pre>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1091,6 +1093,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	
 	<p><?=lang("GS_IS_UNPBO_PAR4", ["&lt;game&gt;"])?></p>
 	<pre><code><?=GS_scripting_highlighting("UNPBO  <game>\\addons\\kozl.pbo  addons")?></code></pre>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1114,6 +1117,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	
 	<p><?=lang("GS_IS_MAKEPBO_PAR3")?></p>
 	<p><?=lang("GS_IS_MAKEPBO_PAR4")?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1137,6 +1141,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<p><?=lang("GS_IS_EDIT_PAR6")?></p>
 	<p><?=lang("GS_IS_EDIT_PAR7")?></p>
 	<p><?=lang("GS_IS_EDIT_PAR8", ["&lt;download&gt;", "&lt;dl&gt;"])?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1161,6 +1166,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<br>
 	
 	<p><?=lang("GS_IS_DELETE_PAR3")?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1181,6 +1187,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<p><?=lang("GS_IS_EXAMPLE")?></p>
 	<pre><code><?=GS_scripting_highlighting("IF_VERSION  <=  1.96\n\tUNPACK	https://www.mediafire.com/download/86d97zspupnjk9c  ://download  \"WW4 Extended OFP patch v111.zip\"\n\tMOVE	v196_patch\\ww4ext_inf_cfg.pbo.OFP  addons  ww4ext_inf_cfg.pbo\nENDIF")?></code></pre>
 	<pre><code><?=GS_scripting_highlighting("IF_VERSION  >=  1.99\n\tCOPY	<game>\\bin\\Config.cpp  bin\nELSE\n\tCOPY	<game>\\Res\\bin\\Config.cpp  bin\nENDIF")?></code></pre>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1196,6 +1203,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<pre><code><?=GS_scripting_highlighting("MERGE_WITH  @CoC\nhttps://files.ofpisnotdead.com/files/ofpd/unofaddons2/CoC_UA110_Setup.exe")?></code></pre>
 	<p><?=lang("GS_IS_ALIAS_PAR3")?></p>
 	<p><?=lang("GS_IS_ALIAS_PAR4")?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1216,6 +1224,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<pre><code><?=GS_scripting_highlighting("RENAME  addons\\*.pbo  *.pbx\nRENAME  addons\\*.pbo  ??????????????????_OLD*")?></code></pre>
 	<p><?=lang("GS_IS_RENAME_PAR2")?></p>
 	<pre><code><?=GS_scripting_highlighting("RENAME  *  *_old  /match_dir")?></code></pre>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1234,6 +1243,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\addons</span><br>
 	<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\dta</span><br>
 	<span class="courier" style="margin-left:2em;">&lt;<?=lang("GS_IS_GAME_FOLDER")?>&gt;\&lt;<?=lang("GS_IS_MOD_FOLDER")?>&gt;\dta\hwtl</span><br>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1246,6 +1256,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	
 	<p><?=lang("GS_IS_EXAMPLE")?></p>
 	<pre><code><?=GS_scripting_highlighting("FILEDATE  addons\\example.pbo  2021-02-11T21:36:37")?></code></pre>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1259,6 +1270,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	
 	<p><?=lang("GS_IS_EXAMPLE")?></p>
 	<pre><code><?=GS_scripting_highlighting("GET  http://example.com/part1.rar\nGET  http://example.com/part2.rar")?></code></pre>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1272,6 +1284,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	
 	<p><?=lang("GS_IS_EXAMPLE")?></p>
 	<pre><code><?=GS_scripting_highlighting("ASK_GET  ww4mod25rel.rar  https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25")?></code></pre>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1295,6 +1308,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<br>
 	
 	<p><?=lang("GS_IS_ASK_RUN_PAR4")?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 
 
 
@@ -1303,6 +1317,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<h3 class="commandtitle">Exit, Quit</h3>
 	<pre><code><span class="scripting_command">EXIT</span></code></pre>
 	<p><?=lang("GS_IS_EXIT_PAR1")?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 	</div>
 </div>
 

@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,10,25,3,20,38,5,91,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,11,5,0,20,18,13,133,60,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1186,11 +1186,11 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				if ($end_date > $now) {
 					if ($request_type == GS_REQTYPE_GAME) {
 						// Localize date time for the user
-						$utc_start = clone $start_date;
-						$utc_start->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
+						$local_start = clone $start_date;
+						$local_start->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
 						
-						$utc_end = clone $end_date;
-						$utc_end->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
+						$local_end = clone $end_date;
+						$local_end->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
 						
 						$locale = "en_GB";
 						if ($language == "Polish") $locale="pl_PL";
@@ -1201,30 +1201,30 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 						
 						if ($event["type"]==GS_EVENT_SINGLE || (($event["type"]==GS_EVENT_WEEKLY || $event["type"]==GS_EVENT_DAILY) && $start_date_orig > $now)) {
 							$formatter->setPattern('d MMMM ');
-							$event["description"] .= $formatter->format($utc_start);
+							$event["description"] .= $formatter->format($local_start);
 						}
 						
 						if ($event["type"] == GS_EVENT_DAILY)
 							$event["description"] .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_DAILY"), $language) . " ";
 						
 						if ($event["type"] == GS_EVENT_WEEKLY)
-							$event["description"] .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$utc_start->format("w")), $language) . " ";
+							$event["description"] .= GS_convert_utf8_to_windows(lang("GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC".$local_start->format("w")), $language) . " ";
 						
 						$formatter->setPattern('HH:mm');
-						$event["description"] .= $formatter->format($utc_start) . " - " . $formatter->format($utc_end) . "\"";
+						$event["description"] .= $formatter->format($local_start) . " - " . $formatter->format($local_end) . "\"";
 						
 						$event["date"]          = $start_date;
 						$event["date_end"]      = $end_date;
 						$event["date_sqf"]      = 
 								"[{$event["type"]},[".
-								$start_date->format("Y").",".
-								$start_date->format("n").",".
-								$start_date->format("j").",".
-								$start_date->format("w").",".
-								$start_date->format("H").",".
-								$start_date->format("i").",".
-								$start_date->format("s").",0,".
-								($time_zone -> getOffset($start_date) / 60).
+								$local_start->format("Y").",".
+								$local_start->format("n").",".
+								$local_start->format("j").",".
+								$local_start->format("w").",".
+								$local_start->format("H").",".
+								$local_start->format("i").",".
+								$local_start->format("s").",0,".
+								$timeoffset.
 								",false],{$event["duration"]}]";
 					}
 					
