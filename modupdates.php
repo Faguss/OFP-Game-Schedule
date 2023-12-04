@@ -171,13 +171,6 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_MU_SECTION5_PAR5" => "См. также <a href=\"install_scripts#testing\">тестирование сценариев установки</a>.",
 	));
 }
-?>
-
-<div id="page-wrapper">
-	<div class="container">
-	
-<?php
-languageSwitcher();
 
 echo "
 <div class=\"jumbotron\">
@@ -318,9 +311,6 @@ foreach($paragraphs as $index=>$paragraph) {
 	</div><!-- /panel -->";
 }
 ?>	
-
-	</div>
-</div>
 
 <!-- Place any per-page javascript here -->
 

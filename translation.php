@@ -2,8 +2,6 @@
 require_once 'users/init.php';
 require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 ?>
-<div id="page-wrapper">
-	<div class="container">
 	
 <style>
 .context_link {
@@ -1051,9 +1049,6 @@ function create_text_input_inside_table_cell(table_cell) {
 	}
 }
 </script>
-
-	</div>
-</div>
 
 <!-- Place any per-page javascript here -->
 

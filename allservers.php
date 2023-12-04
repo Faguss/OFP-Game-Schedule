@@ -16,10 +16,6 @@ $servers = GS_list_servers(["current"], [], GS_REQTYPE_WEBSITE, 0, $lang["THIS_L
 $mods    = GS_list_mods($servers["mods"], [], [], [], GS_REQTYPE_WEBSITE, $servers["lastmodified"]);
 
 echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, GS_SPLIT_PERSISTENT) . "</div>";
-
-echo '<div class="index_section">';
-languageSwitcher();
-echo '</div>';
 ?>
 
 

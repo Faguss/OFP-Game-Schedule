@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2023,11,5,0,20,18,13,133,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2023,12,2,6,1,46,42,427,60,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -3566,11 +3566,19 @@ function GS_url_get_contents($url, $timeout=NULL) {
 // Output address to image or placeholder
 function GS_output_item_logo($record_type, $filename, $size=32) {
 	$html = '<img width='.$size.' height='.$size.' src=';
+	$path = '';
+
+	if (!empty($filename)) {
+		$check = 'logo/'.str_replace('.paa','.png',$filename);
 		
-	if (substr($filename, -3) == "jpg")
-		$html .= 'logo/'.$filename;
+		if (file_exists($check))
+			$path = $check;
+	}
+	
+	if (!empty($path))
+		$html .= $path;
 	else
-		$html .= "images/placeholder/placeholder_".$record_type."_".$size.".png";
+		$html .= 'images/placeholder/placeholder_'.$record_type.'_'.$size.'.png';
 		
 	return $html.'>';
 }

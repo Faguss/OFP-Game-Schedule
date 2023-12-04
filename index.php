@@ -722,12 +722,6 @@ echo '
 
 </div>';
 
-
-echo '<div class="index_section">';
-languageSwitcher();
-echo '</div>';
-
-
 $localized_strings = [
 	"Daily" => "GS_STR_SERVER_EVENT_REPEAT_DAILY_DESC",
 	"0"     => "GS_STR_SERVER_EVENT_REPEAT_WEEKLY_DESC0",

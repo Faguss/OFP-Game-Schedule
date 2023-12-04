@@ -89,10 +89,6 @@ echo '<div id="page-wrapper">
 	</div>
 </div>';
 
-
-echo "<br><br>";
-if (isset($user) && $user->isLoggedIn())
-	languageSwitcher();
 ?>
 <!-- Place any per-page javascript here -->
 

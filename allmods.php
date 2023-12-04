@@ -8,7 +8,6 @@ if (!securePage($_SERVER['PHP_SELF']))
 
 require_once "common.php";
 $Parsedown = new Parsedown();
-languageSwitcher();
 
 // Get all records
 $sql_allmods = "
@@ -97,14 +96,9 @@ foreach ($mod_labels as $key=>$label) {
 		if (!empty($modfolders[$i]["website"]))
 			$mod_links .= ' &nbsp;<a target="_blank" href="'.$modfolders[$i]["website"].'"><span class="glyphicon glyphicon-globe"></span></a>';
 		
-		$mod_logo = '<img src="images/placeholder/placeholder_mod_64.png">';
-		
-		if (!empty($modfolders[$i]["logo"]) && substr($modfolders[$i]["logo"], -3)!="paa")
-			$mod_logo = '<img width=64 height=64 src="'.GS_get_current_url(false).GS_LOGO_FOLDER.'/'.$modfolders[$i]["logo"].'">';
-		
 		$html .= 
 		'<tr>
-			<td>'.$mod_logo.'</td>
+			<td>'.GS_output_item_logo("mod",$modfolders[$i]["logo"],64).'</td>
 			<td><b>'.$modfolders[$i]["name"].'</b></td>
 			<td>'.$Parsedown->line($modfolders[$i]["description"]).' '.$mod_links.'</td>
 			<td>'.$modfolders[$i]["addedby"].'</td>

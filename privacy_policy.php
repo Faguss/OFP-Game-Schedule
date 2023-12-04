@@ -6,8 +6,6 @@ require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 
 ?>
 
-<div id="page-wrapper">
-<div class="container">
 <STYLE TYPE="text/css">
 .website_url {font-style:italic;  color:#71d1b2;}
 .website_name {font-weight: bold;}
@@ -58,11 +56,6 @@ require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 
 <br><br>
 
-
-
-</div> <!-- /container -->
-
-</div> <!-- /#page-wrapper -->
 
 <!-- Place any per-page javascript here -->
 

@@ -3,9 +3,6 @@ require_once 'users/init.php';
 require_once $abs_us_root.$us_url_root.'users/includes/template/prep.php';
 require_once "common.php";
 
-if (!isset($user) || (isset($user) && !$user->isLoggedIn()))
-	languageSwitcher();
-
 	
 // Get servers and mods info from database
 $input         = GS_get_common_input();
@@ -18,7 +15,7 @@ $csrf          = Session::get(Config::get('session/token_name'));
 
 // Display servers	
 if (!empty($servers["id"]))
-	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
+	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:x-large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
 
 echo '<div class="row">' . GS_format_server_info($servers, $mods, 12, GS_USER_INFO, $input["server"]) . '</div>';
 
@@ -27,7 +24,7 @@ echo '<div class="row">' . GS_format_server_info($servers, $mods, 12, GS_USER_IN
 if (!empty($mods["id"]))
 	echo '
 	<center>
-		<a style="cursor:pointer; font-weight:bold; font-size:large;" href="https://youtu.be/vj04wSh-9CA" target="_blank">'.lang("GS_STR_MOD_HOWTO_INSTALL").'</a>
+		<a style="cursor:pointer; font-weight:bold; font-size:x-large;" href="https://youtu.be/vj04wSh-9CA" target="_blank">'.lang("GS_STR_MOD_HOWTO_INSTALL").'</a>
 	</center>
 	<br>';
 
@@ -273,8 +270,5 @@ if (!empty($js_addedon)) {
 }
 
 echo '</div><!-- end mods row-->';
-	
-if (isset($user) && $user->isLoggedIn())
-	languageSwitcher();
 
 require_once $abs_us_root . $us_url_root . 'usersc/templates/' . $settings->template . '/footer.php'; //custom template footer ?>

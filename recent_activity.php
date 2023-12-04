@@ -9,12 +9,6 @@ if (!securePage($_SERVER['PHP_SELF']))
 
 require_once "common.php";
 
-?>
-
-<DIV ID="page-wrapper">
-<DIV CLASS="container">
-
-<?php
 $exclude_list = [
 	GS_LOG_SERVER_UPDATED,
 	GS_LOG_SERVER_REVOKE_ACCESS,
@@ -69,15 +63,7 @@ echo "</table>
 </div>
 
 </div></div></div></div>";
-
-if (isset($user) && $user->isLoggedIn())
-	languageSwitcher();
 ?>
-
-
-	</DIV> <!-- /.container -->
-</DIV> <!-- /.wrapper -->
-
 
 <!-- Place any per-page javascript here -->
 

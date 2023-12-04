@@ -259,18 +259,42 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_EXAMPLE_PAR56" => "Replace island cutscenes so that a message will show up when Fwatch is enabled",
 
 	#Testing scripts
-	"GS_IS_TEST_PAR1" => "Write your installation script in the <span class=\"courier\">fwatch\\data\\addonInstaller_test.txt</span>",
-	"GS_IS_TEST_PAR2" => "Run <span class=\"courier\">addonInstaller.exe</span> with parameters <code>-testmod=%m1%mod name%m2%</code> and optionally <code>-testdir=%m1%folder name%m2%</code></span>",
-	"GS_IS_TEST_PAR3" => "Example: <code>-testmod=@ww4mod25 -testdir=@test</code>. Folder <span class=\"courier\">@test</span> will be treated as if it's <span class=\"courier\">@ww4mod25</span>.",
-	"GS_IS_TEST_PAR4" => "See <span class=\"courier\">fwatch\\data\\addonInstallerLog.txt</span> for feedback on the installation process.",
-	"GS_IS_TEST_PAR5" => "Add parameter <code>-gameversion=%m1%number%m2%</code> to test conditions.",
-	"GS_IS_TEST_PAR6" => "In testing mode downloaded files won't be removed so you won't have to redownload them every time you run the installer.",
-	"GS_IS_TEST_PAR7" => "Installer will generate <span class=\"courier\">fwatch\\tmp\\__downloadtoken</span> file which you can use to find intermediate download links:",
-	"GS_IS_TEST_PAR8" => "Open it in your web browser",
-	"GS_IS_TEST_PAR9" => "Find the <i>Download</i> button, right-click on it and select <i>Inspect</i>",
-	"GS_IS_TEST_PAR10" => "Property <i>href</i> contains the link you're looking for. Pick a small part of it that is constant",
-	"GS_IS_TEST_PAR11" => "Do a search to make sure that the selected part does not occur anywhere else in the file",
-	"GS_IS_TEST_PAR12" => "If it doesn't then you can add it to your installation script"
+	"GS_IS_TEST_PAR1" => "Launch <span class=\"courier\">fwatch\\data\\addonInstarrer.exe</span>. The installer will start in test mode.",
+	"GS_IS_TEST_PAR2" => "Section \"Edit Script\":",
+	"GS_IS_TEST_PAR3" => "write your installation script here",
+	"GS_IS_TEST_PAR4" => "\"Save and Test\" (CTRL-S) - saves written text to the fwatch\\data\\addonInstaller_test.txt and then interprets it",
+	"GS_IS_TEST_PAR5" => "\"Reload file\" - reads contents of fwatch\\data\\addonInstaller_test.txt to the text input",
+	"GS_IS_TEST_PAR6" => "\"Documentation\" - opens this page in a web browser",
+	"GS_IS_TEST_PAR7" => "\"Convert download link\" - opens dialog for making links (from certain sites) usable by the installer",
+	"GS_IS_TEST_PAR8" => "\"Insert DTA template\" - pastes code for modifying dta\\data.pbo and dta\\data3d.pbo",
+	"GS_IS_TEST_PAR9" => "CTRL-A - selects entire text",
+	"GS_IS_TEST_PAR10" => "CTRL-D - duplicate current line",
+	"GS_IS_TEST_PAR11" => "Section \"Testing\":",
+	"GS_IS_TEST_PAR12" => "\"Mod name\" - determines destination folder; it's also important for the auto installation and \"move\" command",
+	"GS_IS_TEST_PAR13" => "\"Dir name\" - use it to install to a different directory",
+	"GS_IS_TEST_PAR14" => "\"Game version\" - for testing <a href=\"#if_version\">conditions</a>",
+	"GS_IS_TEST_PAR15" => "\"Open mod folder\" - opens destination folder in the Windows Explorer. If it doesn't exist then it opens game directory instead",
+	"GS_IS_TEST_PAR16" => "\"Open fwatch\\tmp\\_extracted\" - opens folder (in the Windows Explorer) to which the installer extracts archives",
+	"GS_IS_TEST_PAR17" => "|< - rewinds installation to the beginning",
+	"GS_IS_TEST_PAR18" => "<< - move to the previous command",
+	"GS_IS_TEST_PAR19" => ">> - executes current command",
+	"GS_IS_TEST_PAR20" => "> - executes commands until the end. Press again to stop (after the current action)",
+	"GS_IS_TEST_PAR21" => "\"Commands\" - list of commands from the installation script. Click on one to get more information about it",
+	"GS_IS_TEST_PAR22" => "\"Jump to this step\" - makes installer start from the selected command. If you're using this option to go backwards then installer will revert changes",
+	"GS_IS_TEST_PAR23" => "\"Show in script\" - selects line with the current command in the script text input",
+	"GS_IS_TEST_PAR24" => "\"Open documentation\" - opens page with information about this command in a web browser",
+	"GS_IS_TEST_PAR25" => "Section \"Log\":",
+	"GS_IS_TEST_PAR26" => "upper window shows what the installer has done so far",
+	"GS_IS_TEST_PAR27" => "lower window shows progress for the current action",
+	"GS_IS_TEST_PAR28" => "In testing mode more disk space is required:",
+	"GS_IS_TEST_PAR29" => "downloaded files won't be removed",
+	"GS_IS_TEST_PAR30" => "installer backups more files than in normal mode",
+	"GS_IS_TEST_PAR31" => "Installer generates <span class=\"courier\">fwatch\\tmp\\__downloadtoken</span> file which you can use to find intermediate download links:",
+	"GS_IS_TEST_PAR32" => "Open it in your web browser",
+	"GS_IS_TEST_PAR33" => "Find the <i>Download</i> button, right-click on it and select <i>Inspect</i>",
+	"GS_IS_TEST_PAR34" => "Property <i>href</i> contains the link you're looking for. Pick a small part of it that is constant",
+	"GS_IS_TEST_PAR35" => "Do a search to make sure that the selected part does not occur anywhere else in the file",
+	"GS_IS_TEST_PAR36" => "If it doesn't then you can add it to your installation script"
 	));
 }
 
@@ -520,18 +544,42 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_EXAMPLE_PAR56" => "Замените ролики острова, чтобы при включении Fwatch появлялось сообщение",
 
 	#Testing scripts
-"GS_IS_TEST_PAR1" => "Напишите скрипт установки в <span class=\"courier\">fwatch\\data\\addonInstaller_test.txt</span>",
-"GS_IS_TEST_PAR2" => "Запустите <span class=\"courier\">addonInstaller.exe</span> с параметрами <code>-testmod=%m1%mod name%m2%</code> и опционально <code>-testdir=%m1%folder имя%m2%</code></span>",
-"GS_IS_TEST_PAR3" => "Пример: <code>-testmod=@ww4mod25 -testdir=@test</code>. Папка <span class=\"courier\">@test</span> будет рассматриваться как <span class=\"courier\">@ww4mod25</span>.",
-"GS_IS_TEST_PAR4" => "См. <span class=\"courier\">fwatch\\data\\addonInstallerLog.txt</span> для отзывов о процессе установки.",
-"GS_IS_TEST_PAR5" => "Добавьте параметр <code>-gameversion=%m1%number%m2%</code> в условия тестирования.",
-"GS_IS_TEST_PAR6" => "В тестовом режиме загруженные файлы не будут удалены, поэтому вам не придется загружать их заново каждый раз при запуске установщика.",
-"GS_IS_TEST_PAR7" => "Установщик сгенерирует файл <span class=\"courier\">fwatch\\tmp\\__downloadtoken</span>, который можно использовать для поиска промежуточных ссылок для скачивания:",
-"GS_IS_TEST_PAR8" => "Откройте его в своем веб-браузере",
-"GS_IS_TEST_PAR9" => "Найдите кнопку <i>Загрузить</i>, щелкните ее правой кнопкой мыши и выберите <i>Проверить</i>",
-"GS_IS_TEST_PAR10" => "Свойство <i>href</i> содержит искомую ссылку. Выберите небольшую его часть, которая является постоянной",
-"GS_IS_TEST_PAR11" => "Выполните поиск, чтобы убедиться, что выбранная часть не встречается больше нигде в файле",
-"GS_IS_TEST_PAR12" => "Если это не так, вы можете добавить его в свой сценарий установки"
+"GS_IS_TEST_PAR1" => "Запустите <span class=\"courier\">fwatch\\data\\addonInstarrer.exe</span>. Установщик запустится в тестовом режиме.",
+"GS_IS_TEST_PAR2" => "Раздел «Редактировать скрипт»:",
+"GS_IS_TEST_PAR3" => "напишите здесь свой скрипт установки",
+"GS_IS_TEST_PAR4" => "\"Сохраните и протестируйте\" (CTRL-S) - сохраняет письменный текст в fwatch\\data\\addonInstaller_test.txt и затем интерпретирует его",
+"GS_IS_TEST_PAR5" => "\"Перезагрузить файл\" - считывает содержимое fwatch\\data\\addonInstaller_test.txt в текстовый ввод",
+"GS_IS_TEST_PAR6" => "\"Документация\" - открывает эту страницу в веб-браузере",
+"GS_IS_TEST_PAR7" => "\"Конвертировать ссылку для скачивания\" - открывает диалог для создания ссылок (с определенных сайтов), доступных для использования установщиком",
+"GS_IS_TEST_PAR8" => "\"Вставить шаблон DTA\" - вставляет код для изменения dta\\data.pbo и dta\\data3d.pbo",
+"GS_IS_TEST_PAR9" => "CTRL-A - выделяет весь текст",
+"GS_IS_TEST_PAR10" => "CTRL-D - дублировать текущую строку",
+"GS_IS_TEST_PAR11" => "Раздел «Тестирование»:",
+"GS_IS_TEST_PAR12" => "\"Название мода\" - определяет папку назначения; это также важно для автоматической установки и команды \"move\"",
+"GS_IS_TEST_PAR13" => "\"Имя каталога\" - используйте его для установки в другой каталог",
+"GS_IS_TEST_PAR14" => "\"Версия игры\" - для <a href=\"#if_version\">условий</a> тестирования",
+"GS_IS_TEST_PAR15" => "\"Открыть папку мода\" - открывает папку назначения в проводнике Windows. Если он не существует, вместо этого открывается каталог игры",
+"GS_IS_TEST_PAR16" => "\"Открыть fwatch\\tmp\\_extracted\" - открывает папку (в проводнике Windows), в которую установщик извлекает архивы",
+"GS_IS_TEST_PAR17" => "|< - перематывает установку на начало",
+"GS_IS_TEST_PAR18" => "<< - перейти к предыдущей команде",
+"GS_IS_TEST_PAR19" => ">> - выполняет текущую команду",
+"GS_IS_TEST_PAR20" => "> - выполняет команды до конца. Нажмите еще раз, чтобы остановиться (после текущего действия)",
+"GS_IS_TEST_PAR21" => "\"Команды\" - список команд из скрипта установки. Нажмите на один, чтобы получить дополнительную информацию о нем",
+"GS_IS_TEST_PAR22" => "\"Перейти к этому шагу\" - заставляет установщик запуститься с выбранной команды. Если вы используете эту опцию для возврата назад, установщик отменит изменения",
+"GS_IS_TEST_PAR23" => "\"Показать в скрипте\" - выбирает строку с текущей командой при вводе текста скрипта",
+"GS_IS_TEST_PAR24" => "\"Открыть документацию\" - открывает страницу с информацией об этой команде в веб-браузере",
+"GS_IS_TEST_PAR25" => "Раздел «Журнал»:",
+"GS_IS_TEST_PAR26" => "верхнее окно показывает, что уже сделал установщик",
+"GS_IS_TEST_PAR27" => "нижнее окно показывает прогресс текущего действия",
+"GS_IS_TEST_PAR28" => "В режиме тестирования требуется больше места на диске:",
+"GS_IS_TEST_PAR29" => "загруженные файлы не будут удалены",
+"GS_IS_TEST_PAR30" => "установщик создает резервные копии большего количества файлов, чем в обычном режиме",
+"GS_IS_TEST_PAR31" => "Установщик сгенерирует файл <span class=\"courier\">fwatch\\tmp\\__downloadtoken</span>, который можно использовать для поиска промежуточных ссылок для скачивания:",
+"GS_IS_TEST_PAR32" => "Откройте его в своем веб-браузере",
+"GS_IS_TEST_PAR33" => "Найдите кнопку <i>Загрузить</i>, щелкните ее правой кнопкой мыши и выберите <i>Проверить</i>",
+"GS_IS_TEST_PAR34" => "Свойство <i>href</i> содержит искомую ссылку. Выберите небольшую его часть, которая является постоянной",
+"GS_IS_TEST_PAR35" => "Выполните поиск, чтобы убедиться, что выбранная часть не встречается больше нигде в файле",
+"GS_IS_TEST_PAR36" => "Если это не так, вы можете добавить его в свой сценарий установки"
 	));
 }
 
@@ -781,25 +829,45 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_EXAMPLE_PAR56" => "Zamień przerywniki filmowe wysp, żeby pojawiła się wiadomość gdy Fwatch jest włączony.",
 
 	#Testing scripts
-	"GS_IS_TEST_PAR1" => "Napisz swój skrypt instalacyjny w <span class=\"courier\">fwatch\\data\\addonInstaller_test.txt</span>",
-	"GS_IS_TEST_PAR2" => "Uruchom <span class=\"courier\">addonInstaller.exe</span> z parametrami <code>-testmod=%m1%nazwa moda%m2%</code> i opcjonalnie <code>-testdir=%m1%nazwa folderu%m2%</code>",
-	"GS_IS_TEST_PAR3" => "Na przykład: <code>-testmod=@ww4mod25 -testdir=@test</code>. Folder <span class=\"courier\">@test</span> będzie traktowany jak gdyby był to <span class=\"courier\">@ww4mod25</span>.",
-	"GS_IS_TEST_PAR4" => "Szczegóły procesu instalacji znajdziesz w <span class=\"courier\">fwatch\\data\\addonInstallerLog.txt</span>.",
-	"GS_IS_TEST_PAR5" => "Dodaj parametr <code>-gameversion=%m1%numer%m2%</code> aby testować warunki.",
-	"GS_IS_TEST_PAR6" => "W trybie testowym pobrane pliki nie zostaną usunięte dzięki czemu nie będziesz musiał za każdym razem je ściągać.",
-	"GS_IS_TEST_PAR7" => "Instalator utworzy plik <span class=\"courier\">fwatch\\tmp\\__downloadtoken</span> który możesz wykorzystać do znalezienia linków przejściowych:",
-	"GS_IS_TEST_PAR8" => "Otwórz go w swojej przeglądarce internetowej",
-	"GS_IS_TEST_PAR9" => "Znajdź przycisk <i>Ściągnij</i>, kliknij na niego prawym przyciskiem i wybierz <i>Zbadaj</i>",
-	"GS_IS_TEST_PAR10" => "Właściwość <i>href</i> zawiera odsyłacz którego szukasz. Wybierz jego małą część która się nie zmienia",
-	"GS_IS_TEST_PAR11" => "Wyszukaj wybraną część aby upewnić się, że nie występuje ona nigdzie indziej w pliku",
-	"GS_IS_TEST_PAR12" => "Jeśli nie to możesz ją dodać do swojego skryptu instalacyjnego"
+	"GS_IS_TEST_PAR1" => "Uruchom <span class=\"courier\">fwatch\\data\\addonInstarrer.exe</span>. Instalator przejdzie w tryb testowania.",
+	"GS_IS_TEST_PAR2" => "Sekcja \"Edycja Skryptu\":",
+	"GS_IS_TEST_PAR3" => "napisz tutaj swój skrypt instalacyjny",
+	"GS_IS_TEST_PAR4" => "\"Zapisz i Przetestuj\" (CTRL-S) - zapisuje wpisany tekst do pliku fwatch\\data\\addonInstaller_test.txt a potem go interpretuje",
+	"GS_IS_TEST_PAR5" => "\"Załaduj plik\" - wczytuje zawartość pliku fwatch\\data\\addonInstaller_test.txt do pola do wpisywania tekstu",
+	"GS_IS_TEST_PAR6" => "\"Dokumentacja\" - otwiera tą stornę w przeglądarce",
+	"GS_IS_TEST_PAR7" => "\"Skonwertuj link\" - otwiera okienko do przetwarzania linków (z pewnych stron) tak, aby mogły zostać użyte przez instalator",
+	"GS_IS_TEST_PAR8" => "\"Wstaw szablon DTA\" - wkleja kod do modifykacji dta\\data.pbo oraz dta\\data3d.pbo",
+	"GS_IS_TEST_PAR9" => "CTRL-A - zaznacza cały tekst",
+	"GS_IS_TEST_PAR10" => "CTRL-D - duplikuje obecnie zaznaczoną linijkę",
+	"GS_IS_TEST_PAR11" => "Sekcja \"Testowanie\":",
+	"GS_IS_TEST_PAR12" => "\"Nazwa moda\" - ustala folder docelowy; jest także potrzebny do automatycznej instalacji oraz komendy \"move\"",
+	"GS_IS_TEST_PAR13" => "\"Nazwa folderu\" - użyj tego pola, żeby zainstalować w innym katalogu",
+	"GS_IS_TEST_PAR14" => "\"Wersja gry\" - do testowania <a href=\"#if_version\">warunków</a>",
+	"GS_IS_TEST_PAR15" => "\"Otwórz mod folder\" - otwiera folder docelowy w Eksploratorze Windows. Jeśli nie istenieje to zamiast tego otwiera folder z grą",
+	"GS_IS_TEST_PAR16" => "\"Otwórz fwatch\\tmp\\_extracted\" - otwiera folder (w Eksploratorze Windows) do którego, instalator wypakowuje archiwa",
+	"GS_IS_TEST_PAR17" => "|< - przewija instalację do początku",
+	"GS_IS_TEST_PAR18" => "<< - przechodzi do poprzedniej komendy",
+	"GS_IS_TEST_PAR19" => ">> - wykonuje aktualną komendę",
+	"GS_IS_TEST_PAR20" => "> - wykonuje komendy aż do końca. Wciśnij jeszcze raz aby zatrzymać (po wykonaniu aktualnego polecenia)",
+	"GS_IS_TEST_PAR21" => "\"Komendy\" - lista komend ze skryptu instalacyjnego. Wybierz którąś aby wyświetlić o niej więcej informacji",
+	"GS_IS_TEST_PAR22" => "\"Przejdź to tego kroku\" - instalator rozpocznie instalację od wybranej komendy. Jeśli używasz tej opcji aby się cofnąć to instalator cofnie zmiany w plikach",
+	"GS_IS_TEST_PAR23" => "\"Pokaż w skrypcie\" - zaznacza linijkę z wybraną komendą w polu do wpisywania skryptu",
+	"GS_IS_TEST_PAR24" => "\"Otwórz dokumentację\" - otwiera stronę z informacjami o wybranej komendzie w przeglądarce",
+	"GS_IS_TEST_PAR25" => "Sekcja \"Zapis czynności\":",
+	"GS_IS_TEST_PAR26" => "Górne okno pokazuje co instalator zrobił dotychczas",
+	"GS_IS_TEST_PAR27" => "Dolne okno pokazuje postęp aktualnego działania",
+	"GS_IS_TEST_PAR28" => "Tryb testowania wymaga więcej wolnego miejsca na dysku:",
+	"GS_IS_TEST_PAR29" => "ściągniete pliki nie są usuwane",
+	"GS_IS_TEST_PAR30" => "instalator zachowuje większą liczbę plików niż w zwykłym trybie",
+	"GS_IS_TEST_PAR31" => "Instalator utworzy plik <span class=\"courier\">fwatch\\tmp\\__downloadtoken</span> który możesz wykorzystać do znalezienia linków przejściowych:",
+	"GS_IS_TEST_PAR32" => "Otwórz go w swojej przeglądarce internetowej",
+	"GS_IS_TEST_PAR33" => "Znajdź przycisk <i>Ściągnij</i>, kliknij na niego prawym przyciskiem i wybierz <i>Zbadaj</i>",
+	"GS_IS_TEST_PAR34" => "Właściwość <i>href</i> zawiera odsyłacz którego szukasz. Wybierz jego małą część która się nie zmienia",
+	"GS_IS_TEST_PAR35" => "Wyszukaj wybraną część aby upewnić się, że nie występuje ona nigdzie indziej w pliku",
+	"GS_IS_TEST_PAR36" => "Jeśli nie to możesz ją dodać do swojego skryptu instalacyjnego"
 	));
 }
 ?>
-
-<div id="page-wrapper">
-	<div class="container">
-		<?php languageSwitcher(); ?>
 
 <div class="jumbotron">
 	<h1 align="center"><?=lang("GS_IS_TITLE")?></h1>
@@ -1667,24 +1735,66 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <div class="panel panel-default betweencommands">
 	<div class="panel-heading"><strong><?=lang("GS_IS_TESTING")?></strong></div>
 	<div class="panel-body">
+	<p><?=lang("GS_IS_TEST_PAR1")?></p>
+	<br>
+	
+	<p><strong><?=lang("GS_IS_TEST_PAR2")?></strong></p>
 	<ul>
-		<li><?=lang("GS_IS_TEST_PAR1")?></li>
-		<li><?=lang("GS_IS_TEST_PAR2", ["&lt;", "&gt;"])?></li>
-	</ul>
-
-	<p><?=lang("GS_IS_TEST_PAR3")?></p>
-	<p><?=lang("GS_IS_TEST_PAR4")?></p>
-	<p><?=lang("GS_IS_TEST_PAR5", ["&lt;", "&gt;"])?></p>
-	<p><?=lang("GS_IS_TEST_PAR6")?></p>
-	<p><?=lang("GS_IS_TEST_PAR7")?></p>
-	<ul>
+		<li><?=lang("GS_IS_TEST_PAR3")?></li>
+		<li><?=lang("GS_IS_TEST_PAR4")?></li>
+		<li><?=lang("GS_IS_TEST_PAR5")?></li>
+		<li><?=lang("GS_IS_TEST_PAR6")?></li>
+		<li><?=lang("GS_IS_TEST_PAR7")?></li>
 		<li><?=lang("GS_IS_TEST_PAR8")?></li>
 		<li><?=lang("GS_IS_TEST_PAR9")?></li>
 		<li><?=lang("GS_IS_TEST_PAR10")?></li>
-		<li><?=lang("GS_IS_TEST_PAR11")?></li>
-		<li><?=lang("GS_IS_TEST_PAR12")?></li>
 	</ul>
-	</div>
+	<br>
+	
+	<p><strong><?=lang("GS_IS_TEST_PAR11")?></strong></p>
+	<ul>
+		<li><?=lang("GS_IS_TEST_PAR12")?></li>
+		<li><?=lang("GS_IS_TEST_PAR13")?></li>
+		<li><?=lang("GS_IS_TEST_PAR14")?></li>
+		<br>
+		<li><?=lang("GS_IS_TEST_PAR15")?></li>
+		<li><?=lang("GS_IS_TEST_PAR16")?></li>
+		<br>
+		<li><?=lang("GS_IS_TEST_PAR17")?></li>
+		<li><?=lang("GS_IS_TEST_PAR18")?></li>
+		<li><?=lang("GS_IS_TEST_PAR19")?></li>
+		<li><?=lang("GS_IS_TEST_PAR20")?></li>
+		<br>
+		<li><?=lang("GS_IS_TEST_PAR21")?></li>
+		<li><?=lang("GS_IS_TEST_PAR22")?></li>
+		<li><?=lang("GS_IS_TEST_PAR23")?></li>
+		<li><?=lang("GS_IS_TEST_PAR24")?></li>
+	</ul>
+	<br>
+	
+	<p><strong><?=lang("GS_IS_TEST_PAR25")?></strong></p>
+	<ul>
+		<li><?=lang("GS_IS_TEST_PAR26")?></li>
+		<li><?=lang("GS_IS_TEST_PAR27")?></li>
+	</ul>
+	<br>
+	
+	<p><?=lang("GS_IS_TEST_PAR28")?></p>
+	<ul>
+		<li><?=lang("GS_IS_TEST_PAR29")?></li>
+		<li><?=lang("GS_IS_TEST_PAR30")?></li>
+	</ul>
+	<br>
+	
+	<p><?=lang("GS_IS_TEST_PAR31")?></p>
+	<ul>
+		<li><?=lang("GS_IS_TEST_PAR32")?></li>
+		<li><?=lang("GS_IS_TEST_PAR33")?></li>
+		<li><?=lang("GS_IS_TEST_PAR34")?></li>
+		<li><?=lang("GS_IS_TEST_PAR35")?></li>
+		<li><?=lang("GS_IS_TEST_PAR36")?></li>
+	</ul>
+	</div>	
 </div>
 
 
@@ -1893,14 +2003,7 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 First release.<br>
 	</div>
 </div>
-	
-	
-	
-	
 
-<!-- end page-wrapper -->	
-	</div>
-</div>
 
 <!-- Place any per-page javascript here -->
 <script>
