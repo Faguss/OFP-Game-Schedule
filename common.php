@@ -75,6 +75,25 @@ define("GS_LOG_MOD_LINK_DELETED"     , 24);
 define("GS_LOG_SERVER_MOD_CHANGED"   , 25);
 define("GS_LOG_INSTALLER_UPDATE"     , 26);
 
+// Recent activity page/rss will include all items except for these
+define("GS_GENERAL_RSS_EXCLUDE", [
+	GS_LOG_SERVER_UPDATED,
+	GS_LOG_SERVER_REVOKE_ACCESS,
+	GS_LOG_MOD_REVOKE_ACCESS,
+	GS_LOG_SERVER_SHARE_ACCESS,
+	GS_LOG_MOD_SHARE_ACCESS,
+	GS_LOG_SERVER_TRANSFER_ADMIN,
+	GS_LOG_MOD_TRANSFER_ADMIN,
+	GS_LOG_MOD_UPDATED,
+	GS_LOG_MOD_SCRIPT_UPDATED,
+	GS_LOG_MOD_SCRIPT_ADDED,
+	GS_LOG_MOD_VERSION_UPDATED,
+	GS_LOG_MOD_LINK_ADDED,
+	GS_LOG_MOD_LINK_UPDATED,
+	GS_LOG_MOD_LINK_DELETED,
+	GS_LOG_SERVER_MOD_CHANGED
+]);
+
 // User permissions
 define("GS_PERM_NOUSER",0);
 define("GS_PERM_USER",1);
@@ -1187,9 +1206,11 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 					if ($request_type == GS_REQTYPE_GAME) {
 						// Localize date time for the user
 						$local_start = clone $start_date;
+						$local_start->setTimezone(new DateTimeZone('UTC'));
 						$local_start->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
 						
 						$local_end = clone $end_date;
+						$local_end->setTimezone(new DateTimeZone('UTC'));
 						$local_end->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
 						
 						$locale = "en_GB";

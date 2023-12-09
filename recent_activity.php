@@ -8,24 +8,7 @@ if (!securePage($_SERVER['PHP_SELF']))
 	die();
 
 require_once "common.php";
-
-$exclude_list = [
-	GS_LOG_SERVER_UPDATED,
-	GS_LOG_SERVER_REVOKE_ACCESS,
-	GS_LOG_MOD_REVOKE_ACCESS,
-	GS_LOG_SERVER_SHARE_ACCESS,
-	GS_LOG_MOD_SHARE_ACCESS,
-	GS_LOG_SERVER_TRANSFER_ADMIN,
-	GS_LOG_MOD_TRANSFER_ADMIN,
-	GS_LOG_MOD_UPDATED,
-	GS_LOG_MOD_SCRIPT_UPDATED,
-	GS_LOG_MOD_SCRIPT_ADDED,
-	GS_LOG_MOD_VERSION_UPDATED,
-	GS_LOG_MOD_LINK_ADDED,
-	GS_LOG_MOD_LINK_UPDATED,
-	GS_LOG_MOD_LINK_DELETED
-];
-$table = GS_get_activity_log(500, $exclude_list, false, GS_get_permission_level($user), GS_get_common_input());
+$table = GS_get_activity_log(500, GS_GENERAL_RSS_EXCLUDE, false, GS_get_permission_level($user), GS_get_common_input());
 
 echo "
 <br>

@@ -664,24 +664,7 @@ if (isset($user) && $user->isLoggedIn()){
 
 
 // Recent activity
-$exclude_list = [
-	GS_LOG_SERVER_UPDATED,
-	GS_LOG_SERVER_REVOKE_ACCESS,
-	GS_LOG_MOD_REVOKE_ACCESS,
-	GS_LOG_SERVER_SHARE_ACCESS,
-	GS_LOG_MOD_SHARE_ACCESS,
-	GS_LOG_SERVER_TRANSFER_ADMIN,
-	GS_LOG_MOD_TRANSFER_ADMIN,
-	GS_LOG_MOD_UPDATED,
-	GS_LOG_MOD_SCRIPT_UPDATED,
-	GS_LOG_MOD_SCRIPT_ADDED,
-	GS_LOG_MOD_VERSION_UPDATED,
-	GS_LOG_MOD_LINK_ADDED,
-	GS_LOG_MOD_LINK_UPDATED,
-	GS_LOG_MOD_LINK_DELETED
-];
-
-$table         = GS_get_activity_log(5, $exclude_list, false, $gs_my_permission_level);
+$table         = GS_get_activity_log(5, GS_GENERAL_RSS_EXCLUDE, false, $gs_my_permission_level);
 $activity_html = "";
 
 foreach($table as $row) {
