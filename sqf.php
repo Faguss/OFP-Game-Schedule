@@ -199,19 +199,12 @@ switch($input_mode) {
 			foreach($server["events"] as $gametime)
 				$server_info .= "]+[{$gametime["description"]}";
 				
-			$server_info .= "];";
+			$server_info .= "];_server_game_times2=[";
 			
-			$server_info .= "_server_game_times2=[";
 			foreach($server["events"] as $gametime)
 				$server_info .= "]+[[{$gametime["description"]},\"{$gametime["eventid"]}\",{$gametime["date_sqf"]}]";
+				
 			$server_info .= "];";
-
-			// Include today game time
-			if (!in_array($id,$servers["listbox"]["now"]) && in_array($id,$servers["listbox"]["today"])) {
-				$time_zone    = new DateTimeZone($server["events"][0]["timezone"]);
-				$offset       = $time_zone->getOffset($server["events"][0]["date"]) / 60;
-				$server_info .= "_today_game_time=" . $server["events"][0]["date"]->format("[Y,n,j,w,H,i,s") . ",0,$offset,false];";
-			}
 					
 			// Add server mods
 			$server_info .= "_server_modfolders=[";

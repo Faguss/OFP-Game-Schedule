@@ -1234,8 +1234,8 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 						$formatter->setPattern('HH:mm');
 						$event["description"] .= $formatter->format($local_start) . " - " . $formatter->format($local_end) . "\"";
 						
-						$event["date"]          = $start_date;
-						$event["date_end"]      = $end_date;
+						$event["date"]     = $local_start;
+						$event["date_end"] = $local_end;						
 						$event["date_sqf"]      = 
 								"[{$event["type"]},[".
 								$local_start->format("Y").",".
