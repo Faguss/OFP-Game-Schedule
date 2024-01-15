@@ -504,9 +504,14 @@ switch($input_mode) {
 			}
 		}
 		
-		$arg_mod = "";
-		foreach($mods["info"] as $mod)
-			$arg_mod .= "{$mod["uniqueid"]};";
+		$arg_mod  = "";
+		$mod_info = "";
+		
+		foreach($server["mods"] as $mod_key) {
+			$mod       = $mods["info"][$mod_key];
+			$arg_mod  .= "{$mod["uniqueid"]};";
+			$mod_info .= packString($mod["name"], $mod["uniqueid"], $mod["version"]) . pack("c", intval($mod["forcename"]));
+		}
 		
 		if (!empty($arg_mod))
 			$argline .= "-modid=$arg_mod ";
@@ -532,12 +537,8 @@ switch($input_mode) {
 			pack("Vl", GR_TAG_EVENT_TYPE, $event["type"]) .
 			pack("Vc", GR_TAG_EVENT_VACATION, intval($event["vacation"])) .
 			pack("V" , GR_TAG_EXE_ARGUMENTS) . packString($argline) . 
-			pack("VV", GR_TAG_MOD_INFO, count($mods["info"]));
-		
-		foreach($mods["info"] as $mod)
-			$output .= 
-				packString($mod["name"], $mod["uniqueid"], $mod["version"]) . 
-				pack("c", intval($mod["forcename"]));
+			pack("VV", GR_TAG_MOD_INFO, count($mods["info"])) .
+			$mod_info;			
 
 		break;
 	}

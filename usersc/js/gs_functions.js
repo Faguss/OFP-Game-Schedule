@@ -1225,7 +1225,7 @@ function GS_activate_convertlink_modal() {
 				final_url += ' ';
 				
 				if (convertlink_modal_size.checked)
-					final_url += 'confirm= ';
+					final_url += '/download ';
 			}
 		}
 
