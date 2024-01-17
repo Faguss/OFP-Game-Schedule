@@ -15,6 +15,13 @@ $Parsedown = new Parsedown();
 $servers = GS_list_servers(["current"], [], GS_REQTYPE_WEBSITE, 0, $lang["THIS_LANGUAGE"], $user);
 $mods    = GS_list_mods($servers["mods"], [], [], [], GS_REQTYPE_WEBSITE, $servers["lastmodified"]);
 
+echo '
+<div class="permalink_parent" style="padding-right: 16px;">
+	<div class="permalink_child">
+		<a href="rss?server=all"><span class="fa fa-rss"></span></a>
+	</div>
+</div>';
+
 echo "<div class=\"row\">" . GS_format_server_info($servers, $mods, 12, GS_SPLIT_PERSISTENT) . "</div>";
 ?>
 

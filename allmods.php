@@ -110,9 +110,16 @@ foreach ($mod_labels as $key=>$label) {
 
 
 
-echo '<div class="jumbotron">
-	<h1 align="center">'.lang("GS_STR_INDEX_ALLMODS"). ' (' .count($modfolders_id) . ')</h1>
-	<p align="center" style="font-size: 1em;">';
+echo '
+<div class="permalink_parent" style="padding-right: 16px;">
+	<div class="permalink_child">
+		<a href="rss?mod=all"><span class="fa fa-rss"></span></a>
+	</div>
+</div>
+
+<div class="jumbotron">
+<h1 align="center">'.lang("GS_STR_INDEX_ALLMODS"). ' (' .count($modfolders_id) . ')</h1>
+<p align="center" style="font-size: 1em;">';
 
 foreach ($mod_labels as $key=>$label)
 	echo '<a align="center" href="#'.$anchors[$key].'">'.$label.'</a>  &nbsp; ';

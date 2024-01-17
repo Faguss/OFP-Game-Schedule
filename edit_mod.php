@@ -191,14 +191,14 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->add_text("access"     , lang("GS_STR_MOD_ACCESS")   , lang("GS_STR_MOD_ACCESS_HINT"));
 	$form->add_select("forcename", lang("GS_STR_MOD_FORCENAME"), lang("GS_STR_MOD_FORCENAME_HINT"), [[lang("GS_STR_DISABLED"),"0"], [lang("GS_STR_ENABLED"),"1"]], "0", "radio");
 	
-	if ($form->hidden["display_form"] == "Add New")
+	if ($form->hidden["display_form"] == "Add New") {
 		$form->add_text("version", lang("GS_STR_MOD_VERSION"), lang("GS_STR_MOD_VERSION_HINT"), "1", "1");
-	
 	$form->add_text("scripttext" , lang("GS_STR_MOD_INSTALLATION_SCRIPT"), $install_hint, $install_example, "", -1);
 	$form->add_emptyspan("warning_field");
 	$form->add_emptyspan("convertlink_field", "id=\"convertlink_field_group\"");
 	$form->add_text("size"      , lang("GS_STR_MOD_DOWNLOADSIZE"), "", "128");
 	$form->add_select("sizetype", ""                             , "", GS_SIZE_TYPES, "MB");
+	}
 	
 	$form->add_select("is_mp"  , lang("GS_STR_MOD_MPCOMP") , lang("GS_STR_MOD_MPCOMP_HINT") , [[lang("GS_STR_MOD_MPCOMP_YES"),"1"], [lang("GS_STR_MOD_MPCOMP_NO"),"0"]], "1", "radio");
 	$form->add_imagefile("logo", lang("GS_STR_SERVER_LOGO"), lang("GS_STR_SERVER_LOGO_HINT"), GS_LOGO_FOLDER, 10240*2.5);
