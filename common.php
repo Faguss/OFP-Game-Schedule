@@ -3671,6 +3671,7 @@ function GS_compare_names_with_trim($a, $b) {
 	);
 }
 
+// Create collapsible paragraphs
 function GS_format_collapse($list, $nesting=0) {
     $nesting++;
     $output       = '';
