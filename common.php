@@ -1322,7 +1322,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 
 					$db->update("gs_serv", $id, [
 						"status"         => $output["info"][$id]["status"], 
-						"status_expires" => date('Y-m-d H:i:s', strtotime("+1 minute"))
+						"status_expires" => date('Y-m-d H:i:s', strtotime("+".(50+rand(0,20))." second"))
 					]);
 				}
 			}

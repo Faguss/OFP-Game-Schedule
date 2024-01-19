@@ -322,6 +322,8 @@ if ($form->hidden["display_form"] == "Schedule")
 			$form->add_validation_rules(["starttime"], ["is_datetime"=>true]);
 			
 			if ($form->validate([], lang("GS_STR_ERROR_FORMDATA"))) {
+				$data["starttime"] = substr_replace($data["starttime"],"00",-2);	//zero seconds
+				
 				$playing_time = [
 					"serverid"   => $id,
 					"userid"     => $uid,

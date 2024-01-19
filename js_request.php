@@ -138,7 +138,7 @@ else
 
 					$db->update("gs_serv", $server["id"], [
 						"status"         => $output, 
-						"status_expires" => date('Y-m-d H:i:s', strtotime("+1 minute"))
+						"status_expires" => date('Y-m-d H:i:s', strtotime("+".(50+rand(0,20))." second"))
 					]);
 				}
 			} else {
