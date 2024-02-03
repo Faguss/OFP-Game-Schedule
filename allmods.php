@@ -111,9 +111,9 @@ foreach ($mod_labels as $key=>$label) {
 
 
 echo '
-<div class="permalink_parent" style="padding-right: 16px;">
+<div class="permalink_parent" style="padding-right: 30px;padding-top: 6px;">
 	<div class="permalink_child">
-		<a href="rss?mod=all"><span class="fa fa-rss"></span></a>
+		<a href="rss?mod=all"><span class="fa fa-rss fa-2x"></span></a>
 	</div>
 </div>
 

@@ -16,9 +16,9 @@ $servers = GS_list_servers(["current"], [], GS_REQTYPE_WEBSITE, 0, $lang["THIS_L
 $mods    = GS_list_mods($servers["mods"], [], [], [], GS_REQTYPE_WEBSITE, $servers["lastmodified"]);
 
 echo '
-<div class="permalink_parent" style="padding-right: 16px;">
-	<div class="permalink_child">
-		<a href="rss?server=all"><span class="fa fa-rss"></span></a>
+<div class="permalink_parent" style="padding-right: 26px;">
+	<div class="permalink_child" style="padding-top: 24px;">
+		<a href="rss?server=all"><span class="fa fa-rss fa-2x"></span></a>
 	</div>
 </div>';
 

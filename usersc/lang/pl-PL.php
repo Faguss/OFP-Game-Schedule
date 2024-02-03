@@ -29,12 +29,13 @@ $lang = array_merge($lang,array(
 	"GS_STR_MENU_BI" => "Forum BI",
 	"GS_STR_MENU_BIFORUM" => "Dyskusja na forum BI",
 	"GS_STR_MENU_GOG" => "Forum GOG",
-	"GS_STR_MENU_GOGFORUM" => "Dyskusja na forum GOG",
+	"GS_STR_MENU_GOGFORUM" => "Dyskusja na GOG",
 	"GS_STR_MENU_FACEBOOK" => "Facebook",
 	"GS_STR_MENU_FACEBOOKFORUM" => "Dyskusja na Facebooku",
 	"GS_STR_MENU_VK" => "VK",
 	"GS_STR_MENU_VKFORUM" => "Dyskusja na VK",
 	"GS_STR_MENU_TRANSLATION" => "Tłumaczenie",
+	"GS_STR_MENU_CONTACT" => "Kontakt",
 	
     #Home page
 	"GS_STR_INDEX_WELCOME" => "Witamy w Rozkładzie Rozgrywek do OFP",

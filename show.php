@@ -15,7 +15,7 @@ $csrf          = Session::get(Config::get('session/token_name'));
 
 // Display servers	
 if (!empty($servers["id"]))
-	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:x-large;\" href=\"quickstart#players\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
+	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:x-large;\" href=\"quickstart\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
 
 echo '<div class="row">' . GS_format_server_info($servers, $mods, 12, GS_USER_INFO, $input["server"]) . '</div>';
 
@@ -24,7 +24,7 @@ echo '<div class="row">' . GS_format_server_info($servers, $mods, 12, GS_USER_IN
 if (!empty($mods["id"]))
 	echo '
 	<center>
-		<a style="cursor:pointer; font-weight:bold; font-size:x-large;" href="https://youtu.be/vj04wSh-9CA" target="_blank">'.lang("GS_STR_MOD_HOWTO_INSTALL").'</a>
+		<a style="cursor:pointer; font-weight:bold; font-size:x-large;" href="https://ofp-faguss.com/fwatch/modmanager" target="_blank">'.lang("GS_STR_MOD_HOWTO_INSTALL").'</a>
 	</center>
 	<br>';
 

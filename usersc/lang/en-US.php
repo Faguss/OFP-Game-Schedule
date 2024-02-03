@@ -29,12 +29,13 @@ $lang = array_merge($lang,array(
 	"GS_STR_MENU_BI" => "BI Forum",
 	"GS_STR_MENU_BIFORUM" => "Discuss on BI Forum",
 	"GS_STR_MENU_GOG" => "GOG Forum",
-	"GS_STR_MENU_GOGFORUM" => "Discuss on GOG Forum",
+	"GS_STR_MENU_GOGFORUM" => "Discuss on GOG",
 	"GS_STR_MENU_FACEBOOK" => "Facebook",
 	"GS_STR_MENU_FACEBOOKFORUM" => "Discuss on Facebook",
 	"GS_STR_MENU_VK" => "VK",
 	"GS_STR_MENU_VKFORUM" => "Discuss on VK",
 	"GS_STR_MENU_TRANSLATION" => "Translation",
+	"GS_STR_MENU_CONTACT" => "Contact",
 	
     #Home page
 	"GS_STR_INDEX_WELCOME" => "Welcome to the OFP Game Schedule!",

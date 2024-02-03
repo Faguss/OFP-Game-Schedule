@@ -22,9 +22,9 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_WHY" => "Why use it?",
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/UoT6sQQ6dLY",
 	"GS_STR_QUICKSTART_TAB_JOIN_SERVER" => "How to join a server?",
-	"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "How to setup a server?",
+	"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "How to add a server?",
 	"GS_STR_QUICKSTART_TAB_MAKE_MOD" => "How to add a mod?",
-	"GS_STR_QUICKSTART_TAB_MOD_MANAGER" => "Mod Manager",
+	"GS_STR_QUICKSTART_TAB_INSTALL_MOD" => "How to install mods?",
 	
 	#Add a server
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "First you log in with your %m1% account",
@@ -34,7 +34,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "After adding a game time the server will be listed publicly. Players can join now",
 	
 	#Join server
-	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Install Fwatch 1.16 and OFP Aspect Ratio pack 2.07. %m1%Download%m2%<br><span style=\"font-size:small\">Archive password is \"fwatch\". Extract it and run the installer. <a href=\"/fwatch/116test\">More info</a><br>Watch <a href=\"https://youtu.be/wD74VpadQY4\">video</a></span>",
+	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Install Fwatch 1.16 and OFP Aspect Ratio pack 2.07. %m1%Download%m2%<br><span style=\"font-size:small\">Archive password is \"fwatch\". Extract it and run the installer. <a href=\"/fwatch/116test\">More info. </a>Watch <a href=\"https://youtu.be/wD74VpadQY4\">video</a></span>",
 	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Start the game with fwatch.exe. You'll see \"Mods\" button in the lower left corner. Click on it and then on the \"Schedule\" button. Select server from the list",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Double-click on the server name to show available options. If you lack required mods then double-click on the \"Download\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Wait for the installer to finish. Playing the game or even quitting it won't affect the installation",
@@ -46,7 +46,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_MOD_LAUNCH" => "Go to the fwatch\\data folder and launch addonInstarrer.exe",
 	"GS_STR_QUICKSTART_MOD_SCRIPT" => "Paste download links to your files in the \"Edit Script\" input. If you don't have a direct link to the file then click on the \"Convert download link\" button. Once you're done select \"Save and Test\"",
 	"GS_STR_QUICKSTART_MOD_TEST" => "Write the name of your mod in the \"Mod name\" field. If you want to install it to a different directory then fill \"Dir name\" field. Press \">\" button to test your installation script",
-	"GS_STR_QUICKSTART_MOD_VIEW" => "When it's done select \"Open mod folder\" to view the installed files. If you're satisfied with the result then move on to the next step. If not then see %m1%documentation%m2% or %m3%contact%m4% me",
+	"GS_STR_QUICKSTART_MOD_VIEW" => "When it's done select \"Open mod folder\" to view the installed files. If you're satisfied with the result then move on to the next step. If not then see %m1%documentation%m2% and use commands",
 	"GS_STR_QUICKSTART_MOD_LOGIN" => "%m1%Log in%m2% to the OFP GS website. Then select \"Add a new mod\"",
 	"GS_STR_QUICKSTART_MOD_FORM" => "Fill the form fields. Copy installation script from the addonInstarrer program. Copy download size number from the \"Testing\" section.",
 	"GS_STR_QUICKSTART_MOD_DONE" => "Finally click on the \"Add a New Mod\" to publish it. Other players can now install your mod",
@@ -63,9 +63,9 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	"GS_STR_QUICKSTART_WHY" => "Зачем это использовать?",
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/o0dPXTGngcQ",
 	"GS_STR_QUICKSTART_TAB_JOIN_SERVER" => "Как подключиться?",
-	"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "Как устроить?",
+"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "Как устроить?",
 "GS_STR_QUICKSTART_TAB_MAKE_MOD" => "How to add a mod?",
-	"GS_STR_QUICKSTART_TAB_MOD_MANAGER" => "Менеджер модов",
+	"GS_STR_QUICKSTART_TAB_INSTALL_MOD" => "Как установить моды?",
 	
 	#Add a server
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Для начала нужно войти в аккаунт %m1%",
@@ -75,7 +75,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "Сервер будет отображаться для всех после добавления времени начала игры. Игроки могут подключиться.",
 	
 	#Join server
-	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Вам понадобится Fwatch 1.16 и OFP Aspect Ratio сборки 2.07. %m1%Скачать%m2%<br><span style=\"font-size:small\">Пароль архива \"fwatch\". Извлеките его и запустите установщик. <a href=\"/fwatch/116test\">Больше информации</a><br>Смотрите <a href=\"https://youtu.be/wD74VpadQY4\">видео</a></span>",
+	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Вам понадобится Fwatch 1.16 и OFP Aspect Ratio сборки 2.07. %m1%Скачать%m2%<br><span style=\"font-size:small\">Пароль архива \"fwatch\". Извлеките его и запустите установщик. <a href=\"/fwatch/116test\">Больше информации</a>. Смотрите <a href=\"https://youtu.be/wD74VpadQY4\">видео</a></span>",
 	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Запустите игру, используя fwatch.exe. Вы увидите кнопку \"Mods\" в левом нижнем углу. Нажмите на неё, а затем на кнопку \"Расписание\". Выберите сервер из списка",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Нажмите два раза на название сервера, чтобы просмотреть опции. Если Вам не хватает необходимых модов, нажмите два раза на \"Скачать\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Дождитесь завершения установки. Установка не прервётся во время или при закрытии игры",
@@ -87,7 +87,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_STR_QUICKSTART_MOD_LAUNCH" => "Go to fwatch\\data folder and launch addonInstarrer.exe",
 "GS_STR_QUICKSTART_MOD_SCRIPT" => "Paste download links to your files in the \"Edit Script\" input. If you don't have a direct link to the file then click on the \"Convert download link\" button. Once you're done select \"Save and Test\"",
 "GS_STR_QUICKSTART_MOD_TEST" => "Write the name of your mod in the \"Mod name\" field. If you want to install it to a different directory then fill \"Dir name\" field. Press \">\" button to test your installation script",
-"GS_STR_QUICKSTART_MOD_VIEW" => "When it's done select \"Open mod folder\" to view the installed files. If you're satisfied with the result then move on to the next step. If not then see %m1%documentation%m2% or %m3%contact%m4% me",
+"GS_STR_QUICKSTART_MOD_VIEW" => "When it's done select \"Open mod folder\" to view the installed files. If you're satisfied with the result then move on to the next step. If not then see %m1%documentation%m2% and use commands",
 "GS_STR_QUICKSTART_MOD_LOGIN" => "%m1%Log in%m2% to the OFP GS website. Then select \"Add a new mod\"",
 "GS_STR_QUICKSTART_MOD_FORM" => "Fill the form fields. Copy installation script from the addonInstarrer program. Copy download size number from the \"Testing\" section.",
 "GS_STR_QUICKSTART_MOD_DONE" => "Finally click on the \"Add a New Mod\" to publish it. Other players can now install your mod",
@@ -104,9 +104,9 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_WHY" => "Dlaczego warto skorzystać?",
 	"GS_STR_QUICKSTART_WHY_URL" => "https://youtu.be/UoT6sQQ6dLY",
 	"GS_STR_QUICKSTART_TAB_JOIN_SERVER" => "Jak dołączyć do serwera?",
-	"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "Jak ustawić serwer?",
+	"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "Jak dodać serwer?",
 	"GS_STR_QUICKSTART_TAB_MAKE_MOD" => "Jak dodać mod?",
-	"GS_STR_QUICKSTART_TAB_MOD_MANAGER" => "Menedżer Modów",
+	"GS_STR_QUICKSTART_TAB_INSTALL_MOD" => "Jak zainstalować mody?",
 	
 	#Add a server
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Najpierw zaloguj się przy pomocy konta %m1%",
@@ -116,7 +116,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_FORORGANIZERS_READY" => "Po dodaniu czasu rozpoczęcia gry serwer pojawi się na publicznej liście. Gracze mogą już dołączyć",
 	
 	#Join server
-	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Zainstaluj Fwatch 1.16 oraz OFP Aspect Ratio pack 2.07. %m1%Pobierz%m2%<br><span style=\"font-size:small\">Hasło archiwum to \"fwatch\". Wypakuj je i uruchom instalator. <a href=\"/fwatch/116test\">Więcej informacji</a><br>Patrz <a href=\"https://youtu.be/wD74VpadQY4\">film</a></span>",
+	"GS_STR_QUICKSTART_FORPLAYERS_INSTALL" => "Zainstaluj Fwatch 1.16 oraz OFP Aspect Ratio pack 2.07. %m1%Pobierz%m2%<br><span style=\"font-size:small\">Hasło archiwum to \"fwatch\". Wypakuj je i uruchom instalator. <a href=\"/fwatch/116test\">Więcej informacji</a>. Patrz <a href=\"https://youtu.be/wD74VpadQY4\">film</a></span>",
 	"GS_STR_QUICKSTART_FORPLAYERS_START" => "Uruchom grę przez fwatch.exe. W lewym dolnym rogu pojawi się przycisk \"Mods\". Kliknij na nim a potem na przycisku \"Plan Rozgrywek\". Wybierz serwer z listy",
 	"GS_STR_QUICKSTART_FORPLAYERS_SHOWSERV" => "Kliknij dwa razy na nazwie serwera żeby wyświetlić opcje. Jeśli nie masz wymaganych modów to kliknij dwa razy na \"Ściągnij\"",
 	"GS_STR_QUICKSTART_FORPLAYERS_WAITINSTALL" => "Zaczekaj aż instalator skończy. Granie albo wyjście z gry nie ma wpływu na proces instalacji",
@@ -128,7 +128,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_MOD_LAUNCH" => "Przejdź do katalogu fwatch\\data i uruchom addonInstarrer.exe",
 	"GS_STR_QUICKSTART_MOD_SCRIPT" => "Wklej linki do ściągnięcia twoich plików w polu \"Edytuj Skrypt\". Jeśli nie masz bezpośredniego linku do pliku to naciśnij na przycisk \"Skonwertuj link\". Gdy skończysz wybierz \"Zapisz i Przetestuj\"",
 	"GS_STR_QUICKSTART_MOD_TEST" => "Wpisz nazwę swojego moda w polu \"Nazwa moda\". Jeśli chcesz go zainstalować w innym katalogu to wypełnij pole \"Folder\". Naciśnij na przycisk \">\", żeby przetestować swój skrypt instalacyjny",
-	"GS_STR_QUICKSTART_MOD_VIEW" => "Gdy instalacja się zakończy wybierz \"Otwórz mod folder\", żeby przejrzeć zainstalowane pliki. Jeśli odpowiada ci rezultat to przejdź do następnego kroku. Jeśli nie to przejrzyj %m1%dokumentację%m2% lub %m3%skontaktuj%m4% się ze mną",
+	"GS_STR_QUICKSTART_MOD_VIEW" => "Gdy instalacja się zakończy wybierz \"Otwórz mod folder\", żeby przejrzeć zainstalowane pliki. Jeśli odpowiada ci rezultat to przejdź do następnego kroku. Jeśli nie to przejrzyj %m1%dokumentację%m2% i użyj komend",
 	"GS_STR_QUICKSTART_MOD_LOGIN" => "%m1%Zaloguj się%m2% na stronie OFP GS. Następnie wybierz \"Dodaj nowy mod\"",
 	"GS_STR_QUICKSTART_MOD_FORM" => "Wypełnij formularz. Skopiuj skrypt instalacyjny z programu addonInstarrer. Skopiuj wielkość pobranych plików z sekcji \"Testowanie\"",
 	"GS_STR_QUICKSTART_MOD_DONE" => "Na końcu wybierz \"Dodaj Nowy Mod\" by go opublikować. Inni gracze mogą teraz zainstalować twój mod",
@@ -250,7 +250,7 @@ foreach($sections as $section) {
 }
 	
 echo
-	'<li><a href="../fwatch/modmanager/details">'.lang("GS_STR_QUICKSTART_TAB_MOD_MANAGER").'</a></li>
+	'<li><a href="https://ofp-faguss.com/fwatch/modmanager">'.lang("GS_STR_QUICKSTART_TAB_INSTALL_MOD").'</a></li>
 </ul>
 <div class="jumbotron">
 <div class="tab-content">';
