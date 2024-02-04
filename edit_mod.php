@@ -165,15 +165,15 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	$form->input_size = 10;
 	
 	if ($form->hidden["display_form"] == "Edit")
-		$form->title=lang("GS_STR_MOD_PAGE_TITLE", ["<strong>$record_title</strong>"]);
+		$form->title = lang("GS_STR_MOD_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 	else
-		$form->title=lang("GS_STR_INDEX_ADDNEW_MOD");
+		$form->title = lang("GS_STR_INDEX_ADDNEW_MOD");
 	
 	$mod_type_select = [];
 	for($i=0; $i<=GS_MOD_TYPE_NUM; $i++)
 		$mod_type_select[] = [lang("GS_STR_MOD_TYPE{$i}")." - ".lang("GS_STR_MOD_TYPE{$i}_DESC"),"{$i}"];
 	
-	$description_hint =  lang("GS_STR_MOD_DESCRIPTION_HINT"). ". <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a>";
+	$description_hint = lang("GS_STR_MOD_DESCRIPTION_HINT"). ". <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a>";
 	
 	$form->add_text("name", lang("GS_STR_MOD_FOLDER"), lang("GS_STR_MOD_FOLDER_HINT"), "@ww4mod25");
 	
@@ -274,7 +274,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 			
 			$script_fields = [
 				"size"        => "{$data["size"]} {$data["sizetype"]}",
-				"script"      => html_entity_decode($data["scripttext"])
+				"script"      => html_entity_decode($data["scripttext"], ENT_QUOTES)
 			];
 			
 			$update_fields = [
@@ -308,11 +308,9 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 			
 			if ($result) {
 				if ($form->hidden["action"] == "Add New") {
-					$id                           = $db->lastId();
-					$form->hidden["uniqueid"]     = $mod_fields["uniqueid"];
-					$form->hidden["display_form"] = "Edit";
-					$admin_fields["modid"]        = $id;
-					$update_fields["modid"]       = $id;
+					$id                     = $db->lastId();
+					$admin_fields["modid"]  = $id;
+					$update_fields["modid"] = $id;
 
 					$db->insert("gs_mods_admins" , $admin_fields);
 					$db->insert("gs_mods_scripts", $script_fields);
@@ -332,6 +330,9 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				
 				// Update logo hash
 				$db->update("gs_mods", $id, ["logohash"=>empty($data["logo"]) ? "" : hash_file('crc32', $form->image_dir.$data["logo"])]);
+				
+				if ($form->hidden["action"] == "Add New")
+					Redirect::to("edit_mod.php?uniqueid={$mod_fields["uniqueid"]}&display_form=Edit");
 			}
 		}
 	} else
@@ -531,7 +532,7 @@ if ($form->hidden["display_form"] == "Update")
 
 			$script_fields = [
 				"size"       => "{$data["size"]} {$data["sizetype"]}",
-				"script"     => html_entity_decode($data["scripttext"]),
+				"script"     => html_entity_decode($data["scripttext"], ENT_QUOTES),
 				"modified"   => date("Y-m-d H:i:s"),
 				"modifiedby" => $uid
 			];
@@ -539,7 +540,7 @@ if ($form->hidden["display_form"] == "Update")
 			$link_fields = [
 				"updateid"     => $updateid,
 				"scriptid"     => $data["script"],
-				"fromver"      => html_entity_decode($data["fromver"]),
+				"fromver"      => html_entity_decode($data["fromver"], ENT_QUOTES),
 				"alwaysnewest" => $data["version"] == "-1",
 				"modified"     => date("Y-m-d H:i:s"),
 				"modifiedby"   => $uid
@@ -748,7 +749,7 @@ if ($form->hidden["display_form"] == "Update")
 			
 			$js_script_list["data"][] = [
 				"uniqueid"   => $update["uniqueid"],
-				"script"     => html_entity_decode($update["script"]),
+				"script"     => html_entity_decode($update["script"], ENT_QUOTES),
 				"sizenumber" => $size[0],
 				"sizetype"   => $size[1]
 			];
@@ -822,7 +823,7 @@ if ($form->hidden["display_form"] == "Update")
 		if (!$already_on_the_list)
 				$js_script_list["data"][] = [
 					"uniqueid"   => $link["scriptUniqueID"],
-					"script"     => html_entity_decode($link["script"]),
+					"script"     => html_entity_decode($link["script"], ENT_QUOTES),
 					"sizenumber" => $size[0],
 					"sizetype"   => $size[1]
 				];

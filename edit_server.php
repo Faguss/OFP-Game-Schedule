@@ -139,10 +139,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				$form->title                  = lang("GS_STR_SERVER_PAGE_TITLE", ["<strong>$record_title</strong>"]);
 				
 				if ($form->hidden["action"] == "Add New") {
-					$id                           = $db->lastId();
-					$form->hidden["uniqueid"]     = $data["uniqueid"];
-					$form->hidden["display_form"] = "Edit";
-					
+					$id = $db->lastId();
 					$db->insert("gs_serv_admins", ["serverid"=>$id, "userid"=>$uid, "isowner"=>1]);
 				}
 				
@@ -150,6 +147,9 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				
 				// Update logo hash
 				$db->update("gs_serv", $id, ["logohash"=>empty($data["logo"]) ? "" : hash_file('crc32', $form->image_dir.$data["logo"])]);
+				
+				if ($form->hidden["action"] == "Add New")
+					Redirect::to("edit_server.php?uniqueid={$data["uniqueid"]}&display_form=Edit");
 			}
 		}
 	} else
