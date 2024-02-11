@@ -61,7 +61,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	
 	$form->add_text("name"             , lang("GS_STR_SERVER_NAME")         , lang("GS_STR_SERVER_NAME_HINT")      , lang("GS_STR_SERVER_NAME_EXAMPLE"));
 	$form->add_text("password"         , lang("GS_STR_SERVER_PASSWORD")     , lang("GS_STR_SERVER_PASSWORD_HINT")  , "123", "", 0, "");
-	$form->add_select("persistent"     , lang("GS_STR_SERVER_PERSISTENT")   , lang("GS_STR_SERVER_PERSISTENT_HINT"), [[lang("GS_STR_MOD_MPCOMP_YES"),0], [lang("GS_STR_SERVER_PERSISTENT_OFF"),1]]);
+	$form->add_select("persistent"     , lang("GS_STR_SERVER_PERSISTENT")   , lang("GS_STR_SERVER_PERSISTENT_HINT"), [[lang("GS_STR_SERVER_PERSISTENT_OFF"),0], [lang("GS_STR_SERVER_PERSISTENT_ON"),1]]);
 	$form->add_text("access"           , lang("GS_STR_SERVER_ACCESSCODE")   , lang("GS_STR_SERVER_ACCESSCODE_HINT"), "", "", 0, "");
 	$form->add_select("version"        , lang("GS_STR_SERVER_VERSION")      , lang("GS_STR_SERVER_VERSION_HINT")   , GS_GAME_VERSIONS, "1.99");
 	$form->add_select("equalmodreq"    , lang("GS_STR_SERVER_EQUALMODS")    , lang("GS_STR_SERVER_EQUALMODS_HINT") , [[lang("GS_STR_DISABLED"),0], [lang("GS_STR_ENABLED"),1]]);	
