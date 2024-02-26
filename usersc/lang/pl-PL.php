@@ -101,7 +101,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_SERVER_PERSISTENT" => "Stały serwer?",
 	"GS_STR_SERVER_PERSISTENT_HINT" => "Czy gracze zbierają się na konkretne czasy grania czy spontanicznie?",
 	"GS_STR_SERVER_PERSISTENT_OFF" => "Nie. Ma konkretne czasy grania i używa harmonogramu",
-	"GS_STR_SERVER_PERSISTENT_OFF" => "Tak. Ten serwer nie ma harmonogramu",
+	"GS_STR_SERVER_PERSISTENT_ON" => "Tak. Ten serwer nie ma harmonogramu",
 	"GS_STR_SERVER_PICK_IP" => "Wybierz adres z listy serwerów",
 	"GS_STR_SERVER_MASTER_LIST" => "Główna lista serwerów",
 	"GS_STR_SERVER_MASTER_5MIN" => "Źródło: <a href=\"master.ofpisnotdead.com\">master.ofpisnotdead.com</a>. Aktualizowana co 5 minut",

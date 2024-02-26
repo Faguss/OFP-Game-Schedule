@@ -857,21 +857,12 @@ if ($form->hidden["display_form"] == "Update")
 		if (isset($data["version_new"])  &&  $data["version_new"]<=$highest)	// if number in the input field is obsolete then remove it
 			unset($data["version_new"]);
 
-		$suggested = 0;
-
-		if (fmod($highest,1) == 0)
-			$suggested = 0.1;
-		else {
-			$temp      = $highest;
-			$suggested = 1;
-			
-			while(fmod($temp,1) > 0) {
-				$temp      *= 10;
-				$suggested /= 10;
-			}
-		}
+		$suggested = 0.1;
+		$digits    = strlen(substr(strrchr($highest, "."), 1));
+		if ($digits > 0)
+			$suggested = 1 / pow(10,$digits);
 		
-		$form->change_control("version_new" , ["Default"=>floatval(sprintf("%01.3f", $highest+$suggested))]);
+		$form->change_control("version_new", ["Default"=>floatval(sprintf("%01.3f", $highest+$suggested))]);
 	}
 
 	// Default selection: "add a new version" and "add a new script"
