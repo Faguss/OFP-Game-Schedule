@@ -22,6 +22,14 @@ function format_items($key_array, $items, $record_type, $record_column, $permiss
 	
 	if ($column_size < 1)
 		$column_size = 1;
+	
+	$all_names = [];
+	foreach($items as $item) {
+		if (array_key_exists($item["name"], $all_names))
+			$all_names[$item["name"]]++;
+		else
+			$all_names[$item["name"]] = 1;
+	}
 
 	for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 		$html .= '<div class="row">';
@@ -46,6 +54,10 @@ function format_items($key_array, $items, $record_type, $record_column, $permiss
 			if (!$include)
 				continue;
 			
+			$title_wrap = ["",""];
+			if (!empty($item["subtitle"]) && $all_names[$item["name"]] > 1)
+				$title_wrap = ['', ' <span class="gs_mod_subtitle">('.$item["subtitle"].')</span>'];
+			
 			$total_items++;
 			$html .= '
 			<div class="col-lg-'.$column_size.'">
@@ -54,7 +66,7 @@ function format_items($key_array, $items, $record_type, $record_column, $permiss
 						'.GS_output_item_logo($record_type, $item["logo"]).'
 					</div>
 					<div class="media-body media-middle">
-						'.GS_show_dropdown_controls($item, $record_type, $permission_to, $gs_my_permission_level).'
+						'.GS_show_dropdown_controls($item, $record_type, $permission_to, $gs_my_permission_level, $title_wrap).'
 					</div><!--end media-body-->
 				</div><!--end media-->
 			</div><!--end col-->';
@@ -271,6 +283,15 @@ $mods_html = '
 			<a href="rss?mod=all"><span class="fa fa-rss"></span></a>
 		</div>
 	</div>';
+	
+// Check for duplicates
+$all_names = [];
+foreach($items as $item) {
+	if (array_key_exists($item["name"], $all_names))
+		$all_names[$item["name"]]++;
+	else
+		$all_names[$item["name"]] = 1;
+}
 
 for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 	$mods_html .= '<div class="row">';
@@ -281,12 +302,13 @@ for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 		if (!isset($key))
 			break;
 		
-		$item     = $items[$key];
-		$mod_name = empty($item["name"]) ? $item["uniqueid"] : $item["name"];
+		$item      = $items[$key];
+		$mod_name  = empty($item["name"]) ? $item["uniqueid"] : $item["name"];
+		$mod_name2 = "";
 						
-		if (!empty($item["subtitle"]))
-			$mod_name .= ' <span class="gs_mod_subtitle">('.$item["subtitle"].')</span>';
-		
+		if (!empty($item["subtitle"]) && $all_names[$item["name"]] > 1)
+			$mod_name2 = ' <span class="gs_mod_subtitle">('.$item["subtitle"].')</span>';
+
 		$mods_html .= '
 		<div class="col-lg-3">
 			<div class="media">
@@ -294,7 +316,7 @@ for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 					'.GS_output_item_logo("mod", $item["logo"]).'
 				</div>
 				<div class="media-body media-middle">
-					<a href="show.php?mod='.$item["uniqueid"].'" target="_blank">'.$mod_name.'</a>
+					<a href="show.php?mod='.$item["uniqueid"].'" target="_blank">'.$mod_name.'</a>'.$mod_name2.'
 				</div>
 			</div>
 		</div>';
@@ -314,10 +336,12 @@ if (isset($user) && $user->isLoggedIn()){
 	foreach ($record_types as $record_type) {
 		$record_table  = $record_type=="server" ? "serv"   : "mods";
 		$record_column = $record_type=="server" ? "server" : "mod";
+		$second_name   = $record_type=="server" ? "" : "gs_mods.subtitle,";
 		$sql           = "
 			SELECT 
 				gs_{$record_table}.uniqueid,
 				gs_{$record_table}.name,
+				$second_name
 				gs_{$record_table}.logo,
 				gs_{$record_table}.access,
 				gs_{$record_table}_admins.*
@@ -340,6 +364,7 @@ if (isset($user) && $user->isLoggedIn()){
 			SELECT 
 				gs_{$record_table}.uniqueid,
 				gs_{$record_table}.name,
+				$second_name
 				gs_{$record_table}.logo,
 				gs_{$record_table}.access
 				

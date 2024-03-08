@@ -173,12 +173,12 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	for($i=0; $i<=GS_MOD_TYPE_NUM; $i++)
 		$mod_type_select[] = [lang("GS_STR_MOD_TYPE{$i}")." - ".lang("GS_STR_MOD_TYPE{$i}_DESC"),"{$i}"];
 	
-	$description_hint = lang("GS_STR_MOD_DESCRIPTION_HINT"). ". <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a>";
+	$description_hint = lang("GS_STR_MOD_DESCRIPTION_HINT"). " <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a>";
 	
 	$form->add_text("name", lang("GS_STR_MOD_FOLDER"), lang("GS_STR_MOD_FOLDER_HINT"), "@ww4mod25");
 	
 	if ($form->hidden["display_form"] == "Edit")
-		$form->add_text("subtitle", lang("GS_STR_MOD_SUBTITLE"), lang("GS_STR_MOD_SUBTITLE_HINT"), "Sanctuary");
+		$form->add_text("subtitle", lang("GS_STR_MOD_SUBTITLE"), lang("GS_STR_MOD_SUBTITLE_HINT"), "Redux");
 	
 	$form->add_text("description"  , lang("GS_STR_MOD_DESCRIPTION"), $description_hint, lang("GS_STR_MOD_DESCRIPTION_EXAMPLE"));
 	$form->add_text("website"      , lang("GS_STR_SERVER_WEBSITE") , ""               , GS_get_current_url(true, false));

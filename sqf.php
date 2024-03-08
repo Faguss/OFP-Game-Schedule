@@ -301,6 +301,15 @@ switch($input_mode) {
 		if (!$db->query($sql,$mods["userlist"])->error())
 			foreach($db->results(true) as $row)
 				$user_list[$row["id"]] = $row["username"];
+
+		// Count duplicates
+		$all_names = [];
+		foreach($mods["info"] as $mod) {
+			if (array_key_exists($mod["name"], $all_names))
+				$all_names[$mod["name"]]++;
+			else
+				$all_names[$mod["name"]] = 1;
+		}
 				
 		// Prepare mods listbox data
 		$mods_simple_array          = "";
@@ -311,19 +320,24 @@ switch($input_mode) {
 		uasort($mods["info"], 'GS_compare_names_with_trim');
 		
 		foreach($mods["info"] as $id=>$mod) {
-			$mods_simple_array .= "]+[[\"{$mod["uniqueid"]}\",\"{$mod["name"]}\",{$mod["forcename"]}]";
+			$formatted_name = $mod["name"];
+			
+			if (!empty($mod["subtitle"]) && $all_names[$mod["name"]] > 1)
+				$formatted_name .= " ({$mod["subtitle"]})";
+			
+			$mods_simple_array .= "]+[[\"{$mod["uniqueid"]}\",\"$formatted_name\",{$mod["forcename"]}]";
 			
 			if ($mod["userver"] == 0) {
 				if (empty($mods_that_user_doesnt_have))
 					$mods_that_user_doesnt_have = "]+[[\"missing\"]";
 				
-				$mods_that_user_doesnt_have .= "]+[[\"{$mod["name"]}\",\"{$mod["uniqueid"]}\",{$mod["type"]}]";
+				$mods_that_user_doesnt_have .= "]+[[\"$formatted_name\",\"{$mod["uniqueid"]}\",{$mod["type"]}]";
 			} else
 				if ($mod["userver"] != $mod["version"]) {
 					if (empty($mods_that_user_can_update))
 						$mods_that_user_can_update = "]+[[\"update\"]";
 		
-					$mods_that_user_can_update .= "]+[[\"{$mod["name"]}\",\"{$mod["uniqueid"]}\",{$mod["type"]}]";
+					$mods_that_user_can_update .= "]+[[\"$formatted_name\",\"{$mod["uniqueid"]}\",{$mod["type"]}]";
 					$mods_update_count++;
 				}
 			

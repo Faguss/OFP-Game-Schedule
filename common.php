@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2024,2,26,1,17,15,55,0,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2024,3,5,2,21,13,17,536,60,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1588,6 +1588,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					switch($request_type) {
 						case GS_REQTYPE_GAME :
 							$output["info"][$id]["name"]        = $row["name"];
+							$output["info"][$id]["subtitle"]    = $row["subtitle"];
 							$output["info"][$id]["type"]        = $row["type"];
 							$output["info"][$id]["createdby"]   = $row["createdby"];
 							$output["info"][$id]["created"]     = $row["created"];
