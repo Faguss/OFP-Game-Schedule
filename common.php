@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2024,3,5,2,21,13,17,536,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2024,3,12,2,23,32,34,691,60,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -152,6 +152,7 @@ define("GS_REQTYPE_WEBSITE", 0);
 define("GS_REQTYPE_GAME", 1);
 define("GS_REQTYPE_GAME_DOWNLOAD_MODS", 2);
 define("GS_REQTYPE_INSTALL_SCRIPT", 3);
+define("GS_REQTYPE_GAME_RESTART", 4);
 
 // Available languages on the website
 define("GS_LANGUAGES", ["game"=>["English","Russian","Polish"], "file"=>["en-US","ru-RU","pl-PL"]]);
@@ -1123,7 +1124,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				$output["info"][$id]["uniqueid"]   = $row["uniqueid"];
 				$output["id"][$id]                 = $row["uniqueid"];
 				
-				if ($request_type == GS_REQTYPE_GAME)
+				if (in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_GAME_RESTART]))
 					foreach(["status","status_expires","ip","uniqueid","website","message","location","name","equalmodreq","version","logo","logohash","maxcustomfilesize","password","voice","languages"] as $column)
 						$output["info"][$id][$column] = GS_convert_utf8_to_windows(html_entity_decode($row[$column], ENT_QUOTES), $language);
 					
@@ -1194,16 +1195,16 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				
 				// Compensate for vacation
 				$event["vacation"] = false;
-				while($event["type"]!=GS_EVENT_SINGLE && $start_date > $vacation_date && $start_date < $vacation_end) {
+				while($event["type"]!=GS_EVENT_SINGLE && $start_date > $vacation_start && $start_date < $vacation_end) {
 					$offset = $event["type"]==GS_EVENT_WEEKLY ? 7 : 1;
 					$start_date->modify("+$offset day");
 					$end_date->modify("+$offset day");
 					$event["vacation"] = true;
 				}
 				
-				// If the event has not ended
-				if ($end_date > $now) {
-					if ($request_type == GS_REQTYPE_GAME) {
+				// If the event has not ended (except it's useful to pass outdated events to the automatic connection from the Windows Task Scheduler)
+				if ($end_date > $now || $request_type==GS_REQTYPE_GAME_RESTART) {
+					if (in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_GAME_RESTART])) {
 						// Localize date time for the user
 						$local_start = clone $start_date;
 						$local_start->setTimezone(new DateTimeZone('UTC'));
@@ -1214,8 +1215,10 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 						$local_end->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
 						
 						$locale = "en_GB";
-						if ($language == "Polish") $locale="pl_PL";
-						if ($language == "Russian") $locale="ru_RU";
+						switch($language) {
+							case "Polish"  : $locale="pl_PL"; break;
+							case "Russian" : $locale="ru_RU"; break;
+						}
 						
 						$formatter = new IntlDateFormatter($locale, IntlDateFormatter::FULL, IntlDateFormatter::FULL, "UTC", IntlDateFormatter::GREGORIAN);
 						$event["description"] = "\"";
@@ -1247,6 +1250,14 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 								$local_start->format("s").",0,".
 								$timeoffset.
 								",false],{$event["duration"]}]";
+								
+						if ($request_type == GS_REQTYPE_GAME_RESTART) {
+							foreach(["date_original"=>$start_date_orig, "date_vacation_start"=>$vacation_start, "date_vacation_end"=>$vacation_end] as $key=>$value) {
+								$value->setTimezone(new DateTimeZone('UTC'));
+								$value->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
+								$event[$key] = $value;
+							}
+						}
 					}
 					
 					if ($request_type == GS_REQTYPE_WEBSITE) {
@@ -1301,7 +1312,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			}
 		}
 		
-		if ($request_type == GS_REQTYPE_GAME) {
+		if (in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_GAME_RESTART])) {
 			$output["listbox"] = [];
 			
 			foreach(GS_SERVER_CATEGORIES as $category_name)

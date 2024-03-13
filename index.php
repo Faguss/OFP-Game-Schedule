@@ -469,7 +469,7 @@ if (isset($user) && $user->isLoggedIn()){
 			
 			#Why use OFP Game Schedule?
 			"GS_FAQ_SECTION4_PAR1" => "Joining server with a single button. No need to type ip address, password and mods",
-			"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may add event to the Windows Task Scheduler so that they won't miss it",
+			"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may automatically add event to the Windows Task Scheduler so that they won't miss it",
 			"GS_FAQ_SECTION4_PAR3" => "Joining with voice. Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
 			"GS_FAQ_SECTION4_PAR4" => "Automatic mod installation. No need to send links and instructions to players",
 			"GS_FAQ_SECTION4_PAR5" => "Custom mod faces. User's face texture may be stored in a modfolder and it will be automatically activated",
@@ -504,7 +504,7 @@ if (isset($user) && $user->isLoggedIn()){
 			
 			#Why use OFP Game Schedule?
 			"GS_FAQ_SECTION4_PAR1" => "Dołączanie do serwera jednym przyciskiem. Nie trzeba pisać adresu ip, hasła i linii modów",
-			"GS_FAQ_SECTION4_PAR2" => "Dołączanie o czasie. Gracze mogą dodać sesję do Harmonogramu Windows dzięki czemu jej nie przegapią",
+			"GS_FAQ_SECTION4_PAR2" => "Dołączanie o czasie. Gracze mogą automatycznie dodać sesję do Harmonogramu Windows dzięki czemu jej nie przegapią",
 			"GS_FAQ_SECTION4_PAR3" => "Dołączanie z czatem głosowym. Automatyczne podłączanie się do serwera TeamSpeak3 lub Mumble przy dołączaniu do serwera OFP",
 			"GS_FAQ_SECTION4_PAR4" => "Automatyczna instalacja modów. Nie ma potrzeby rozsyłania graczom linków do ściągnięcia modu i instrukcji",
 			"GS_FAQ_SECTION4_PAR5" => "Twarze w modach. Własna tekstura twarzy może być przechowywana w modfolderze i będzie aktywowana automatycznie",
@@ -539,7 +539,7 @@ if (isset($user) && $user->isLoggedIn()){
 			
 			#Why use OFP Game Schedule?
 "GS_FAQ_SECTION4_PAR1" => "Joining server with a single button. No need to type ip address, password and mods",
-"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may add event to the Windows Task Scheduler so that they won't miss it",
+"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may automatically add event to the Windows Task Scheduler so that they won't miss it",
 "GS_FAQ_SECTION4_PAR3" => "Joining with voice. Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
 "GS_FAQ_SECTION4_PAR4" => "Automatic mod installation. No need to send links and instructions to players",
 "GS_FAQ_SECTION4_PAR5" => "Custom mod faces. User's face texture may be stored in a modfolder and it will be automatically activated",

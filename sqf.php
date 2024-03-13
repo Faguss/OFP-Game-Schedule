@@ -425,6 +425,9 @@ switch($input_mode) {
 		define("GR_TAG_EXE_ARGUMENTS", 7);
 		define("GR_TAG_MOD_INFO", 8);
 		define("GR_TAG_EVENT_VACATION", 9);
+		define("GR_TAG_EVENT_DATE_ORIGINAL", 10);
+		define("GR_TAG_EVENT_DATE_VACATION_START", 11);
+		define("GR_TAG_EVENT_DATE_VACATION_END", 12);
 		
 		function packString(...$strings) {
 			$output = "";
@@ -443,7 +446,7 @@ switch($input_mode) {
 			break;
 		}
 		
-		$servers = GS_list_servers($input["server"], $input["password"], GS_REQTYPE_GAME, GS_fwatch_date_to_timestamp(GS_FWATCH_LAST_UPDATE), $input["language"], NULL, $input["timeoffset"]);
+		$servers = GS_list_servers($input["server"], $input["password"], GS_REQTYPE_GAME_RESTART, GS_fwatch_date_to_timestamp(GS_FWATCH_LAST_UPDATE), $input["language"], NULL, $input["timeoffset"]);
 		$mods    = GS_list_mods($servers["mods"], array_keys($input["modver"]), $input["modver"], $input["password"], GS_REQTYPE_GAME, $servers["lastmodified"]);
 
 		if (empty($servers["info"])) {
@@ -552,7 +555,10 @@ switch($input_mode) {
 			pack("Vc", GR_TAG_EVENT_VACATION, intval($event["vacation"])) .
 			pack("V" , GR_TAG_EXE_ARGUMENTS) . packString($argline) . 
 			pack("VV", GR_TAG_MOD_INFO, count($mods["info"])) .
-			$mod_info;			
+			$mod_info .
+			packDate(GR_TAG_EVENT_DATE_ORIGINAL, $event["date_original"]) .
+			packDate(GR_TAG_EVENT_DATE_VACATION_START, $event["date_vacation_start"]) .
+			packDate(GR_TAG_EVENT_DATE_VACATION_END, $event["date_vacation_end"]);
 
 		break;
 	}
