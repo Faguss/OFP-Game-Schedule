@@ -1,5 +1,5 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2024,3,12,2,23,32,34,691,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2024,7,4,4,6,41,11,32,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1253,8 +1253,16 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 								
 						if ($request_type == GS_REQTYPE_GAME_RESTART) {
 							foreach(["date_original"=>$start_date_orig, "date_vacation_start"=>$vacation_start, "date_vacation_end"=>$vacation_end] as $key=>$value) {
+								// adjust difference from GMT so that these dates can be compared with current date
+								$test = clone $value;
+								$offset_before = $test->getOffset();
+								$test->setDate($now->format('Y'), $now->format('m'), $now->format('d'));
+								$offset_after = $test->getOffset();
+								$difference = $offset_after - $offset_before;
+								
 								$value->setTimezone(new DateTimeZone('UTC'));
 								$value->modify(($timeoffset>0?"+":"-").$timeoffset." minutes");
+								$value->modify("-$difference seconds");
 								$event[$key] = $value;
 							}
 						}
