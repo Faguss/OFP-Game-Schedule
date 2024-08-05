@@ -260,7 +260,8 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 				"type"        => $data["type"],
 				"is_mp"       => $data["is_mp"],
 				"website"     => $data["website"],
-				"logo"        => $data["logo"]
+				"logo"        => $data["logo"],
+				"req_version" => $data["req_version"]
 			];
 			
 			if (isset($data["subtitle"]))
