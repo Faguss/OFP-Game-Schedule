@@ -1,5 +1,7 @@
 <?php
-define("GS_FWATCH_LAST_UPDATE","[2024,7,4,4,6,41,11,32,120,FALSE]");
+require_once "common_min.php";
+
+define("GS_FWATCH_LAST_UPDATE","[2025,4,12,6,23,4,8,977,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -981,6 +983,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 	$specific_server = "";
 	$ignore_outdated = true;
 
+	if (!empty($server_id_list)) {
 	if (count($server_id_list)==1 && ($server_id_list[0]=="all" || $server_id_list[0]=="current")) {
 		if ($server_id_list[0] == "all")
 			$ignore_outdated = false;
@@ -990,6 +993,8 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 		$specific_server = "AND gs_serv.uniqueid IN (".substr( str_repeat(",?",count($server_id_list)), 1).")";
 		$ignore_outdated = false;
 	}
+	} else
+		return $output;
 
 	// Get server list
 	$sql = "
@@ -1113,15 +1118,13 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				continue;
 
 			for ($i=1; $i<=2; $i++)
-				if (strtotime($row["modified$i"]) > $output["lastmodified"])
+				if (isset($row["modified$i"]) && strtotime($row["modified$i"]) > $output["lastmodified"])
 					$output["lastmodified"] = strtotime($row["modified$i"]);			
 			
 			// Add server to the list
 			if ($last_id != $id) {
 				$last_id                           = $id;
-				$output["info"][$id]["events"]     = [];
-				$output["info"][$id]["persistent"] = $row["persistent"];
-				$output["info"][$id]["uniqueid"]   = $row["uniqueid"];
+				$output["info"][$id]               = [];
 				$output["id"][$id]                 = $row["uniqueid"];
 				
 				if (in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_GAME_RESTART]))
@@ -1130,10 +1133,14 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 					
 				if ($request_type == GS_REQTYPE_WEBSITE)
 					$output["info"][$id] = $row;
+				
+				$output["info"][$id]["events"]     = [];
+				$output["info"][$id]["persistent"] = $row["persistent"];
+				$output["info"][$id]["uniqueid"]   = $row["uniqueid"];
 			}
 			
 			// Add game time to the list
-			if (!$row["persistent"] && isset($row["starttime"]))
+			if (!$row["persistent"] && !empty($row["starttime"])) {
 				$output["info"][$id]["events"][] = [
 					"eventid"    => $row["eventid"],
 					"timezone"   => $row["timezone"], 
@@ -1144,12 +1151,15 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 					"breakend"   => $row["breakend"]
 				];
 		}
+		}
 		
 		// Sort game times
 		$all_servers = [];
 		
 		foreach($output["info"] as $id=>&$server) {
 			// Filter out outdated events
+			
+			if (isset($server["events"]))
 			foreach($server["events"] as $key=>&$event) {
 				$time_zone       = new DateTimeZone($event["timezone"]);				// time zone object
 				$start_date      = new DateTime($event["starttime"], $time_zone);		// when does the game start
@@ -1307,7 +1317,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			}
 			
 			if (!$server["persistent"]) {
-				if (count($server["events"]) > 0 || !$ignore_outdated) {
+				if (isset($server) && isset($server["events"]) && count($server["events"]) > 0 || !$ignore_outdated) {
 					// Sort events
 					uasort($server["events"], function ($a, $b) {return $a["date"] <=> $b["date"];});
 					$server["events"] = array_values($server["events"]);
@@ -1319,6 +1329,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 				$all_servers[$id] = GS_SERVER_PERSISTENT;
 			}
 		}
+		
 		
 		if (in_array($request_type,[GS_REQTYPE_GAME,GS_REQTYPE_GAME_RESTART])) {
 			$output["listbox"] = [];
@@ -1332,12 +1343,7 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 
 				// Update server status
 				if (strtotime("now") > strtotime($output["info"][$id]["status_expires"])) {
-					$ip = $output["info"][$id]["ip"];
-					
-					if (strpos($ip,":") === FALSE)
-						$ip .= ":2302";
-					
-					$output["info"][$id]["status"] = GS_url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}?timeout=0.5", 1);
+					$output["info"][$id]["status"] = GS_query_ofp_server($output["info"][$id]["ip"]);
 
 					$db->update("gs_serv", $id, [
 						"status"         => $output["info"][$id]["status"], 
@@ -1347,7 +1353,6 @@ function GS_list_servers($server_id_list, $password, $request_type, $last_modifi
 			}
 		}
 	}
-
 	// Get mods assigned to servers
 	if (!empty($output["info"])) {
 		$sql = "
@@ -1645,7 +1650,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 					$first_version = $version;
 
 				for ($i=1; $i<=4; $i++)
-					if (strtotime($row["modified$i"]) > $output["lastmodified"])
+					if (isset($row["modified$i"]) && strtotime($row["modified$i"]) > $output["lastmodified"])
 						$output["lastmodified"] = strtotime($row["modified$i"]);
 
 				if (isset($row["fromver"])) {
@@ -1659,7 +1664,7 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 				if ($last_version != $version) {
 					$last_version    = $version;
 					$columns_to_copy = ["version", "scriptid", "size", "script", "update_created", "changelog", "update_createdby"];
-					$update_num      = count($mods_updates[$id]);
+					$update_num      = isset($mods_updates[$id]) ? count($mods_updates[$id]) : 0;
 									
 					foreach($columns_to_copy as $column)
 						$mods_updates[$id][$update_num][$column] = html_entity_decode($row[$column], ENT_QUOTES);
@@ -1986,7 +1991,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		$add_title["events"]     = true;
 
 		forEach ($servers["info"] as $index=>$server) {
-			if (count($server["events"]) == 0)
+			if (!isset($server["events"]) || count($server["events"]) == 0)
 				$persistent[] = $servers["id"][$index];
 			else
 				$event_based[] = $servers["id"][$index];
@@ -2039,7 +2044,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 					'.GS_output_item_logo("server", $server["logo"], 128).'
 				</div>
 				<div class="media-body media-middle">
-					'.GS_show_dropdown_controls($server, "server", $servers["rights"][$id], $gs_my_permission_level, ['<span class="gs_servermod_title">','</span>']).'
+					'.GS_show_dropdown_controls($server, "server", isset($servers["rights"][$id]) ? $servers["rights"][$id] : [], GS_get_permission_level(isset($user) ? $user : null), ['<span class="gs_servermod_title">','</span>']).'
 				</div><!--end media-body-->
 			</div><!--end media-->
 		';
@@ -2083,11 +2088,12 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 				case "modfolders" : {
 					$mod_list_links = [];
 					
+					if (isset($server["mods"]))
 					foreach ($server["mods"] as $id) {
 						$version          = $mods["info"][$id]["version"]!=1 ? " &nbsp; v{$mods["info"][$id]["version"]}" : "";
 						$mod_list_links[] = 
 							'<a href="show.php?mod='.$mods["info"][$id]["uniqueid"].'" target="_blank">'.$mods["info"][$id]["name"].'</a> &nbsp; 
-							<span style="font-size:70%;">'.$mods["info"][$id]["size"].$version.'</span>';
+							<span style="font-size:70%;">'.(isset($mods["info"][$id]["size"]) ? $mods["info"][$id]["size"] : "").$version.'</span>';
 					}
 					
 					$value = implode("<br>",$mod_list_links);
@@ -2095,6 +2101,7 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 				
 				case "game time" : {
 					$dd_class = "servergametime";
+					if (isset($server["events"]))
 					foreach ($server["events"] as $event) {
 						$value .= (empty($value) ? "" : "<br>") . $event["description"];
 						$current_event_data[] = [
@@ -2198,7 +2205,9 @@ function GS_format_server_info(&$servers, &$mods, $box_size, $options=GS_NO_OPTI
 		var GS_expired     = ".json_encode($js_expired)."
 		
 		$(document).ready(function() {
-			GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, 'descriptionlist')
+			setInterval(function(){
+				GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, 'descriptionlist');
+			}, 10000);
 		});
 		</script>";
 	}
@@ -2431,8 +2440,8 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $gs_permissio
 				case GS_LOG_SERVER_MOD_REMOVED :
 				case GS_LOG_SERVER_MOD_ADDED   : {
 					$serv_mod   = $data["gs_serv_mods"][$log["itemid"]];
-					$mod_id     = $serv_mod["modid"];
-					$server_id  = $serv_mod["serverid"];
+					$mod_id     = isset($serv_mod["modid"]) ? $serv_mod["modid"] : null;
+					$server_id  = isset($serv_mod["serverid"]) ? $serv_mod["serverid"] : null;
 				} break;
 				
 				case GS_LOG_SERVER_REVOKE_ACCESS  :
@@ -2500,20 +2509,20 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $gs_permissio
 				} break;
 			}
 			
-			if (isset($server_id)) {
+			if (isset($server_id) && isset($data["gs_serv"][$server_id])) {
 				$server         = $data["gs_serv"][$server_id];
 				$server_name    = ($server["name"]!="" ? $server["name"] : $server["uniqueid"]);
 				$server_private = $server["access"]!="" && array_search($server["access"],$input["password"])===FALSE;
 				
 				$table_row["server_id"]   = $server["uniqueid"];
 				$table_row["server_name"] = $server_name;
-				$table_row["message"]     = $mod["message"];
+				$table_row["message"]     = isset($mod["message"]) ? $mod["message"] : "";
 				
 				if ($log["type"] == GS_LOG_SERVER_DELETE && $server["removed"]!=1)
 					$valid_row = false;
 			}
 			
-			if (isset($mod_id)) {
+			if (isset($mod_id) && isset($data["gs_mods"][$mod_id])) {
 				$mod         = $data["gs_mods"][$mod_id];
 				$mod_name    = $mod["name"];
 				$mod_private = $mod["access"]!="" && array_search($mod["access"],$input["password"])===FALSE;
@@ -3586,24 +3595,6 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
     return $output;
 }
 
-// Download
-function GS_url_get_contents($url, $timeout=NULL) {
-    if (!function_exists('curl_init'))
-        die('CURL is not installed!');
-
-    $request = curl_init();
-	curl_setopt($request, CURLOPT_URL, $url);
-	curl_setopt($request, CURLOPT_HEADER, 0);
-	curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
-	
-	if (isset($timeout))
-		curl_setopt($request, CURLOPT_TIMEOUT, $timeout);
-	
-    $output = curl_exec($request);
-    curl_close($request);
-    return $output;
-}
-
 // Output address to image or placeholder
 function GS_output_item_logo($record_type, $filename, $size=32) {
 	$html = '<img width='.$size.' height='.$size.' src=';
@@ -3746,4 +3737,5 @@ function GS_format_collapse($list, $nesting=0) {
     $nesting--;
     return $output;
 }
+
 ?>

@@ -42,18 +42,20 @@ $sql = "
 		user_permission_matches.user_id       = ?
 ";
 
-if ($db->query($sql,[$user->data()->id])->error()) {
-	if ($user->data()->id == 1)
-		echo $sql . $db->errorString();
-	die(lang("GS_STR_ERROR_GET_DB_RECORD"));
-}
+if (isset($user) && $user->data()!==null) {
+	if ($db->query($sql,[$user->data()->id])->error()) {
+		if ($user->data()->id == 1)
+			echo $sql . $db->errorString();
+		die(lang("GS_STR_ERROR_GET_DB_RECORD"));
+	}
 
-foreach($db->results(true) as $row) {	
-	forEach($languages as $language_key=>$language_name) {
-		$permission_name = strtolower($language_name) . "_translator";
-		
-		if (strcasecmp($row["name"],$permission_name) == 0  ||  $row["name"] == "Administrator")
-			$permissions[$language_key] = true;
+	foreach($db->results(true) as $row) {	
+		forEach($languages as $language_key=>$language_name) {
+			$permission_name = strtolower($language_name) . "_translator";
+			
+			if (strcasecmp($row["name"],$permission_name) == 0  ||  $row["name"] == "Administrator")
+				$permissions[$language_key] = true;
+		}
 	}
 }
 
@@ -328,12 +330,12 @@ $table_info = [
 		"name"            => "Addon Installer",
 		"source"          => "translation_strings.php",
 		"context_key"     => [
-			"STR_PROGRESS"           => "https://ofp-faguss.com/schedule/images/context/mainmenu/restart_when_done.jpg",
-			"STR_ACTION_DOWNLOADING" => "https://ofp-faguss.com/schedule/images/context/mainmenu/restart_when_done.jpg",
-			"STR_DOWNLOAD_LEFT"      => "https://ofp-faguss.com/schedule/images/context/mainmenu/restart_when_done.jpg",
-			"STR_ERROR"              => "https://ofp-faguss.com/schedule/images/context/mainmenu/installation_move_error.jpg",
-			"STR_ERROR_INVERSION"    => "https://ofp-faguss.com/schedule/images/context/mainmenu/installation_move_error.jpg",
-			"STR_ERROR_ONLINE"       => "https://ofp-faguss.com/schedule/images/context/mainmenu/installation_move_error.jpg"
+			"STR_PROGRESS"           => "images/translation/mainmenu/restart_when_done.jpg",
+			"STR_ACTION_DOWNLOADING" => "images/translation/mainmenu/restart_when_done.jpg",
+			"STR_DOWNLOAD_LEFT"      => "images/translation/mainmenu/restart_when_done.jpg",
+			"STR_ERROR"              => "images/translation/mainmenu/installation_move_error.jpg",
+			"STR_ERROR_INVERSION"    => "images/translation/mainmenu/installation_move_error.jpg",
+			"STR_ERROR_ONLINE"       => "images/translation/mainmenu/installation_move_error.jpg"
 		],
 		"context_section" => [],
 		"hide_rows"       => false,
@@ -561,7 +563,7 @@ function get_file_strings_from_usersc($file_name, $languages) {
 		$comment_count = 0;
 		
 		foreach($lines as $line) {
-			$updated = !ctype_space($line[0]);
+			$updated = strlen($line)>0 && !ctype_space($line[0]);
 			$line    = trim(trim($line), ",");
 			$tokens  = explode("=>", $line);
 			$hash    = strpos($line, "#");
@@ -986,22 +988,11 @@ function create_text_input_inside_table_cell(table_cell) {
 			// Send translation request
 			if (language!=""  &&  stringtable_key!==null  &&  (text_new!=text_original_converted  ||  table_cell.classList.contains('danger'))) {
 				table_cell.innerHTML = "...";
-				text_new_safe        = text_new.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
-				text_new_safe        = encodeURIComponent(text_new_safe);
-				
-				// Calculate length of the data
-				var max_characters  = 633;
-				var argument_names  = 39 + 10 + 17 + 10;
-				var percent_count   = (text_new_safe.match(/%/g) || []).length;
-				var text_new_len    = byteLength(text_new_safe) + percent_count * 2;
-				var argument_values = byteLength(table.title) + byteLength(language) + byteLength(stringtable_key) + text_new_len;
-				
-				// I'm using GET instead of POST because my hosting is blocking it for my translator. 
-				// Unfortunately there's a length limit on GET
-				var send_method = argument_names+argument_values > max_characters ? "POST" : "GET";
+				text_new_safe = text_new.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+				text_new_safe = encodeURIComponent(text_new_safe);
 
 				$.ajax({
-					type: send_method,
+					type: "POST",
 					url: "translation_request.php",
 					data: {"area":table.title, "language":language, "stringtable_key":stringtable_key, "text_new":text_new_safe},
 					error: function(jqXHR, textStatus, errorThrown) {

@@ -545,7 +545,10 @@ if ($form->hidden["display_form"] == "Mods")
 					ON gs_mods.createdby = users.id
 					   
 		WHERE
-			gs_mods.req_version <= $server_version AND
+			(
+				gs_mods.req_version < $server_version OR
+				gs_mods.req_version LIKE $server_version 
+			) AND
 			gs_mods.is_mp = 1 AND 
 			gs_mods.removed = 0 AND (
 				gs_mods.access              = '' OR 

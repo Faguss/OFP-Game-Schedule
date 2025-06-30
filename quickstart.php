@@ -25,6 +25,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "How to add a server?",
 	"GS_STR_QUICKSTART_TAB_MAKE_MOD" => "How to add a mod?",
 	"GS_STR_QUICKSTART_TAB_INSTALL_MOD" => "How to install mods?",
+	"GS_STR_QUICKSTART_TAB_UPDATE_MOD" => "How to update a mod?",
 	
 	#Add a server
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "First you log in with your %m1% account",
@@ -66,6 +67,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "Как устроить?",
 "GS_STR_QUICKSTART_TAB_MAKE_MOD" => "How to add a mod?",
 	"GS_STR_QUICKSTART_TAB_INSTALL_MOD" => "Как установить моды?",
+"GS_STR_QUICKSTART_TAB_UPDATE_MOD" => "Как обновить мод?",
 	
 	#Add a server
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Для начала нужно войти в аккаунт %m1%",
@@ -107,6 +109,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_STR_QUICKSTART_TAB_MAKE_SERVER" => "Jak dodać serwer?",
 	"GS_STR_QUICKSTART_TAB_MAKE_MOD" => "Jak dodać mod?",
 	"GS_STR_QUICKSTART_TAB_INSTALL_MOD" => "Jak zainstalować mody?",
+	"GS_STR_QUICKSTART_TAB_UPDATE_MOD" => "Jak zaktualizować mod?",
 	
 	#Add a server
 	"GS_STR_QUICKSTART_FORORGANIZERS_LOGIN" => "Najpierw zaloguj się przy pomocy konta %m1%",
@@ -251,6 +254,7 @@ foreach($sections as $section) {
 	
 echo
 	'<li><a href="https://ofp-faguss.com/fwatch/modmanager">'.lang("GS_STR_QUICKSTART_TAB_INSTALL_MOD").'</a></li>
+	 <li><a href="mod_updates">'.lang("GS_STR_QUICKSTART_TAB_UPDATE_MOD").'</a></li>
 </ul>
 <div class="jumbotron">
 <div class="tab-content">';

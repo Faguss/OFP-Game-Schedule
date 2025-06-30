@@ -1,16 +1,5 @@
 <?php
-function url_get_contents($url) {
-    if (!function_exists('curl_init'))
-        die('CURL is not installed!');
-
-    $request = curl_init();
-	curl_setopt($request, CURLOPT_URL, $url);
-	curl_setopt($request, CURLOPT_HEADER, 0);
-	curl_setopt($request, CURLOPT_RETURNTRANSFER, 1);
-    $output = curl_exec($request);
-    curl_close($request);
-    return $output;
-}
+require_once "common_min.php";
 
 function get_text_between($content, $start, $end) {
 	$start_index = stripos($content, $start);
@@ -43,7 +32,7 @@ function build_url(array $parts) {
 
 function get_filename_from_page($url) {
 	$url_tokens   = parse_url($url);
-	$page_content = url_get_contents($url);
+	$page_content = GS_url_get_contents($url);
 	$filename     = "";
 	$keywords     = [];
 
@@ -91,7 +80,7 @@ function get_filename_from_page($url) {
 					$index_start = strrpos($page_content, "<a href='", (strlen($page_content)-$index_end)*-1);
 					$index_start += 9;
 					$url_tokens["path"] = substr($page_content, $index_start, $index_end-$index_start);
-					$page_content = url_get_contents(build_url($url_tokens));
+					$page_content = GS_url_get_contents(build_url($url_tokens));
 				}
 			}
 			$keywords = ["<h1 style='font-size:30px;'>", " <font"];
@@ -131,20 +120,22 @@ else
 			if (strtotime("now") > strtotime($server["status_expires"])) {
 				$ip = $server["ip"];
 				if (isset($ip)) {
-					if (strpos($ip,":") === FALSE)
-						$ip .= ":2302";
+					$output = GS_query_ofp_server($ip);
 					
-					$output = url_get_contents("https://ofp-api.ofpisnotdead.com/{$ip}");
-
 					$db->update("gs_serv", $server["id"], [
 						"status"         => $output, 
-						"status_expires" => date('Y-m-d H:i:s', strtotime("+".(50+rand(0,20))." second"))
+						"status_expires" => date('Y-m-d H:i:s', strtotime("+".(10+rand(0,5))." second"))
 					]);
 				}
 			} else {
 				$output = $server["status"];
 			}
 		}
+	}
+else	
+	if (isset($_POST['queryserverip']) && !empty($_POST['queryserverip'])) {
+		header('Content-Type: application/json; charset=utf-8');
+		$output = GS_query_ofp_server($_POST['queryserverip']);
 	}
 
 echo $output;	

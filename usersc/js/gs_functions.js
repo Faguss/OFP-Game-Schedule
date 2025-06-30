@@ -251,32 +251,26 @@ function GS_table_rows_swap(direction, row_id, field_id) {
 		}
 }
 
-// Get game server status
+// Get game server status by IP
 function GS_get_server_status(ip_id) {
-	var ip_input = document.getElementById(ip_id);
-	var ip       = ip_input.value;
-	var port     = '2302';
-	var parts    = ip_input.value.split(':');
-	
-	if (parts.length >= 2) {
-		ip   = parts[0];
-		port = parts[1];
-	}
-	
-	var ip_input_backup = ip_input.innerHTML;
+	let ip_input = document.getElementById(ip_id);
+	let ip_input_backup = ip_input.innerHTML;
 	ip_input.innerHTML  = "";
 	$(ip_input).addClass('schedule_modal_loader');
-	
-	$.get("https://ofp-api.ofpisnotdead.com/"+ip+":"+port, function(data) {
+			
+	$.post('js_request.php', {queryserverip: ip_input.value}, function(data) {
 		$(ip_input).removeClass('schedule_modal_loader');
 		ip_input.innerHTML = ip_input_backup;
 		
 		GS_fill_input_fields_from_server_query(data);
-		GS_get_server_location(ip);
+		
+		var tokens = ip_input.value.split(':');		
+		GS_get_server_location(tokens.length >= 2 ? tokens[0] : ip_input.value);
 	})
-	.fail(function() {
+	.fail(function(xhr, status, error) {
 		$(ip_input).removeClass('schedule_modal_loader');
 		ip_input.innerHTML = ip_input_backup;
+		alert(xhr.responseText);
 	});
 }
 
@@ -291,17 +285,19 @@ function GS_fill_input_fields_from_server_query(data) {
 	}
 	
 	var server_name = data.hostname;
-	var link_pattern = /(http|bit\.ly|www\.)([\S]+)/gi;
+	var link_pattern = /(http|bit\.ly|www\.|tinyurl\.com)([\S]+)/gi;
 	var urls = server_name.match(link_pattern);
+	var website = "";
 	
 	if (urls && urls.length>0) {
-		$('#website').val(urls[0]);
+		website = urls[0];
 		server_name = server_name.replaceAll(link_pattern, '').trim();
 	}
 	
 	$('#name').val(server_name);
 	$('#version').val(data.actver.substring(0,1)+"."+data.actver.substring(1));
 	$('#equalmodreq').val(data.equalModRequired);
+	$('#website').val(website);
 	
 	if (data.password == "1") {
 		if ($('#password').val() == "")
@@ -886,8 +882,9 @@ function GS_get_server_list(master_server, list_id) {
 					for (const ip_address of ip_adresses) {
 						downloads++;
 						$.ajax({
-							type: 'GET',
-							url: 'https://ofp-api.ofpisnotdead.com/'+ip_address,
+							type: 'POST',
+							url: 'js_request.php',
+							data: {queryserverip:ip_address},
 							dataType: 'json',
 							success: function (server_status) {
 								if (server_status != null) {
@@ -2101,7 +2098,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 									if (game_source)
 										command_description += "\nto the "+modname+"\\"+GS_path_last_item(file_name).substr(0,-4);
                                     else
-                                        command_description += "\nto the " . file_name.substr(0,-4);
+                                        command_description += "\nto the " + file_name.substr(0,-4);
 
 								last_unpbo = last_unpbo.substr(0, -4);
 							}

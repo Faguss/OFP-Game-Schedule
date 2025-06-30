@@ -14,10 +14,10 @@ $csrf          = Session::get(Config::get('session/token_name'));
 
 
 // Display servers	
-if (!empty($servers["id"]))
+if (!empty($servers["id"])) {
 	echo "<p style=\"text-align:center;\"><a style=\"cursor:pointer; font-weight:bold; font-size:x-large;\" href=\"quickstart\" target=\"_blank\">".lang("GS_STR_SERVER_HOWTO_CONNECT")."</a></p>";
-
-echo '<div class="row">' . GS_format_server_info($servers, $mods, 12, GS_USER_INFO, $input["server"]) . '</div>';
+	echo '<div class="row">' . GS_format_server_info($servers, $mods, 12, GS_USER_INFO, $input["server"]) . '</div>';
+}
 
 
 
@@ -37,6 +37,7 @@ $navigation_forms = [];
 $db  = DB::getInstance();
 $sql = "SELECT users.username, users.id FROM users WHERE users.id IN (". substr(str_repeat(",?",count($mods["userlist"])), 1) . ")";
 
+if (isset($mods["userlist"]) && !empty($mods["userlist"]))
 if (!$db->query($sql,$mods["userlist"])->error())
 	foreach($db->results(true) as $row)
 		$user_list[$row["id"]] = $row["username"];
@@ -71,7 +72,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 				'.GS_output_item_logo("mod", $mod["logo"], 128).'
 			</div>
 			<div class="media-body media-middle">
-				'.GS_show_dropdown_controls($mod, "mod", $mods["rights"][$id], $gs_my_permission_level, ['<span class="gs_servermod_title">',$subtitle.'</span>']).'
+				'.GS_show_dropdown_controls($mod, "mod", isset($mods["rights"][$id]) ? $mods["rights"][$id] : [], GS_get_permission_level(isset($user) ? $user : null), ['<span class="gs_servermod_title">',$subtitle.'</span>']).'
 			</div><!--end media-body-->
 		</div><!--end media-->
 	';
@@ -110,13 +111,14 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 				}
 			} break;
 			
-			default : $value=$mod[$key];
+			default : $value=isset($mod[$key]) ? $mod[$key] : null;
 		}
 
-		$value = str_replace("&amp;#039;", "'", $value);
 		
-		if (!empty($value))
+		if (!empty($value)) {
+			$value = str_replace("&amp;#039;", "'", $value);
 			echo "<dt>{$name}:</dt><dd>{$value}</dd>";
+		}
 	}
 	
 	echo "</dl>";

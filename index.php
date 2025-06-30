@@ -225,6 +225,7 @@ if (!empty($persistent)) {
 		$status       = GS_parse_game_server_status($server["status"]);
 		
 		$server_mods = [];
+		if (isset($server["mods"]))
 		foreach($server["mods"] as $mod_id)
 			$server_mods[] = '<a target="_blank" href="show.php?mod='.$mods["info"][$mod_id]["uniqueid"].'">'.$mods["info"][$mod_id]["name"].'</a>';
 		
@@ -297,6 +298,9 @@ for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 	$mods_html .= '<div class="row">';
 
 	for ($current_column=0; $current_column<$sorted["number_of_columns"]; $current_column++) {
+		if (!isset($sorted) || !isset($sorted["columns"]) || !isset($sorted["columns"][$current_column]) || !isset($sorted["columns"][$current_column][$current_row]))
+			break;
+		
 		$key = $sorted["columns"][$current_column][$current_row];
 		
 		if (!isset($key))
@@ -676,7 +680,7 @@ if (isset($user) && $user->isLoggedIn()){
 	<div class="index_section">
 		<ul id="main_info_tabs" class="nav nav-tabs" role="tablist">
 			<li role="presentation" class="active"><a href="#currentevents" aria-controls="currentevents" role="tab" data-toggle="tab">'.lang("GS_STR_INDEX_SCHEDULE").'</a></li>
-			<li role="presentation"><a href="#allmods" aria-controls="all'.$record_type.'" role="tab" data-toggle="tab">'.lang("GS_STR_INDEX_ALLMODS").'</a></li>
+			<li role="presentation"><a href="#allmods" aria-controls="allmods" role="tab" data-toggle="tab">'.lang("GS_STR_INDEX_ALLMODS").'</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -769,7 +773,9 @@ echo '
 <script type="text/javascript">
 GS_convert_server_events('.json_encode($js_event_data).','.json_encode($localized_strings).','.json_encode($recurrence_strings).');
 $(document).ready(function() {
+	setInterval(function(){
 	GS_query_game_server('.json_encode($js_serv_id).', '.json_encode($server_status_list).', '.json_encode($js_expired).', "summary");
+	}, 10000);
 	GS_localize_date(\'recentactivity\');
 	
 	let url = location.href.replace(/\/$/, "");
