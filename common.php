@@ -1,7 +1,7 @@
 <?php
 require_once "common_min.php";
 
-define("GS_FWATCH_LAST_UPDATE","[2025,4,12,6,23,4,8,977,120,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2025,12,18,4,23,49,17,869,60,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -1934,14 +1934,10 @@ function GS_parse_game_server_status($status) {
 		
 		if (isset($server_status["numplayers"]) && isset($server_status["players"])) {
 			$output["players"] = $server_status["numplayers"];
-			$player_list       = [];
 			
-			foreach($server_status["players"] as $player)
-				$player_list[] = $player["player"];
-									
-			if (!empty($player_list)) {
-				$output["summary"] .= " - " . implode(", ", $player_list);
-				$output["players"]  = implode("<br>", $player_list);
+			if (!empty($server_status["players"])) {
+				$output["summary"] .= " - " . implode(", ", $server_status["players"]);
+				$output["players"]  = implode("<br>", $server_status["players"]);
 			}
 			
 		}

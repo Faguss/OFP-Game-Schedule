@@ -181,7 +181,7 @@ $sections = [
 			[
 				"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_LOGIN",
 				"image"     => "1_mainmenu",
-				"arguments" => ["<a href='users/login.php' target='_blank'>Steam / Discord / VK / Google / Facebook</a>"],
+				"arguments" => ["<a href='users/login.php' target='_blank'>Steam / Discord / VK / Google</a>"],
 			],
 			[
 				"string"    => "GS_STR_QUICKSTART_FORORGANIZERS_ADDSERV",

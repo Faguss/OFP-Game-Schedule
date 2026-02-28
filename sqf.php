@@ -242,7 +242,7 @@ switch($input_mode) {
 					if ($i != 0)
 						$server_info .= "\\n";
 					
-					$server_info .= $player->player;
+					$server_info .= GS_convert_utf8_to_windows($player);
 				}
 				
 				$server_info .= "\"]";

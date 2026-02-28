@@ -10,11 +10,13 @@ $js_modal = "
 		<p>".lang("GS_STR_MOD_CONVERTLINK_DESC")."</p>
 		<ul>
 			<li><b>Google Drive</b> - <span style=\"font-size:x-small;\">https://drive.google.com/file/d/1_53Xmwek8ffHlHElhKb8vNaQEkJ0PWFj/view?usp=sharing</span></li>
-			<li><b>ModDB</b> - <span style=\"font-size:x-small;\">https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25</span></li>
+			<!--<li><b>ModDB</b> - <span style=\"font-size:x-small;\">https://www.moddb.com/mods/sanctuary1/downloads/ww4-modpack-25</span></li>-->
 			<li><b>Mediafire</b> - <span style=\"font-size:x-small;\">http://www.mediafire.com/file/4rm6uf16ihe36ce/wgl512_2006-11-12.rar/file</span></li>
-			<li><b>DSServers</b> - <span style=\"font-size:x-small;\">https://ds-servers.com/gf/operation-flashpoint/modifications/miscellaneous/fdf-mod-v1-4.html</span></li>
+			<!--<li><b>GameFront</b> - <span style=\"font-size:x-small;\">https://www.gamefront.com/games/operation-flashpoint/file/fdf-mod</span></li>-->
+			<!--<li><b>DSServers</b> - <span style=\"font-size:x-small;\">https://ds-servers.com/gf/operation-flashpoint/modifications/miscellaneous/fdf-mod-v1-4.html</span></li>-->
+			<!--<li><b>ArmaHolic</b> - <span style=\"font-size:x-small;\">https://www.armaholic.com/page.php?id=34273</span></li>-->
 			<li><b>OFPEC</b> - <span style=\"font-size:x-small;\">https://www.ofpec.com/addons_depot/index.php?action=details&id=69</span></li>
-			<li><b>SendSpace</b> - <span style=\"font-size:x-small;\">https://www.sendspace.com/file/8r9g4z</span></li>
+			<!--<li><b>SendSpace</b> - <span style=\"font-size:x-small;\">https://www.sendspace.com/file/8r9g4z</span></li>-->
 			<li><b>LoneBullet</b> - <span style=\"font-size:x-small;\">https://www.lonebullet.com/mods/download-ecp-1085e-tgs-operation-flashpoint-resistance-mod-free-52029.htm</span></li>
 			<li><b>DropBox</b> - <span style=\"font-size:x-small;\">https://www.dropbox.com/s/aswdz81mxhc909b/Bw85%20pack%201.3.rar?dl=0</span></li>
 		</ul>

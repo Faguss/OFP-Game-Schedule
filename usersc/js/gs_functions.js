@@ -1142,9 +1142,9 @@ function GS_activate_convertlink_modal() {
 			}
 		}
 
-		if (convertlink_modal_link.value.indexOf('moddb.com/mods/') >= 0 || convertlink_modal_link.value.indexOf('moddb.com/downloads/start') >= 0) {
+		/*if (convertlink_modal_link.value.indexOf('moddb.com/mods/') >= 0 || convertlink_modal_link.value.indexOf('moddb.com/downloads/start') >= 0) {
 			convertlink_modal_group_filename.style.display = 'block';
-		}
+		}*/
 
 		if (convertlink_modal_link.value.indexOf('mediafire.com/file/') >= 0) {
 			convertlink_modal_group_filename.style.display = 'block';
@@ -1154,16 +1154,16 @@ function GS_activate_convertlink_modal() {
 			pos     = sub.indexOf('/');
 		}
 
-		if (convertlink_modal_link.value.search('ds-servers.com') >= 0) {
+		/*if (convertlink_modal_link.value.search('ds-servers.com') >= 0) {
 			var id_pos = convertlink_modal_link.value.search('/gf/');
 			
 			if (id_pos >= 0)
 				convertlink_modal_group_filename.style.display = 'block';
-		}
+		}*/
 		
-		if (convertlink_modal_link.value.search('armaholic.com/page.php\\?id=') >= 0) {
+		/*if (convertlink_modal_link.value.search('armaholic.com/page.php\\?id=') >= 0) {
 			convertlink_modal_group_filename.style.display = 'block';
-		}
+		}*/
 		
 		if (convertlink_modal_link.value.search('ofpec.com') >= 0) {
 			var id_pos = convertlink_modal_link.value.search('id=');
@@ -1172,12 +1172,12 @@ function GS_activate_convertlink_modal() {
 				convertlink_modal_group_filename.style.display = 'block';
 		}
 		
-		if (convertlink_modal_link.value.search('sendspace.com') >= 0) {
+		/*if (convertlink_modal_link.value.search('sendspace.com') >= 0) {
 			var id_pos = convertlink_modal_link.value.search('/file/');
 			
 			if (id_pos >= 0)
 				convertlink_modal_group_filename.style.display = 'block';
-		}
+		}*/
 
 		if (convertlink_modal_link.value.indexOf('lonebullet.com') >= 0) {
 			convertlink_modal_group_filename.style.display = 'block';
@@ -1226,7 +1226,7 @@ function GS_activate_convertlink_modal() {
 			}
 		}
 
-		if (convertlink_modal_link.value.indexOf('moddb.com/mods/') >= 0) {			
+		/*if (convertlink_modal_link.value.indexOf('moddb.com/mods/') >= 0) {			
 			final_url = convertlink_modal_link.value + ' /downloads/start/ /downloads/mirror/ ';
 		}
 		
@@ -1237,7 +1237,7 @@ function GS_activate_convertlink_modal() {
 				query_pos = convertlink_modal_link.value.length;
 			
 			final_url = convertlink_modal_link.value.substring(0, query_pos) + ' /downloads/mirror/ ';
-		}
+		}*/
 		
 		if (convertlink_modal_link.value.indexOf('mediafire.com/file/') >= 0) {
 			var pos = convertlink_modal_link.value.indexOf('mediafire.com/file/');
@@ -1253,21 +1253,26 @@ function GS_activate_convertlink_modal() {
 			final_url += ' ://download ';
 		}
 		
-		if (convertlink_modal_link.value.search('ds-servers.com') >= 0) {
-			final_url = convertlink_modal_link.value + (convertlink_modal_link.value.search('files/gf/')>=0 ? ' store.node ' : ' files/gf/ store.node ');
-		}
+		/*if (convertlink_modal_link.value.indexOf('gamefront.com/games/') >= 0) {
+			var last_slash = convertlink_modal_link.value.lastIndexOf('/');
+			final_url      = convertlink_modal_link.value + ' ' + convertlink_modal_link.value.substring(last_slash+1) + '/download expires= ';
+		}*/
 		
-		if (convertlink_modal_link.value.search('armaholic.com/page.php\\?id=') >= 0) {
+		/*if (convertlink_modal_link.value.search('ds-servers.com') >= 0) {
+			final_url = convertlink_modal_link.value + (convertlink_modal_link.value.search('files/gf/')>=0 ? ' store.node ' : ' files/gf/ store.node ');
+		}*/
+		
+		/*if (convertlink_modal_link.value.search('armaholic.com/page.php\\?id=') >= 0) {
 			final_url = convertlink_modal_link.value + ' download_file= ';
-		}
+		}*/
 
 		if (convertlink_modal_link.value.search('ofpec.com') >= 0) {
 			final_url = convertlink_modal_link.value + (convertlink_modal_link.value.search('download.php')>=0 ? ' ' : ' download.php ');				
 		}
 
-		if (convertlink_modal_link.value.search('sendspace.com') >= 0) {
+		/*if (convertlink_modal_link.value.search('sendspace.com') >= 0) {
 			final_url = convertlink_modal_link.value + ' sendspace.com/dl ';
-		}
+		}*/
 
 		if (convertlink_modal_link.value.search('lonebullet.com') >= 0) {
 			final_url = convertlink_modal_link.value + ' /file/ files.lonebullet.com ';

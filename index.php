@@ -330,6 +330,151 @@ for ($current_row=0; $current_row<$sorted["number_of_rows"]; $current_row++) {
 }
 
 
+// FAQ Stringtable
+if ($lang["THIS_CODE"] == "en-US") {
+	$lang = array_merge($lang, array(
+		#Section titles
+		"GS_FAQ_SECTION1_TITLE" => "What is OFP Game Schedule?",
+		"GS_FAQ_SECTION2_TITLE" => "How does it work?",
+		"GS_FAQ_SECTION3_TITLE" => "How do the mods work?",
+		"GS_FAQ_SECTION4_TITLE" => "Why use OFP Game Schedule?",
+		
+		#What is OFP Game Schedule? 
+		"GS_FAQ_SECTION1_PAR1" => "OFP Game Schedule is a system facilitating arrangement of multiplayer sessions for the 2001 video game Operation Flashpoint (made by Bohemia Interactive) and its 2011 re-release known as ARMA: Cold War Assault",
+		"GS_FAQ_SECTION1_PAR2" => "The OFP GS website is a database of servers and mods. Players can download mods and connect to the servers from the game's main menu",
+		
+		#How does it work?
+		"GS_FAQ_SECTION2_PAR1" => "Person organizing an event logs in to the website. The entire setup can be done from the Steam game overlay",
+		"GS_FAQ_SECTION2_PAR2" => "Organizer adds information about the server (IP address, game time, mods)",
+		"GS_FAQ_SECTION2_PAR3" => "Players install <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/116test\">Fwatch 1.16 with OFP Aspect Ratio pack 2.07</a>. Once in the game they open the Game Schedule menu and select server that was added by the organizer. They will automatically download required mods and join the server",
+		
+		#How do the mods work?
+		"GS_FAQ_SECTION3_PAR1" => "OFP Game Schedule also handles distribution of OFP mods. You may add a mod to the database and other people will be able to install it from the game's main menu",
+		"GS_FAQ_SECTION3_PAR2" => "You add instructions on how to install your mod. It may be as simple as a single download link or your might micromanage specific files using commands",
+		"GS_FAQ_SECTION3_PAR3" => "Players install your mod using <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a> menu in the game",
+		"GS_FAQ_SECTION3_PAR4" => "Mods can be updated and players will see a notification in the game's main menu",
+		
+		#Why use OFP Game Schedule?
+		"GS_FAQ_SECTION4_PAR1" => "Joining server with a single button. No need to type ip address, password and mods",
+		"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may automatically add game event to the Windows Task Scheduler so that they won't miss it",
+		"GS_FAQ_SECTION4_PAR3" => "Joining with voice. Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
+		"GS_FAQ_SECTION4_PAR4" => "Automatic mod installation. No need to send links and instructions to players",
+		"GS_FAQ_SECTION4_PAR5" => "Custom mod faces. User's face texture may be stored in a modfolder and it will be automatically activated",
+		"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
+		"GS_FAQ_SECTION4_PAR7" => "Faster loading. Modfolders can now store the missions so that players don't have to download them during the game",
+		"GS_FAQ_SECTION4_PAR8" => "Server security. By adding a password you're limiting your server to only OFP Game Schedule users. This way players with the wrong mods won't be able to join and crash the server",
+	));
+}
+
+if ($lang["THIS_CODE"] == "pl-PL") {
+	$lang = array_merge($lang, array(
+		#Section titles
+		"GS_FAQ_SECTION1_TITLE" => "Co to jest Rozkład Rozgrywek do OFP?",
+		"GS_FAQ_SECTION2_TITLE" => "Jak to działa?",
+		"GS_FAQ_SECTION3_TITLE" => "Jak działają mody?",
+		"GS_FAQ_SECTION4_TITLE" => "Po co używać Rozkład Rozgrywek do OFP?",
+		
+		#What is OFP Game Schedule? 
+		"GS_FAQ_SECTION1_PAR1" => "Rozklad Rozgrywek do OFP to system ułatwiający organizowanie sesji sieciowych do gry Operation Flashpoint (stworzonej przez Bohemia Interactive w 2001) oraz jej reedycji znanej jako ARMA: Cold War Assault z 2011",
+		"GS_FAQ_SECTION1_PAR2" => "Strona Rozkładu Rozgrywek do OFP to baza danych serwerów i modów. W menu głównym gry gracze mogą ściągać mody i podłączać się do serwerów",
+		
+		#How does it work?
+		"GS_FAQ_SECTION2_PAR1" => "Osoba organizująca sesję loguje się do strony. Wszystko można ustawić z poziomu Nakładki Steam",
+		"GS_FAQ_SECTION2_PAR2" => "Organizator dodaje informacje o serwerze (adres IP, czas gry, mody)",
+		"GS_FAQ_SECTION2_PAR3" => "Gracze instalują <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/116test\">Fwatch 1.16 z paczką OFP Aspect Ratio 2.07</a>. Po uruchomieniu gry wybierają menu Rozkładu Rozgrywek i wybierają serwer dodany przez organizatora. Automatycznie pobiorą wymagane mody i dołączą do serwera",
+		
+		#How do the mods work?
+		"GS_FAQ_SECTION3_PAR1" => "Rozkład Rozgrywek do OFP to także dystrybutor modów do OFP. Możesz dodać mod do bazy, a inni użytkownicy będą mogli go zainstalować z menu głównego gry",
+		"GS_FAQ_SECTION3_PAR2" => "Wpisujesz instrukcje instalacji modu. Może to być po prostu pojedynczy link do wymaganego pliku albo mogą też zarządzać konkretnymi plikami przy użyciu komend",
+		"GS_FAQ_SECTION3_PAR3" => "Gracze instalują twój mod używając menu <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a> w grze",
+		"GS_FAQ_SECTION3_PAR4" => "Mody mogą być aktualizowane i gracze zobaczą powiadomienie w menu głównym gry",
+		
+		#Why use OFP Game Schedule?
+		"GS_FAQ_SECTION4_PAR1" => "Dołączanie do serwera jednym przyciskiem. Nie trzeba pisać adresu ip, hasła i linii modów",
+		"GS_FAQ_SECTION4_PAR2" => "Dołączanie o czasie. Gracze mogą automatycznie dodać sesję do Harmonogramu Windows dzięki czemu jej nie przegapią",
+		"GS_FAQ_SECTION4_PAR3" => "Dołączanie z czatem głosowym. Automatyczne podłączanie się do serwera TeamSpeak3 lub Mumble przy dołączaniu do serwera OFP",
+		"GS_FAQ_SECTION4_PAR4" => "Automatyczna instalacja modów. Nie ma potrzeby rozsyłania graczom linków do ściągnięcia modu i instrukcji",
+		"GS_FAQ_SECTION4_PAR5" => "Twarze w modach. Własna tekstura twarzy może być przechowywana w modfolderze i będzie aktywowana automatycznie",
+		"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
+		"GS_FAQ_SECTION4_PAR7" => "Szybsze ładowanie. Modfoldery mogą teraz przechowywać misje dzięki czemu gracze nie będą musieli ich ściągać podczas rozgrywki",
+		"GS_FAQ_SECTION4_PAR8" => "Bezpieczeństwo serwera. Po dodaniu hasła tylko gracze używający menu Rozkładu Rozgrywek będą mogli się podłączyć. W ten sposób użytkownicy z nieprawidłowymi modami nie wejdą do serwera i nie zawieszą go",
+	));
+}
+
+if ($lang["THIS_CODE"] == "ru-RU") {
+	$lang = array_merge($lang, array(
+		#Section titles
+	"GS_FAQ_SECTION1_TITLE" => "Что такое Расписание Игр для OFP?",
+	"GS_FAQ_SECTION2_TITLE" => "Как это работает?",
+	"GS_FAQ_SECTION3_TITLE" => "Как работают моды?",
+	"GS_FAQ_SECTION4_TITLE" => "Почему стоит пользоваться Расписанием?",
+		
+		#What is OFP Game Schedule? 
+"GS_FAQ_SECTION1_PAR1" => "Расписание Игр для OFP — это система, которая упрощает создание мультиплеер-сессий для игр Operation Flashpoint (2001, Bohemia Interactive) и ARMA: Cold War Assault (2011)",
+"GS_FAQ_SECTION1_PAR2" => "Расписание Игр — это датабаза серверов и модов. Игроки могут просматривать аддоны, скачивать моды, и подключаться к серверам из главного меню OFP",
+		
+		#How does it work?
+"GS_FAQ_SECTION2_PAR1" => "Для начала нужно войти в аккаунт на сайте. Это можно сделать через Steam, чтобы все настройки были доступны в игровом оверлее Steam.",
+"GS_FAQ_SECTION2_PAR2" => "Нужно добавить информацию о сервере, в котором будет игра (IP-адрес, время, моды).",
+"GS_FAQ_SECTION2_PAR3" => "Игрокам нужно установить <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/116test\">Fwatch 1.16 с OFP Aspect Ratio (pack 2.07)</a>. В Расписании Игр появится сервер, откуда можно загрузить нужные моды, и куда можно присоединиться.",
+		
+		#How do the mods work?
+"GS_FAQ_SECTION3_PAR1" => "Расписание Игр также является ПО для установки модов для OFP, с помощью которого пользователи могут добавить новые моды на сайте.",
+"GS_FAQ_SECTION3_PAR2" => "Нужно добавить инструкции как правильно установить мод. Инструкции могут быть разной степени сложности (от \"установить по ссылке\" до \"использовать команды скрипта для изменения файлов\").",
+"GS_FAQ_SECTION3_PAR3" => "Игрокам нужно установить моды через меню <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a>  или же через меню Расписания Игр (в случае если мод привязан к серверу).",
+	"GS_FAQ_SECTION3_PAR4" => "Моды можно обновлять, и игрокам придёт уведомление в главном меню игры.",
+		
+		#Why use OFP Game Schedule?
+	"GS_FAQ_SECTION4_PAR1" => "Подключение к серверу в один клик. Не нужно прописывать IP-адрес, пароль и моды.",
+"GS_FAQ_SECTION4_PAR2" => "Подключение по времени. Игроки могут добавить событие в Планировщик заданий Windows, чтобы не пропустить.",
+	"GS_FAQ_SECTION4_PAR3" => "Подключение с голосовым чатом. Автоматическое присоединение к TeamSpeak3 или Mumble при подключении к серверу OFP. ",			
+	"GS_FAQ_SECTION4_PAR4" => "Автоматическая установка модов. Не нужно присылать ссылки и инструкции каждому игроку.",
+	"GS_FAQ_SECTION4_PAR5" => "Кастомные моды на лица. Пользователи могут сохранять текстуру лица в папке мода, и она будет включена автоматически.",
+	"GS_FAQ_SECTION4_PAR6" => "Отключение кастомных файлов по необходимости. Игрокам не нужно беспокоиться о кастомных файлах, которые могут мешать подключению к серверу.",
+	"GS_FAQ_SECTION4_PAR7" => "Загрузка теперь быстрее. Папки модов теперь могут хранить миссии, так что игрокам не придётся загружать их во время игры.",
+"GS_FAQ_SECTION4_PAR8" => "Безопасность серверов. Серверы могут требовать пароль на входе, а сам веб-сайт шифрует пароль. Таким образом, игроки с неподходящими модами не обрушат сервер при подключении.",
+	));
+}
+
+$faq = [
+	[
+		"id"=>"whatisofpgs",
+		"paragraphs"=>[
+			["image"=>"ofp_cwa_logo.jpg","alt"=>"Game Logo"],
+			["image"=>"ofp_extra_menu.jpg","alt"=>"Main Menu"]
+		],
+	],
+	[
+		"id"=>"howdoesitwork",
+		"paragraphs"=>[
+			["image"=>"ofp_steam_login.jpg","alt"=>"Steam Login"],
+			["image"=>"website_server_options.png","alt"=>"Server details"],
+			["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
+		],
+	],
+	[
+		"id"=>"howdothemodswork",
+		"paragraphs"=>[
+			["image"=>"website_add_new_mod.png","alt"=>"Add Mod"],
+			["image"=>"website_installation_scripts.png","alt"=>"Installation script"],
+			["image"=>"ofp_mod_menu.jpg","alt"=>"Mod menu"],
+			["image"=>"ofp_available_mod_updates.jpg","alt"=>"Available updates"],
+		],
+	],
+	[
+		"id"=>"whyuseofpgs",
+		"paragraphs"=>[
+			["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
+			["image"=>"windows_task_scheduler.png","alt"=>"Scheduler"],
+			["image"=>"ofp_with_ts3.jpg","alt"=>"VOIP"],
+			["image"=>"ofp_mod_installation.jpg","alt"=>"Mod installation"],
+			["image"=>"custom_mod_face.jpg","alt"=>"Face"],
+			["image"=>"custom_sounds.png","alt"=>"Custom sounds"],
+			["image"=>"ofp_briefing.jpg","alt"=>"Briefing"],
+			["image"=>"ofp_locked_server.jpg","alt"=>"Locked server"],
+		],
+	]
+];
 $js_faq_sections = [];
 
 if (isset($user) && $user->isLoggedIn()){
@@ -447,112 +592,6 @@ if (isset($user) && $user->isLoggedIn()){
 		</div>';
 	}
 } else {
-	// FAQ Stringtable
-	if ($lang["THIS_CODE"] == "en-US") {
-		$lang = array_merge($lang, array(
-			#Section titles
-			"GS_FAQ_SECTION1_TITLE" => "What is OFP Game Schedule?",
-			"GS_FAQ_SECTION2_TITLE" => "How does it work?",
-			"GS_FAQ_SECTION3_TITLE" => "How do the mods work?",
-			"GS_FAQ_SECTION4_TITLE" => "Why use OFP Game Schedule?",
-			
-			#What is OFP Game Schedule? 
-			"GS_FAQ_SECTION1_PAR1" => "OFP Game Schedule is a system facilitating arrangement of multiplayer sessions for the 2001 video game Operation Flashpoint (made by Bohemia Interactive) and its 2011 re-release ARMA: Cold War Assault",
-			"GS_FAQ_SECTION1_PAR2" => "The OFP GS website is a database of servers and mods. Players, after installing required game extensions, can browse them in the OFP's main menu, download mods and connect to the servers",
-			
-			#How does it work?
-			"GS_FAQ_SECTION2_PAR1" => "Person organizing an event logs in to the website. They can do it via Steam so the entire setup can be done from the Steam game overlay",
-			"GS_FAQ_SECTION2_PAR2" => "They add information about the server that the game will take place on (IP address, game time, mods)",
-			"GS_FAQ_SECTION2_PAR3" => "Players install Fwatch 1.16 with OFP Aspect Ratio pack 2.07. Server will show up in the Game Schedule menu. From there they'll be able to download required mods and join the server",
-			
-			#How do the mods work?
-			"GS_FAQ_SECTION3_PAR1" => "OFP Game Schedule is also a package manager for OFP mods. Users may register new mods on the website",
-			"GS_FAQ_SECTION3_PAR2" => "They submit instructions on how to install their mod. It may be as simple as a single download link or they might micromanage specific files using scripting commands",
-			"GS_FAQ_SECTION3_PAR3" => "Players install mods from the game using <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a> menu or the Game Schedule menu (when a mod is assigned to a server)",
-			"GS_FAQ_SECTION3_PAR4" => "Mods can be updated and players will see a notification in the game's main menu",
-			
-			#Why use OFP Game Schedule?
-			"GS_FAQ_SECTION4_PAR1" => "Joining server with a single button. No need to type ip address, password and mods",
-			"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may automatically add event to the Windows Task Scheduler so that they won't miss it",
-			"GS_FAQ_SECTION4_PAR3" => "Joining with voice. Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
-			"GS_FAQ_SECTION4_PAR4" => "Automatic mod installation. No need to send links and instructions to players",
-			"GS_FAQ_SECTION4_PAR5" => "Custom mod faces. User's face texture may be stored in a modfolder and it will be automatically activated",
-			"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
-			"GS_FAQ_SECTION4_PAR7" => "Faster loading. Modfolders can now store the missions so that players don't have to download them during the game",
-			"GS_FAQ_SECTION4_PAR8" => "Server security. If the server is behind password then the only way to connect is through the Game Schedule menu. Website encrypts the password. This way users with wrong mods won't crash the server by joining it",
-		));
-	}
-
-	if ($lang["THIS_CODE"] == "pl-PL") {
-		$lang = array_merge($lang, array(
-			#Section titles
-			"GS_FAQ_SECTION1_TITLE" => "Co to jest Rozkład Rozgrywek do OFP?",
-			"GS_FAQ_SECTION2_TITLE" => "Jak to działa?",
-			"GS_FAQ_SECTION3_TITLE" => "Jak działają mody?",
-			"GS_FAQ_SECTION4_TITLE" => "Po co używać Rozkład Rozgrywek do OFP?",
-			
-			#What is OFP Game Schedule? 
-			"GS_FAQ_SECTION1_PAR1" => "Rozklad Rozgrywek do OFP to system ułatwiający organizowanie sesji sieciowych do gry Operation Flashpoint (stworzonej przez Bohemia Interactive w 2001) oraz jej reedycji ARMA: Cold War Assault z 2011",
-			"GS_FAQ_SECTION1_PAR2" => "Strona Rozkładu Rozgrywek do OFP to baza danych serwerów i modów. Gracze, po zainstalowaniu wymaganych rozszerzeń gry, mogą je przeglądać w menu głównym OFP, ściągać mody i podłączać się do serwerów",
-			
-			#How does it work?
-			"GS_FAQ_SECTION2_PAR1" => "Osoba organizująca sesję loguje się do strony. Mogą to zrobić poprez Steam dzięki czemu wszystko można ustawić z poziomu Nakładki Steam",
-			"GS_FAQ_SECTION2_PAR2" => "Dodaje informacje o serwerze na którym będzie toczyła się gra (adres IP, czas gry, mody)",
-			"GS_FAQ_SECTION2_PAR3" => "Gracze instalują Fwatch 1.16 z paczką OFP Aspect Ratio 2.07. Serwer pojawi się w menu Rozkład Rozgrywek. Stamtąd gracze będą mogli pobrać wymagane mody i dołączyć do serwera",
-			
-			#How do the mods work?
-			"GS_FAQ_SECTION3_PAR1" => "Rozkład Rozgrywek do OFP to także system zarządzania modami do OFP. Użytkownicy mogą zarejestrować nowe mody na stronie",
-			"GS_FAQ_SECTION3_PAR2" => "Wpisują instrukcje instalacji modu. Może to być po prostu pojedynczy link do wymaganego pliku albo mogą też zarządzać konkretnymi plikami przy użyciu komend skryptowych",
-			"GS_FAQ_SECTION3_PAR3" => "Greacze instalują mody z poziomu gry używając menu <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a> lub menu Rozkład Rozgrywek (gdy mod został przypisany do serwera)",
-			"GS_FAQ_SECTION3_PAR4" => "Mody mogą być aktualizowane i gracze zobaczą powiadomienie w menu głównym gry",
-			
-			#Why use OFP Game Schedule?
-			"GS_FAQ_SECTION4_PAR1" => "Dołączanie do serwera jednym przyciskiem. Nie trzeba pisać adresu ip, hasła i linii modów",
-			"GS_FAQ_SECTION4_PAR2" => "Dołączanie o czasie. Gracze mogą automatycznie dodać sesję do Harmonogramu Windows dzięki czemu jej nie przegapią",
-			"GS_FAQ_SECTION4_PAR3" => "Dołączanie z czatem głosowym. Automatyczne podłączanie się do serwera TeamSpeak3 lub Mumble przy dołączaniu do serwera OFP",
-			"GS_FAQ_SECTION4_PAR4" => "Automatyczna instalacja modów. Nie ma potrzeby rozsyłania graczom linków do ściągnięcia modu i instrukcji",
-			"GS_FAQ_SECTION4_PAR5" => "Twarze w modach. Własna tekstura twarzy może być przechowywana w modfolderze i będzie aktywowana automatycznie",
-			"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
-			"GS_FAQ_SECTION4_PAR7" => "Szybsze ładowanie. Modfoldery mogą teraz przechowywać misje dzięki czemu gracze nie będą musieli ich ściągać podczas rozgrywki",
-			"GS_FAQ_SECTION4_PAR8" => "Bezpieczeństwo serwera. Jeśli serwer jest na hasło to można się do niego podłączyć jedynie poprzez menu Rozkład Rozgrywek. Strona szyfruje hasło. W ten sposób użytkownicy z nieprawidłowymi modami nie wejdą do serwera i go nie zawieszą",
-		));
-	}
-
-	if ($lang["THIS_CODE"] == "ru-RU") {
-		$lang = array_merge($lang, array(
-			#Section titles
-"GS_FAQ_SECTION1_TITLE" => "What is OFP Game Schedule?",
-"GS_FAQ_SECTION2_TITLE" => "How does it work?",
-"GS_FAQ_SECTION3_TITLE" => "How do the mods work?",
-"GS_FAQ_SECTION4_TITLE" => "Why use OFP Game Schedule?",
-			
-			#What is OFP Game Schedule? 
-"GS_FAQ_SECTION1_PAR1" => "OFP Game Schedule is a system facilitating arrangement of multiplayer sessions for the 2001 video game Operation Flashpoint (made by Bohemia Interactive) and its 2011 re-release ARMA: Cold War Assault",
-"GS_FAQ_SECTION1_PAR2" => "The OFP GS website is a database of servers and mods. Players, after installing required game extensions, can browse them in the OFP's main menu, download mods and connect to the servers",
-			
-			#How does it work?
-"GS_FAQ_SECTION2_PAR1" => "Person organizing an event logs in to the website. They can do it via Steam so the entire setup can be done from the Steam game overlay",
-"GS_FAQ_SECTION2_PAR2" => "They add information about the server that the game will take place on (IP address, game time, mods)",
-"GS_FAQ_SECTION2_PAR3" => "Players install Fwatch 1.16 with OFP Aspect Ratio pack 2.07. Server will show up in the Game Schedule menu. From there they'll be able to download required mods and join the server",
-			
-			#How do the mods work?
-"GS_FAQ_SECTION3_PAR1" => "OFP Game Schedule is also a package manager for OFP mods. Users may register new mods on the website",
-"GS_FAQ_SECTION3_PAR2" => "They submit instructions on how to install their mod. It may be as simple as a single download link or they might micromanage specific files using scripting commands",
-"GS_FAQ_SECTION3_PAR3" => "Players install mods from the game using <a target=\"_blank\" href=\"https://ofp-faguss.com/fwatch/modmanager\">Mods</a> menu or the Game Schedule menu (when a mod is assigned to a server)",
-"GS_FAQ_SECTION3_PAR4" => "Mods can be updated and players will see a notification in the game's main menu",
-			
-			#Why use OFP Game Schedule?
-"GS_FAQ_SECTION4_PAR1" => "Joining server with a single button. No need to type ip address, password and mods",
-"GS_FAQ_SECTION4_PAR2" => "Joining on time. Players may automatically add event to the Windows Task Scheduler so that they won't miss it",
-"GS_FAQ_SECTION4_PAR3" => "Joining with voice. Automatically connect to a TeamSpeak3 or a Mumble server when joining the OFP server",			
-"GS_FAQ_SECTION4_PAR4" => "Automatic mod installation. No need to send links and instructions to players",
-"GS_FAQ_SECTION4_PAR5" => "Custom mod faces. User's face texture may be stored in a modfolder and it will be automatically activated",
-"GS_FAQ_SECTION4_PAR6" => "Disabling custom files when necessary. Players don't have to worry about their custom files preventing them from joining a server",
-"GS_FAQ_SECTION4_PAR7" => "Faster loading. Modfolders can now store the missions so that players don't have to download them during the game",
-"GS_FAQ_SECTION4_PAR8" => "Server security. If the server is behind password then the only way to connect is through the Game Schedule menu. Website encrypts the password. This way users with wrong mods won't crash the server by joining it",
-		));
-	}
-	
 	echo '
 	<div class="well">
 		<h1 class="text-center">'.lang("GS_STR_INDEX_WELCOME").'</h1>
@@ -571,46 +610,6 @@ if (isset($user) && $user->isLoggedIn()){
 			</div>
 		</div>
 	</div>';
-	
-	$faq = [
-		[
-			"id"=>"whatisofpgs",
-			"paragraphs"=>[
-				["image"=>"ofp_cwa_logo.jpg","alt"=>"Game Logo"],
-				["image"=>"ofp_extra_menu.jpg","alt"=>"Main Menu"]
-			],
-		],
-		[
-			"id"=>"howdoesitwork",
-			"paragraphs"=>[
-				["image"=>"ofp_steam_login.jpg","alt"=>"Steam Login"],
-				["image"=>"website_server_options.png","alt"=>"Server details"],
-				["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
-			],
-		],
-		[
-			"id"=>"howdothemodswork",
-			"paragraphs"=>[
-				["image"=>"website_add_new_mod.png","alt"=>"Add Mod"],
-				["image"=>"website_installation_scripts.png","alt"=>"Installation script"],
-				["image"=>"ofp_mod_menu.jpg","alt"=>"Mod menu"],
-				["image"=>"ofp_available_mod_updates.jpg","alt"=>"Available updates"],
-			],
-		],
-		[
-			"id"=>"whyuseofpgs",
-			"paragraphs"=>[
-				["image"=>"ofp_test_server_options.jpg","alt"=>"Joining server"],
-				["image"=>"windows_task_scheduler.png","alt"=>"Scheduler"],
-				["image"=>"ofp_with_ts3.jpg","alt"=>"VOIP"],
-				["image"=>"ofp_mod_installation.jpg","alt"=>"Mod installation"],
-				["image"=>"custom_mod_face.jpg","alt"=>"Face"],
-				["image"=>"custom_sounds.png","alt"=>"Custom sounds"],
-				["image"=>"ofp_briefing.jpg","alt"=>"Briefing"],
-				["image"=>"ofp_locked_server.jpg","alt"=>"Locked server"],
-			],
-		]
-	];
 
 	echo '
 	<div class="row">
@@ -695,6 +694,7 @@ if (isset($user) && $user->isLoggedIn()){
 // Recent activity
 $table         = GS_get_activity_log(5, GS_GENERAL_RSS_EXCLUDE, false, $gs_my_permission_level);
 $activity_html = "";
+$faq_html      = "";
 
 foreach($table as $row) {
 	$description = $row["description"];
@@ -712,12 +712,57 @@ foreach($table as $row) {
 	</div>';
 }
 
+foreach($faq as $key => $section) {
+	$section_number    = $key + 1;
+	$js_faq_sections[] = $section["id"];
+	
+	$faq_html .= "<h3 style='margin-top:1em;margin-bottom:1em;'><center>".lang("GS_FAQ_SECTION".$section_number."_TITLE")."</center></h3>";
+		
+	foreach($section["paragraphs"] as $pkey => $paragraph) {
+		$paragraph_number = $pkey + 1;
+		$left             = true;
+		$thumbnail        = substr_replace($paragraph["image"], "_300", -4, 0);
+		$paragraph_text   = lang("GS_FAQ_SECTION".$section_number."_PAR".$paragraph_number);
+		
+		if ($section_number == 4) {
+			$heading_end = strpos($paragraph_text, ".");
+			if ($heading_end !== FALSE) {
+				$paragraph_text = '<h4 class="media-heading">' . substr($paragraph_text,0,$heading_end) . '</h4><p class="faq_paragraph faq_paragraph_smaller">' . substr($paragraph_text,$heading_end+2) . '</p>';
+			}
+		} else {
+			$paragraph_text = '<p class="faq_paragraph">'.$paragraph_text.'</p>';
+		}
+
+		$html_img = '<a target="_blank" href="images/index/'.$paragraph["image"].'"><img class="media-object faq_image" src="images/index/'.$thumbnail.'" alt="'.$paragraph["alt"].'"></a>';
+		$html_txt = '<div class="media-body media-middle">'.$paragraph_text.'</div>';
+		
+		$faq_html .= '<div class="media '.($left?"":"text-right").'">';
+		
+		if ($left)
+			$faq_html .= '<div class="media-left">'.$html_img.'</div>'.$html_txt;
+		else
+			$faq_html .= $html_txt.'<div class="media-right">'.$html_img.'</div>';
+		
+		$faq_html .= '</div><!-- end media -->';
+	}
+}
+
 echo '
 <div class="index_section">
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" class="active">
 			<a href="#recent_activity" aria-controls="recent_activity" role="tab" data-toggle="tab">'.lang("GS_STR_INDEX_RECENT").'</a>
+		</li>';
+		
+	if (isset($user) && $user->isLoggedIn()) echo '
+		<li role="presentation">
+			<a href="#learn_more" aria-controls="learn_more" role="tab" data-toggle="tab">'.lang("GS_STR_INDEX_LEARN_MORE").'</a>
 		</li>
+		<li role="presentation">
+			<a href="quickstart">'.lang("GS_STR_INDEX_QUICKSTART").'</a>
+		</li>';
+		
+echo '
 	</ul>
 
 	<div class="tab-content">		
@@ -730,8 +775,16 @@ echo '
 			</div>
 			'.$activity_html.'
 		</div>
+		
+		<div role="tabpanel" class="tab-pane servers_background" id="learn_more">
+			<div class="row">
+				<div class="col-lg-8">
+					'.$faq_html.'
+				</div>
+			</div>
+		</div>
 	</div>
-
+	
 </div>';
 
 $localized_strings = [
@@ -774,7 +827,7 @@ echo '
 GS_convert_server_events('.json_encode($js_event_data).','.json_encode($localized_strings).','.json_encode($recurrence_strings).');
 $(document).ready(function() {
 	setInterval(function(){
-	GS_query_game_server('.json_encode($js_serv_id).', '.json_encode($server_status_list).', '.json_encode($js_expired).', "summary");
+		GS_query_game_server('.json_encode($js_serv_id).', '.json_encode($server_status_list).', '.json_encode($js_expired).', "summary");
 	}, 10000);
 	GS_localize_date(\'recentactivity\');
 	
