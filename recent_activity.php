@@ -8,7 +8,7 @@ if (!securePage($_SERVER['PHP_SELF']))
 	die();
 
 require_once "common.php";
-$table = GS_get_activity_log(500, GS_GENERAL_RSS_EXCLUDE, false, GS_get_permission_level($user), GS_get_common_input());
+$table = GS_get_activity_log(5000, GS_GENERAL_RSS_EXCLUDE, false, GS_get_permission_level($user), GS_get_common_input());
 
 echo "
 <br>

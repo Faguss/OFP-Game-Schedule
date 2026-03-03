@@ -2776,7 +2776,7 @@ function GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, output_typ
 
 								if (server.players) {
 									for (var j=0; j<server.players.length; j++)
-										players += '<br>' + server.players[j].player;
+										players += '<br>' + server.players[j];
 									
 									$('#query'+this.input_id+'_players').html(players);
 									$('#query'+this.input_id+'_players').show();
@@ -2796,13 +2796,8 @@ function GS_query_game_server(GS_serv_id, GS_game_status, GS_expired, output_typ
 									str += ' - ' + server.gametype + '.' + server.mapname;
 								
 								if (server.players) {
-									let player_list = [];
-									
-									for (var j=0; j<server.players.length; j++)
-										player_list.push(server.players[j].player);
-									
-									if (player_list.length > 0)
-										str += ' - ' + player_list.join(', ');
+									if (server.players.length > 0)
+										str += ' - ' + server.players.join(', ');
 								}
 							} else
 								str += GS_game_status[0];

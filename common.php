@@ -1,7 +1,7 @@
 <?php
 require_once "common_min.php";
 
-define("GS_FWATCH_LAST_UPDATE","[2025,12,18,4,23,49,17,869,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2026,3,2,1,14,46,52,709,60,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -2235,7 +2235,7 @@ function GS_get_activity_log($limit, $exclude_type, $show_private, $gs_permissio
 			$sql .= (empty($exclude_type) ? " WHERE" : " AND") . " gs_log.userid IN (". substr( str_repeat(",?",count($input["user"])), 1) . ")";
 		}
 		
-		$sql    .= " ORDER BY ID DESC LIMIT $offset, $buffer";
+		$sql    .= " ORDER BY added DESC LIMIT $offset, $buffer";
 		$logs    = $db->query($sql,array_merge($exclude_type,$input["user"]))->results(true);
 		$offset += $buffer;
 		
@@ -2827,100 +2827,327 @@ function GS_lang($string_name, $number_array, $bold=0) {
 	return str_replace("%m2%",$ending,$string);
 }
 
-// Convert Unicode characters to the Windows code page
-function GS_convert_utf8_to_windows($input, $language="Windows") {
+// Convert Unicode characters to the Windows Code Pages (used by OFP)
+function GS_convert_utf8_to_windows($input, $language="English") {
 	if (mb_strlen($input) == strlen($input))
 		return $input;
 	
-	// Unicode characters to be replaced
-	$unicode = [
-		#Cyrillic
-		"а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","ъ","ы","ь","э","ю","я",
-		"А","Б","В","Г","Д","Е","Ё","Ж","З","И","Й","К","Л","М","Н","О","П","Р","С","Т","У","Ф","Х","Ц","Ч","Ш","Щ","Ъ","Ы","Ь","Э","Ю","Я",
-		#Polish
-		"ą","ć","ę","ł","ń","ó","ś","ź","ż",
-		"Ą","Ć","Ę","Ł","Ń","Ó","Ś","Ź","Ż",
-		#Czech
-		"á","č","ď","é","ě","ň","ó","ř","š","ť","ú","ů","ý","ž",
-		"Á","Č","Ď","É","Ě","Ň","Ó","Ř","Š","Ť","Ú","Ů","Ý","Ž",
-		#French/Italian/Spanish/German
-		"à","á","â","ä","æ","ß","ç","œ","è","é","ê","ë","ì","í","î","ï","ñ","ò","ó","ô","ö","ú","û","ü","ù","ÿ",
-		"À","Á","Â","Ä","Æ","ẞ","Ç","Œ","È","É","Ê","Ë","Ì","Í","Î","Ï","Ñ","Ò","Ó","Ô","Ö","Ú","Û","Ü","Ù","Ÿ",
+	$conversion_table=[
+	//Present in Windows-1252 (EFIGS)
+	/*U+20AC*/		"€" => ["en"=>"\x80", "pl"=>"\x80", "ru"=>"\x88"],
+	/*U+201A*/		"‚" => ["en"=>"\x82", "pl"=>"\x82", "ru"=>"\x82"],
+	/*U+0192*/		"ƒ" => ["en"=>"\x83", "pl"=>"f", "ru"=>"f"],
+	/*U+201E*/		"„" => ["en"=>"\x84", "pl"=>"\x84", "ru"=>"\x84"],
+	/*U+2026*/		"…" => ["en"=>"\x85", "pl"=>"\x85", "ru"=>"\x85"],
+	/*U+2020*/		"†" => ["en"=>"\x86", "pl"=>"\x86", "ru"=>"\x86"],
+	/*U+2021*/		"‡" => ["en"=>"\x87", "pl"=>"\x87", "ru"=>"\x87"],
+	/*U+02C6*/		"ˆ" => ["en"=>"\x88", "pl"=>"^", "ru"=>"^"],
+	/*U+2030*/		"‰" => ["en"=>"\x89", "pl"=>"\x89", "ru"=>"\x89"],
+	/*U+0160*/		"Š" => ["en"=>"\x8A", "pl"=>"\x8A", "ru"=>"S"],
+	/*U+2039*/		"‹" => ["en"=>"\x8B", "pl"=>"\x8B", "ru"=>"\x8B"],
+	/*U+0152*/		"Œ" => ["en"=>"\x8C", "pl"=>"CE", "ru"=>"CE"],
+	/*U+017D*/		"Ž" => ["en"=>"\x8E", "pl"=>"\x8E", "ru"=>"Z"],
+	/*U+2018*/		"‘" => ["en"=>"\x91", "pl"=>"\x91", "ru"=>"\x91"],
+	/*U+2019*/		"’" => ["en"=>"\x92", "pl"=>"\x92", "ru"=>"\x92"],
+	/*U+201C*/		"“" => ["en"=>"\x93", "pl"=>"\x93", "ru"=>"\x93"],
+	/*U+201D*/		"”" => ["en"=>"\x94", "pl"=>"\x94", "ru"=>"\x94"],
+	/*U+2022*/		"•" => ["en"=>"\x95", "pl"=>"\x95", "ru"=>"\x95"],
+	/*U+2013*/		"–" => ["en"=>"\x96", "pl"=>"\x96", "ru"=>"\x96"],
+	/*U+2014*/		"—" => ["en"=>"\x97", "pl"=>"\x97", "ru"=>"\x97"],
+	/*U+02DC*/		"˜" => ["en"=>"\x98", "pl"=>"~", "ru"=>"~"],
+	/*U+2122*/		"™" => ["en"=>"\x99", "pl"=>"\x99", "ru"=>"\x99"],
+	/*U+0161*/		"š" => ["en"=>"\x9A", "pl"=>"\x9A", "ru"=>"s"],
+	/*U+203A*/		"›" => ["en"=>"\x9B", "pl"=>"\x9B", "ru"=>"\x9B"],
+	/*U+0153*/		"œ" => ["en"=>"\x9C", "pl"=>"CE", "ru"=>"ce"],
+	/*U+017E*/		"ž" => ["en"=>"\x9E", "pl"=>"\x9E", "ru"=>"z"],
+	/*U+0178*/		"Ÿ" => ["en"=>"\x9F", "pl"=>"Y", "ru"=>"Y"],
+	/*U+00A1*/		"¡" => ["en"=>"\xA1", "pl"=>"!", "ru"=>"!"],
+	/*U+00A2*/		"¢" => ["en"=>"\xA2", "pl"=>"CENT", "ru"=>"CENT"],
+	/*U+00A3*/		"£" => ["en"=>"\xA3", "pl"=>"GBP", "ru"=>"GBP"],
+	/*U+00A4*/		"¤" => ["en"=>"\xA4", "pl"=>"\xA4", "ru"=>"\xA4"],
+	/*U+00A5*/		"¥" => ["en"=>"\xA5", "pl"=>"YEN", "ru"=>"YEN"],
+	/*U+00A6*/		"¦" => ["en"=>"\xA6", "pl"=>"\xA6", "ru"=>"\xA6"],
+	/*U+00A7*/		"§" => ["en"=>"\xA7", "pl"=>"\xA7", "ru"=>"\xA7"],
+	/*U+00A8*/		"¨" => ["en"=>"\xA8", "pl"=>"\xA8", "ru"=>"**"],
+	/*U+00A9*/		"©" => ["en"=>"\xA9", "pl"=>"\xA9", "ru"=>"\xA9"],
+	/*U+00AA*/		"ª" => ["en"=>"\xAA", "pl"=>"a", "ru"=>"a"],
+	/*U+00AB*/		"«" => ["en"=>"\xAB", "pl"=>"\xAB", "ru"=>"\xAB"],
+	/*U+00AC*/		"¬" => ["en"=>"\xAC", "pl"=>"\xAC", "ru"=>"\xAC"],
+	/*U+00AE*/		"®" => ["en"=>"\xAE", "pl"=>"\xAE", "ru"=>"\xAE"],
+	/*U+00AF*/		"¯" => ["en"=>"\xAF", "pl"=>"-", "ru"=>"-"],
+	/*U+00B0*/		"°" => ["en"=>"\xB0", "pl"=>"\xB0", "ru"=>"\xB0"],
+	/*U+00B1*/		"±" => ["en"=>"\xB1", "pl"=>"\xB1", "ru"=>"\xB1"],
+	/*U+00B2*/		"²" => ["en"=>"\xB2", "pl"=>"^2", "ru"=>"^2"],
+	/*U+00B3*/		"³" => ["en"=>"\xB3", "pl"=>"^3", "ru"=>"^3"],
+	/*U+00B4*/		"´" => ["en"=>"\xB4", "pl"=>"\xB4", "ru"=>"`"],
+	/*U+00B5*/		"µ" => ["en"=>"\xB5", "pl"=>"\xB5", "ru"=>"\xB5"],
+	/*U+00B6*/		"¶" => ["en"=>"\xB6", "pl"=>"\xB6", "ru"=>"\xB6"],
+	/*U+00B7*/		"·" => ["en"=>"\xB7", "pl"=>"\xB7", "ru"=>"\xB7"],
+	/*U+00B8*/		"¸" => ["en"=>"\xB8", "pl"=>"\xB8", "ru"=>","],
+	/*U+00B9*/		"¹" => ["en"=>"\xB9", "pl"=>"^1", "ru"=>"^1"],
+	/*U+00BA*/		"º" => ["en"=>"\xBA", "pl"=>"O", "ru"=>"O"],
+	/*U+00BB*/		"»" => ["en"=>"\xBB", "pl"=>"\xBB", "ru"=>"\xBB"],
+	/*U+00BC*/		"¼" => ["en"=>"\xBC", "pl"=>"1/4", "ru"=>"1/4"],
+	/*U+00BD*/		"½" => ["en"=>"\xBD", "pl"=>"1/2", "ru"=>"1/2"],
+	/*U+00BE*/		"¾" => ["en"=>"\xBE", "pl"=>"3/4", "ru"=>"3/4"],
+	/*U+00BF*/		"¿" => ["en"=>"\xBF", "pl"=>"?", "ru"=>"?"],
+	/*U+00C0*/		"À" => ["en"=>"\xC0", "pl"=>"A", "ru"=>"A"],
+	/*U+00C1*/		"Á" => ["en"=>"\xC1", "pl"=>"\xC1", "ru"=>"A"],
+	/*U+00C2*/		"Â" => ["en"=>"\xC2", "pl"=>"\xC2", "ru"=>"A"],
+	/*U+00C3*/		"Ã" => ["en"=>"\xC3", "pl"=>"A", "ru"=>"A"],
+	/*U+00C4*/		"Ä" => ["en"=>"\xC4", "pl"=>"\xC4", "ru"=>"A"],
+	/*U+00C5*/		"Å" => ["en"=>"\xC5", "pl"=>"A", "ru"=>"A"],
+	/*U+00C6*/		"Æ" => ["en"=>"\xC6", "pl"=>"AE", "ru"=>"AE"],
+	/*U+00C7*/		"Ç" => ["en"=>"\xC7", "pl"=>"\xC7", "ru"=>"C"],
+	/*U+00C8*/		"È" => ["en"=>"\xC8", "pl"=>"E", "ru"=>"E"],
+	/*U+00C9*/		"É" => ["en"=>"\xC9", "pl"=>"\xC9", "ru"=>"E"],
+	/*U+00CA*/		"Ê" => ["en"=>"\xCA", "pl"=>"E", "ru"=>"E"],
+	/*U+00CB*/		"Ë" => ["en"=>"\xCB", "pl"=>"\xCB", "ru"=>"E"],
+	/*U+00CC*/		"Ì" => ["en"=>"\xCC", "pl"=>"I", "ru"=>"I"],
+	/*U+00CD*/		"Í" => ["en"=>"\xCD", "pl"=>"\xCD", "ru"=>"I"],
+	/*U+00CE*/		"Î" => ["en"=>"\xCE", "pl"=>"\xCE", "ru"=>"I"],
+	/*U+00CF*/		"Ï" => ["en"=>"\xCF", "pl"=>"I", "ru"=>"I"],
+	/*U+00D0*/		"Ð" => ["en"=>"\xD0", "pl"=>"TH", "ru"=>"TH"],
+	/*U+00D1*/		"Ñ" => ["en"=>"\xD1", "pl"=>"N", "ru"=>"N"],
+	/*U+00D2*/		"Ò" => ["en"=>"\xD2", "pl"=>"O", "ru"=>"O"],
+	/*U+00D3*/		"Ó" => ["en"=>"\xD3", "pl"=>"\xD3", "ru"=>"O"],
+	/*U+00D4*/		"Ô" => ["en"=>"\xD4", "pl"=>"\xD4", "ru"=>"O"],
+	/*U+00D5*/		"Õ" => ["en"=>"\xD5", "pl"=>"O", "ru"=>"O"],
+	/*U+00D6*/		"Ö" => ["en"=>"\xD6", "pl"=>"\xD6", "ru"=>"O"],
+	/*U+00D7*/		"×" => ["en"=>"\xD7", "pl"=>"\xD7", "ru"=>"x"],
+	/*U+00D8*/		"Ø" => ["en"=>"\xD8", "pl"=>"O", "ru"=>"O"],
+	/*U+00D9*/		"Ù" => ["en"=>"\xD9", "pl"=>"U", "ru"=>"U"],
+	/*U+00DA*/		"Ú" => ["en"=>"\xDA", "pl"=>"\xDA", "ru"=>"U"],
+	/*U+00DB*/		"Û" => ["en"=>"\xDB", "pl"=>"U", "ru"=>"U"],
+	/*U+00DC*/		"Ü" => ["en"=>"\xDC", "pl"=>"\xDC", "ru"=>"U"],
+	/*U+00DD*/		"Ý" => ["en"=>"\xDD", "pl"=>"\xDD", "ru"=>"Y"],
+	/*U+00DE*/		"Þ" => ["en"=>"\xDE", "pl"=>"TH", "ru"=>"TH"],
+	/*U+00DF*/		"ß" => ["en"=>"\xDF", "pl"=>"\xDF", "ru"=>"s"],
+	/*U+00E0*/		"à" => ["en"=>"\xE0", "pl"=>"a", "ru"=>"a"],
+	/*U+00E1*/		"á" => ["en"=>"\xE1", "pl"=>"\xE1", "ru"=>"a"],
+	/*U+00E2*/		"â" => ["en"=>"\xE2", "pl"=>"\xE2", "ru"=>"a"],
+	/*U+00E3*/		"ã" => ["en"=>"\xE3", "pl"=>"a", "ru"=>"a"],
+	/*U+00E4*/		"ä" => ["en"=>"\xE4", "pl"=>"\xE4", "ru"=>"a"],
+	/*U+00E5*/		"å" => ["en"=>"\xE5", "pl"=>"a", "ru"=>"a"],
+	/*U+00E6*/		"æ" => ["en"=>"\xE6", "pl"=>"ae", "ru"=>"ae"],
+	/*U+00E7*/		"ç" => ["en"=>"\xE7", "pl"=>"\xE7", "ru"=>"c"],
+	/*U+00E8*/		"è" => ["en"=>"\xE8", "pl"=>"e", "ru"=>"e"],
+	/*U+00E9*/		"é" => ["en"=>"\xE9", "pl"=>"\xE9", "ru"=>"e"],
+	/*U+00EA*/		"ê" => ["en"=>"\xEA", "pl"=>"e", "ru"=>"e"],
+	/*U+00EB*/		"ë" => ["en"=>"\xEB", "pl"=>"\xEB", "ru"=>"e"],
+	/*U+00EC*/		"ì" => ["en"=>"\xEC", "pl"=>"i", "ru"=>"i"],
+	/*U+00ED*/		"í" => ["en"=>"\xED", "pl"=>"\xED", "ru"=>"i"],
+	/*U+00EE*/		"î" => ["en"=>"\xEE", "pl"=>"\xEE", "ru"=>"i"],
+	/*U+00EF*/		"ï" => ["en"=>"\xEF", "pl"=>"i", "ru"=>"i"],
+	/*U+00F0*/		"ð" => ["en"=>"\xF0", "pl"=>"th", "ru"=>"th"],
+	/*U+00F1*/		"ñ" => ["en"=>"\xF1", "pl"=>"n", "ru"=>"n"],
+	/*U+00F2*/		"ò" => ["en"=>"\xF2", "pl"=>"o", "ru"=>"o"],
+	/*U+00F3*/		"ó" => ["en"=>"\xF3", "pl"=>"\xF3", "ru"=>"o"],
+	/*U+00F4*/		"ô" => ["en"=>"\xF4", "pl"=>"\xF4", "ru"=>"o"],
+	/*U+00F5*/		"õ" => ["en"=>"\xF5", "pl"=>"o", "ru"=>"o"],
+	/*U+00F6*/		"ö" => ["en"=>"\xF6", "pl"=>"\xF6", "ru"=>"o"],
+	/*U+00F7*/		"÷" => ["en"=>"\xF7", "pl"=>"\xF7", "ru"=>"/"],
+	/*U+00F8*/		"ø" => ["en"=>"\xF8", "pl"=>"o", "ru"=>"o"],
+	/*U+00F9*/		"ù" => ["en"=>"\xF9", "pl"=>"u", "ru"=>"u"],
+	/*U+00FA*/		"ú" => ["en"=>"\xFA", "pl"=>"\xFA", "ru"=>"u"],
+	/*U+00FB*/		"û" => ["en"=>"\xFB", "pl"=>"u", "ru"=>"u"],
+	/*U+00FC*/		"ü" => ["en"=>"\xFC", "pl"=>"\xFC", "ru"=>"u"],
+	/*U+00FD*/		"ý" => ["en"=>"\xFD", "pl"=>"\xFD", "ru"=>"y"],
+	/*U+00FE*/		"þ" => ["en"=>"\xFE", "pl"=>"th", "ru"=>"th"],
+	/*U+00FF*/		"ÿ" => ["en"=>"\xFF", "pl"=>"y", "ru"=>"y"],
+	//Present in Windows-1250 (Czech/Polish)
+	/*U+015A*/		"Ś" => ["en"=>"S", "pl"=>"\x8C", "ru"=>"S"],
+	/*U+0164*/		"Ť" => ["en"=>"T", "pl"=>"\x8D", "ru"=>"T"],
+	/*U+0179*/		"Ź" => ["en"=>"Z", "pl"=>"\x8F", "ru"=>"Z"],
+	/*U+015B*/		"ś" => ["en"=>"s", "pl"=>"\x9C", "ru"=>"s"],
+	/*U+0165*/		"ť" => ["en"=>"t", "pl"=>"\x9D", "ru"=>"t"],
+	/*U+017A*/		"ź" => ["en"=>"z", "pl"=>"\x9F", "ru"=>"z"],
+	/*U+02C7*/		"ˇ" => ["en"=>"'", "pl"=>"\xA1", "ru"=>"'"],
+	/*U+02D8*/		"˘" => ["en"=>"'", "pl"=>"\xA2", "ru"=>"'"],
+	/*U+0141*/		"Ł" => ["en"=>"L", "pl"=>"\xA3", "ru"=>"L"],
+	/*U+0104*/		"Ą" => ["en"=>"A", "pl"=>"\xA5", "ru"=>"A"],
+	/*U+015E*/		"Ş" => ["en"=>"S", "pl"=>"\xAA", "ru"=>"S"],
+	/*U+017B*/		"Ż" => ["en"=>"Z", "pl"=>"\xAF", "ru"=>"z"],
+	/*U+02DB*/		"˛" => ["en"=>",", "pl"=>"\xB2", "ru"=>","],
+	/*U+0142*/		"ł" => ["en"=>"l", "pl"=>"\xB3", "ru"=>"l"],
+	/*U+0105*/		"ą" => ["en"=>"a", "pl"=>"\xB9", "ru"=>"a"],
+	/*U+015F*/		"ş" => ["en"=>"s", "pl"=>"\xBA", "ru"=>"s"],
+	/*U+013D*/		"Ľ" => ["en"=>"L", "pl"=>"\xBC", "ru"=>"L"],
+	/*U+02DD*/		"˝" => ["en"=>"\"", "pl"=>"\xBD", "ru"=>"\""],
+	/*U+013E*/		"ľ" => ["en"=>"l", "pl"=>"\xBE", "ru"=>"l"],
+	/*U+017C*/		"ż" => ["en"=>"z", "pl"=>"\xBF", "ru"=>"z"],
+	/*U+0154*/		"Ŕ" => ["en"=>"R", "pl"=>"\xC0", "ru"=>"R"],
+	/*U+0102*/		"Ă" => ["en"=>"A", "pl"=>"\xC3", "ru"=>"A"],
+	/*U+0139*/		"Ĺ" => ["en"=>"L", "pl"=>"\xC5", "ru"=>"L"],
+	/*U+0106*/		"Ć" => ["en"=>"C", "pl"=>"\xC6", "ru"=>"C"],
+	/*U+010C*/		"Č" => ["en"=>"C", "pl"=>"\xC8", "ru"=>"C"],
+	/*U+0118*/		"Ę" => ["en"=>"E", "pl"=>"\xCA", "ru"=>"E"],
+	/*U+011A*/		"Ě" => ["en"=>"E", "pl"=>"\xCC", "ru"=>"E"],
+	/*U+010E*/		"Ď" => ["en"=>"D", "pl"=>"\xCF", "ru"=>"D"],
+	/*U+0110*/		"Đ" => ["en"=>"D", "pl"=>"\xD0", "ru"=>"D"],
+	/*U+0143*/		"Ń" => ["en"=>"N", "pl"=>"\xD1", "ru"=>"N"],
+	/*U+0147*/		"Ň" => ["en"=>"N", "pl"=>"\xD2", "ru"=>"N"],
+	/*U+0150*/		"Ő" => ["en"=>"O", "pl"=>"\xD5", "ru"=>"O"],
+	/*U+0158*/		"Ř" => ["en"=>"R", "pl"=>"\xD8", "ru"=>"R"],
+	/*U+016E*/		"Ů" => ["en"=>"U", "pl"=>"\xD9", "ru"=>"U"],
+	/*U+0170*/		"Ű" => ["en"=>"U", "pl"=>"\xDB", "ru"=>"U"],
+	/*U+0162*/		"Ţ" => ["en"=>"T", "pl"=>"\xDE", "ru"=>"T"],
+	/*U+0155*/		"ŕ" => ["en"=>"r", "pl"=>"\xE0", "ru"=>"r"],
+	/*U+0103*/		"ă" => ["en"=>"a", "pl"=>"\xE3", "ru"=>"a"],
+	/*U+013A*/		"ĺ" => ["en"=>"l", "pl"=>"\xE5", "ru"=>"l"],
+	/*U+0107*/		"ć" => ["en"=>"c", "pl"=>"\xE6", "ru"=>"c"],
+	/*U+010D*/		"č" => ["en"=>"c", "pl"=>"\xE8", "ru"=>"c"],
+	/*U+0119*/		"ę" => ["en"=>"e", "pl"=>"\xEA", "ru"=>"e"],
+	/*U+011B*/		"ě" => ["en"=>"e", "pl"=>"\xEC", "ru"=>"e"],
+	/*U+010F*/		"ď" => ["en"=>"d", "pl"=>"\xEF", "ru"=>"d"],
+	/*U+0111*/		"đ" => ["en"=>"d", "pl"=>"\xF0", "ru"=>"d"],
+	/*U+0144*/		"ń" => ["en"=>"n", "pl"=>"\xF1", "ru"=>"n"],
+	/*U+0148*/		"ň" => ["en"=>"n", "pl"=>"\xF2", "ru"=>"n"],
+	/*U+0151*/		"ő" => ["en"=>"o", "pl"=>"\xF5", "ru"=>"o"],
+	/*U+0159*/		"ř" => ["en"=>"r", "pl"=>"\xF8", "ru"=>"r"],
+	/*U+016F*/		"ů" => ["en"=>"u", "pl"=>"\xF9", "ru"=>"u"],
+	/*U+0171*/		"ű" => ["en"=>"u", "pl"=>"\xFB", "ru"=>"u"],
+	/*U+0163*/		"ţ" => ["en"=>"t", "pl"=>"\xFE", "ru"=>"t"],
+	/*U+02D9*/		"˙" => ["en"=>"'", "pl"=>"\xFF", "ru"=>"'"],
+	//Present in Windows-1251 (Russian)
+	// for "en" and "pl" cyrillic is represented phonetically
+	/*U+0402*/		"Ђ" => ["en"=>"D", "pl"=>"DZ", "ru"=>"\x80"],
+	/*U+0403*/		"Ѓ" => ["en"=>"G", "pl"=>"G", "ru"=>"\x81"],
+	/*U+0453*/		"ѓ" => ["en"=>"g", "pl"=>"G", "ru"=>"\x83"],
+	/*U+0409*/		"Љ" => ["en"=>"L", "pl"=>"L", "ru"=>"\x8A"],
+	/*U+040A*/		"Њ" => ["en"=>"NJ", "pl"=>"\xD1", "ru"=>"\x8C"],
+	/*U+040C*/		"Ќ" => ["en"=>"KJ", "pl"=>"KI", "ru"=>"\x8D"],
+	/*U+040B*/		"Ћ" => ["en"=>"CH", "pl"=>"\xC6", "ru"=>"\x8E"],
+	/*U+040F*/		"Џ" => ["en"=>"DZ", "pl"=>"DZ", "ru"=>"\x8F"],
+	/*U+0452*/		"ђ" => ["en"=>"d", "pl"=>"dz", "ru"=>"\x90"],
+	/*U+0459*/		"љ" => ["en"=>"l", "pl"=>"l", "ru"=>"\x9A"],
+	/*U+045A*/		"њ" => ["en"=>"nj", "pl"=>"\xF1", "ru"=>"\x9C"],
+	/*U+045C*/		"ќ" => ["en"=>"kj", "pl"=>"ki", "ru"=>"\x9D"],
+	/*U+045B*/		"ћ" => ["en"=>"ch", "pl"=>"\xE6", "ru"=>"\x9E"],
+	/*U+045F*/		"џ" => ["en"=>"dz", "pl"=>"dz", "ru"=>"\x9F"],
+	/*U+040E*/		"Ў" => ["en"=>"OUA", "pl"=>"\xA3A", "ru"=>"\xA1"],
+	/*U+045E*/		"ў" => ["en"=>"oua", "pl"=>"\xB3a", "ru"=>"\xA2"],
+	/*U+0408*/		"Ј" => ["en"=>"J", "pl"=>"J", "ru"=>"\xA3"],
+	/*U+0490*/		"Ґ" => ["en"=>"G", "pl"=>"g", "ru"=>"\xA5"],
+	/*U+0401*/		"Ё" => ["en"=>"YO", "pl"=>"JO", "ru"=>"\xA8"],
+	/*U+0404*/		"Є" => ["en"=>"YE", "pl"=>"JE", "ru"=>"\xAA"],
+	/*U+0407*/		"Ї" => ["en"=>"YI", "pl"=>"JI", "ru"=>"\xAF"],
+	/*U+0406*/		"І" => ["en"=>"I", "pl"=>"I", "ru"=>"\xB2"],
+	/*U+0456*/		"і" => ["en"=>"i", "pl"=>"i", "ru"=>"\xB3"],
+	/*U+0491*/		"ґ" => ["en"=>"g", "pl"=>"g", "ru"=>"\xB4"],
+	/*U+0451*/		"ё" => ["en"=>"yo", "pl"=>"jo", "ru"=>"\xB8"],
+	/*U+2116*/		"№" => ["en"=>"No.", "pl"=>"No.", "ru"=>"\xB9"],
+	/*U+0454*/		"є" => ["en"=>"ye", "pl"=>"je", "ru"=>"\xBA"],
+	/*U+0458*/		"ј" => ["en"=>"j", "pl"=>"j", "ru"=>"\xBC"],
+	/*U+0405*/		"Ѕ" => ["en"=>"DS", "pl"=>"DZ", "ru"=>"\xBD"],
+	/*U+0455*/		"ѕ" => ["en"=>"ds", "pl"=>"dz", "ru"=>"\xBE"],
+	/*U+0457*/		"ї" => ["en"=>"yi", "pl"=>"ji", "ru"=>"\xBF"],
+	/*U+0410*/		"А" => ["en"=>"A", "pl"=>"A", "ru"=>"\xC0"],
+	/*U+0411*/		"Б" => ["en"=>"B", "pl"=>"B", "ru"=>"\xC1"],
+	/*U+0412*/		"В" => ["en"=>"V", "pl"=>"W", "ru"=>"\xC2"],
+	/*U+0413*/		"Г" => ["en"=>"G", "pl"=>"G", "ru"=>"\xC3"],
+	/*U+0414*/		"Д" => ["en"=>"D", "pl"=>"D", "ru"=>"\xC4"],
+	/*U+0415*/		"Е" => ["en"=>"YE", "pl"=>"JE", "ru"=>"\xC5"],
+	/*U+0416*/		"Ж" => ["en"=>"ZH", "pl"=>"\xAF", "ru"=>"\xC6"],
+	/*U+0417*/		"З" => ["en"=>"Z", "pl"=>"Z", "ru"=>"\xC7"],
+	/*U+0418*/		"И" => ["en"=>"I", "pl"=>"I", "ru"=>"\xC8"],
+	/*U+0419*/		"Й" => ["en"=>"Y", "pl"=>"IJ", "ru"=>"\xC9"],
+	/*U+041A*/		"К" => ["en"=>"K", "pl"=>"K", "ru"=>"\xCA"],
+	/*U+041B*/		"Л" => ["en"=>"L", "pl"=>"L", "ru"=>"\xCB"],
+	/*U+041C*/		"М" => ["en"=>"M", "pl"=>"M", "ru"=>"\xCC"],
+	/*U+041D*/		"Н" => ["en"=>"N", "pl"=>"N", "ru"=>"\xCD"],
+	/*U+041E*/		"О" => ["en"=>"O", "pl"=>"O", "ru"=>"\xCE"],
+	/*U+041F*/		"П" => ["en"=>"P", "pl"=>"P", "ru"=>"\xCF"],
+	/*U+0420*/		"Р" => ["en"=>"R", "pl"=>"R", "ru"=>"\xD0"],
+	/*U+0421*/		"С" => ["en"=>"S", "pl"=>"S", "ru"=>"\xD1"],
+	/*U+0422*/		"Т" => ["en"=>"T", "pl"=>"T", "ru"=>"\xD2"],
+	/*U+0423*/		"У" => ["en"=>"U", "pl"=>"U", "ru"=>"\xD3"],
+	/*U+0424*/		"Ф" => ["en"=>"F", "pl"=>"F", "ru"=>"\xD4"],
+	/*U+0425*/		"Х" => ["en"=>"H", "pl"=>"H", "ru"=>"\xD5"],
+	/*U+0426*/		"Ц" => ["en"=>"TS", "pl"=>"C", "ru"=>"\xD6"],
+	/*U+0427*/		"Ч" => ["en"=>"CH", "pl"=>"\xC6", "ru"=>"\xD7"],
+	/*U+0428*/		"Ш" => ["en"=>"SH", "pl"=>"SZ", "ru"=>"\xD8"],
+	/*U+0429*/		"Щ" => ["en"=>"SCH", "pl"=>"SI", "ru"=>"\xD9"],
+	/*U+042A*/		"Ъ" => ["en"=>"", "pl"=>"", "ru"=>"\xDA"],
+	/*U+042B*/		"Ы" => ["en"=>"Y", "pl"=>"Y", "ru"=>"\xDB"],
+	/*U+042C*/		"Ь" => ["en"=>"'", "pl"=>"", "ru"=>"\xDC"],
+	/*U+042D*/		"Э" => ["en"=>"E", "pl"=>"E", "ru"=>"\xDD"],
+	/*U+042E*/		"Ю" => ["en"=>"YU", "pl"=>"JU", "ru"=>"\xDE"],
+	/*U+042F*/		"Я" => ["en"=>"YA", "pl"=>"JA", "ru"=>"\xDF"],
+	/*U+0430*/		"а" => ["en"=>"a", "pl"=>"a", "ru"=>"\xE0"],
+	/*U+0431*/		"б" => ["en"=>"b", "pl"=>"b", "ru"=>"\xE1"],
+	/*U+0432*/		"в" => ["en"=>"v", "pl"=>"w", "ru"=>"\xE2"],
+	/*U+0433*/		"г" => ["en"=>"g", "pl"=>"g", "ru"=>"\xE3"],
+	/*U+0434*/		"д" => ["en"=>"d", "pl"=>"d", "ru"=>"\xE4"],
+	/*U+0435*/		"е" => ["en"=>"ye", "pl"=>"je", "ru"=>"\xE5"],
+	/*U+0436*/		"ж" => ["en"=>"zh", "pl"=>"\xBF", "ru"=>"\xE6"],
+	/*U+0437*/		"з" => ["en"=>"z", "pl"=>"z", "ru"=>"\xE7"],
+	/*U+0438*/		"и" => ["en"=>"i", "pl"=>"i", "ru"=>"\xE8"],
+	/*U+0439*/		"й" => ["en"=>"y", "pl"=>"ij", "ru"=>"\xE9"],
+	/*U+043A*/		"к" => ["en"=>"k", "pl"=>"k", "ru"=>"\xEA"],
+	/*U+043B*/		"л" => ["en"=>"l", "pl"=>"l", "ru"=>"\xEB"],
+	/*U+043C*/		"м" => ["en"=>"m", "pl"=>"m", "ru"=>"\xEC"],
+	/*U+043D*/		"н" => ["en"=>"n", "pl"=>"n", "ru"=>"\xED"],
+	/*U+043E*/		"о" => ["en"=>"o", "pl"=>"o", "ru"=>"\xEE"],
+	/*U+043F*/		"п" => ["en"=>"p", "pl"=>"p", "ru"=>"\xEF"],
+	/*U+0440*/		"р" => ["en"=>"r", "pl"=>"r", "ru"=>"\xF0"],
+	/*U+0441*/		"с" => ["en"=>"s", "pl"=>"s", "ru"=>"\xF1"],
+	/*U+0442*/		"т" => ["en"=>"t", "pl"=>"t", "ru"=>"\xF2"],
+	/*U+0443*/		"у" => ["en"=>"u", "pl"=>"u", "ru"=>"\xF3"],
+	/*U+0444*/		"ф" => ["en"=>"f", "pl"=>"f", "ru"=>"\xF4"],
+	/*U+0445*/		"х" => ["en"=>"h", "pl"=>"h", "ru"=>"\xF5"],
+	/*U+0446*/		"ц" => ["en"=>"ts", "pl"=>"c", "ru"=>"\xF6"],
+	/*U+0447*/		"ч" => ["en"=>"ch", "pl"=>"\xE6", "ru"=>"\xF7"],
+	/*U+0448*/		"ш" => ["en"=>"sh", "pl"=>"sz", "ru"=>"\xF8"],
+	/*U+0449*/		"щ" => ["en"=>"sch", "pl"=>"si", "ru"=>"\xF9"],
+	/*U+044A*/		"ъ" => ["en"=>"", "pl"=>"", "ru"=>"\xFA"],
+	/*U+044B*/		"ы" => ["en"=>"y", "pl"=>"y", "ru"=>"\xFB"],
+	/*U+044C*/		"ь" => ["en"=>"'", "pl"=>"", "ru"=>"\xFC"],
+	/*U+044D*/		"э" => ["en"=>"e", "pl"=>"e", "ru"=>"\xFD"],
+	/*U+044E*/		"ю" => ["en"=>"yu", "pl"=>"ju", "ru"=>"\xFE"],
+	/*U+044F*/		"я" => ["en"=>"ya", "pl"=>"ja", "ru"=>"\xFF"],
 	];
 	
-	$language = strtolower($language);
-	if ($language == "czech")
-		$language = "polish";	//Czech and Polish version have similar fonts.pbo
-	
-	// Replacement in Windows code page based on user's game version
-	$windows = [
-		"english" => [
-			#Cyrillic phonetically
-			"a","b","v","g","d","ye","yo","zh","z","i","y","k","l","m","n","o","p","r","s","t","u","f","h","ts","ch","sh","shsh","","i","","e","yu","ya",
-			"A","B","V","G","D","YE","YO","ZH","Z","I","Y","K","L","M","N","O","P","R","S","T","U","F","H","TS","CH","SH","SHSH","","I","","E","YU","YA",
-			#Polish without diacritics
-			"a","c","e","l","n","\xF3","s","z","z",
-			"A","C","E","L","N","\xD3","S","z","z",
-			#Czech partially without diacritics
-			"\xE1","c","d","\xE9","e","n","\xF3","r","\x9A","t","\xFA","u","\xFD","\x9E",
-			"\xC1","C","D","\xC9","E","N","\xD3","R","\x8A","T","\xDA","U","\xDD","\x8E",
-			#French/Italian/Spanish/German
-			"\xE0","\xE1","\xE2","\xE4","\xE6","\xDF","\xE7","\x9C","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF1","\xF2","\xF3","\xF4","\xF6","\xFA","\xFB","\xFC","\xF9","\xFF",
-			"\xC0","\xC1","\xC2","\xC4","\xC6","\xDF","\xC7","\x8C","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD1","\xD2","\xD3","\xD4","\xD6","\xDA","\xDB","\xDC","\xD9","\x9F",
-		],
+	if( !function_exists('mb_str_split')){
+		function mb_str_split(  $string = '', $length = 1){
+			if(!empty($string)){ 
+				$split = array();
+				$mb_strlen = mb_strlen($string);
+				for($pi = 0; $pi < $mb_strlen; $pi += $length){
+					$substr = mb_substr($string, $pi,$length);
+					if( !empty($substr)){ 
+						$split[] = $substr;
+					}
+				}
+			}
+			return $split;
+		}
+	}
 		
-		"russian" => [
-			#Cyrillic in Windows-1251
-			"\xE0","\xE1","\xE2","\xE3","\xE4","\xE5","\xB8","\xE6","\xE7","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF0","\xF1","\xF2","\xF3","\xF4","\xF5","\xF6","\xF7","\xF8","\xF9","\xFA","\xFB","\xFC","\xFD","\xFE","\xFF",
-			"\xC0","\xC1","\xC2","\xC3","\xC4","\xC5","\xA8","\xC6","\xC7","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD0","\xD1","\xD2","\xD3","\xD4","\xD5","\xD6","\xD7","\xD8","\xD9","\xDA","\xDB","\xDC","\xDD","\xDE","\xDF", 
-			#Polish without diacritics
-			"a","c","e","l","n","o","s","z","z",
-			"A","C","E","L","N","O","S","z","z",
-			#Czech without diacritics
-			"a","c","d","e","e","n","o","r","s","t","u","u","y","z",
-			"A","C","D","E","E","N","O","R","S","T","U","U","Y","Z",
-			#French/Italian/Spanish/German without diacrictics
-			"a","a","a","a","ae","ss","c","ce","e","e","e","e","i","i","i","i","n","o","o","o","o","u","u","u","u","y",
-			"A","A","A","A","AE","SS","C","CE","E","E","E","E","I","I","I","I","N","O","O","O","O","U","U","U","U","Y",
-		],
-
-		"polish" => [
-			#Cyrillic phonetically
-			"a","b","w","g","d","je","jo","\xBF","z","i","ij","k","l","m","n","o","p","r","s","t","u","f","h","c","\xE6","sz","si","","y","","e","ju","ja",
-			"A","B","W","G","D","JE","JO","\xAF","Z","I","IJ","K","L","M","N","O","P","R","S","T","U","F","H","C","\xC6","sz","si","","y","","E","JU","JA",
-			#Polish in Windows-1250
-			"\xB9","\xE6","\xEA","\xB3","\xF1","\xF3","\x9C","\x9F","\xBF",
-			"\xA5","\xC6","\xCA","\xA3","\xD1","\xD3","\x8C","\x8F","\xAF",
-			#Czech in Windows-1250
-			"\xE1","\xE8","\xEF","\xE9","\xEC","\xF2","\xF3","\xF8","\x9A","\x9D","\xFA","\xF9","\xFD","\x9E",
-			"\xC1","\xC8","\xCF","\xC9","\xCC","\xD2","\xD3","\xD8","\x8A","\x8D","\xDA","\xD9","\xDD","\x8E",
-			#French/Italian/Spanish/German partially without diacritics
-			"a","\xE1","\xE2","\xE4","ae","\xDF","\xE7","ce","e","\xE9","e","\xEB","i","\xED","\xEE","i","n","o","\xF3","\xF4","\xF6","\xFA","u","\xFC","u","y",
-			"A","\xC1","\xC2","\xC4","AE","\xDF","\xC7","CE","E","\xC9","E","\xCB","I","\xCD","\xCE","I","N","O","\xD3","\xD4","\xD6","\xDA","U","\xDC","U","Y",
-		],
-		
-		"windows" => [
-			"\xE0","\xE1","\xE2","\xE3","\xE4","\xE5","\xB8","\xE6","\xE7","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF0","\xF1","\xF2","\xF3","\xF4","\xF5","\xF6","\xF7","\xF8","\xF9","\xFA","\xFB","\xFC","\xFD","\xFE","\xFF",
-			"\xC0","\xC1","\xC2","\xC3","\xC4","\xC5","\xA8","\xC6","\xC7","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD0","\xD1","\xD2","\xD3","\xD4","\xD5","\xD6","\xD7","\xD8","\xD9","\xDA","\xDB","\xDC","\xDD","\xDE","\xDF", 
-			"\xB9","\xE6","\xEA","\xB3","\xF1","\xF3","\x9C","\x9F","\xBF",
-			"\xA5","\xC6","\xCA","\xA3","\xD1","\xD3","\x8C","\x8F","\xAF",
-			"\xE1","\xE8","\xEF","\xE9","\xEC","\xF2","\xF3","\xF7","\x9A","\x9D","\xFA","\xF9","\xFD","\x9E",
-			"\xC1","\xC8","\xCF","\xC9","\xCC","\xD2","\xD3","\xD7","\x8A","\x8D","\xDA","\xD9","\xDD","\x8E",
-			"\xE0","\xE1","\xE2","\xE4","\xE6","\xDF","\xE7","\x9C","\xE8","\xE9","\xEA","\xEB","\xEC","\xED","\xEE","\xEF","\xF1","\xF2","\xF3","\xF4","\xF6","\xFA","\xFB","\xFC","\xF9","\xFF",
-			"\xC0","\xC1","\xC2","\xC4","\xC6","\xDF","\xC7","\x8C","\xC8","\xC9","\xCA","\xCB","\xCC","\xCD","\xCE","\xCF","\xD1","\xD2","\xD3","\xD4","\xD6","\xDA","\xDB","\xDC","\xD9","\x9F",
-		]
-	];
-	
-	
 	$output = "";
-	$length = mb_strlen($input, 'UTF-8');
-	
-	for ($i=0; $i<$length; $i++) {
-		$letter = mb_substr($input, $i, 1, 'UTF-8');
+	$letters = mb_str_split($input);
+	$language_key = "en";
+
+	switch($language) {
+		case "Czech":
+		case "Polish": $language_key="pl"; break;
+		case "Russian": $language_key="ru"; break;
+	}
 		
+	foreach($letters as $i=>$letter) {
 		if (mb_strlen($letter) != strlen($letter)) {
-			$index   = array_search($letter, $unicode);			
-			$output .= $index!==false ? $windows[$language][$index] : "";
+			if (isset($conversion_table[$letter][$language_key])) {
+				$c = $conversion_table[$letter][$language_key];
+	
+				// digraph can be uppercase or lowercase depending on the next letter
+				if (strlen($c)>1 && ctype_upper($c) && ($i==count($letters)-1 || ($i<count($letters)-1 && !IntlChar::isupper($letters[$i+1]))))
+					$c = ucfirst(strtolower($c));
+	
+				$output .= $c;
+			} else
+				/*characters beyond WCP are translated to 127 (DEL control character) 
+				because it's represented by square in all OFP font sets*/
+				$output .= "\x7F"; 
 		} else
 			$output .= $letter;
 	}
