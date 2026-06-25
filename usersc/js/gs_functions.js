@@ -2105,6 +2105,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
                                     else
                                         command_description += "\nto the " + file_name.substr(0,-4);
 
+								command_description += "\\";
 								last_unpbo = last_unpbo.substr(0, -4);
 							}
 						} break;
@@ -2131,9 +2132,11 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 								
 								command_description += "\nand set its last modification date to " + date.format("YYYY-MM-DD HH:mm:ss") + " GMT";
 							}
+							
+							command_description += "\nfrom the folder "+source_dir+"\\";
 
 							if (!switches_for_this_command.includes("/keep_source"))
-								command_description += "\nand then delete folder "+source_dir;
+								command_description += "\nand then delete that folder";
 						} break;
 
 						case 'edit' : {

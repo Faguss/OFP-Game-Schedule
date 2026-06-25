@@ -96,7 +96,7 @@ foreach($input["mod"] as $input_index=>$uniqueid) {
 		switch($key) {
 			case "type"        : $value=lang("GS_STR_MOD_TYPE{$mod["type"]}"); break;
 			case "description" : $value=$Parsedown->line($mod[$key]); break;
-			case "is_mp"       : if($mod[$key]=="0")$value=lang("GS_STR_MOD_MPCOMP_NO");else $value=""; break;
+			case "is_mp"       : if($mod[$key]=="2")$value=lang("GS_STR_MOD_MPCOMP_YES");else if($mod[$key]=="1")$value=lang("GS_STR_MOD_MPCOMP_UNKNOWN");else $value=lang("GS_STR_MOD_MPCOMP_NO"); break;
 			case "forcename"   : if($mod[$key]=="true")$value=lang("GS_STR_ENABLED");else $value=""; break;			
 			case "req_version" : if($mod[$key]=="1.96")$value="";else $value=$mod[$key]; break;
 			

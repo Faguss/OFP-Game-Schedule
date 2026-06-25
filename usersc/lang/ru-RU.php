@@ -234,6 +234,7 @@ $lang = array_merge($lang, array(
 	"GS_STR_MOD_MPCOMP_HINT" => "Моды для одиночной игры не будут показываться в списке выбора модов для серверов",
 	"GS_STR_MOD_MPCOMP_YES" => "Да",
 	"GS_STR_MOD_MPCOMP_NO" => "Нет",
+"GS_STR_MOD_MPCOMP_UNKNOWN" => "неизвестно",
 	"GS_STR_MOD_SUBMIT" => "Изменить детали",
 	"GS_STR_MOD_REQ_VERSION" => "Требуемая версия игры",
 	"GS_STR_MOD_WARNING_LINK" => "Нужно конвертировать ссылку на %m1%. Используйте опцию \"Конвертировать ссылку для скачивания\" ниже.",

@@ -1,7 +1,7 @@
 <?php
 require_once "common_min.php";
 
-define("GS_FWATCH_LAST_UPDATE","[2026,3,2,1,14,46,52,709,60,FALSE]");
+define("GS_FWATCH_LAST_UPDATE","[2026,5,16,6,23,6,29,754,120,FALSE]");
 define("GS_VERSION", 0.61);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
@@ -36,10 +36,26 @@ define("GS_FORM_ACTIONS_MODUPDATE", [
 
 // List of VOIP software
 define("GS_VOICE", [
-	"TeamSpeak3" => ["url"=>"ts3server://"        , "info"=>"https://web.archive.org/web/20121115204541/https://support.teamspeakusa.com/index.php?/Knowledgebase/Article/View/46/0/how-can-i-link-to-my-teamspeak-3-server-on-my-webpage", "download"=>"https://teamspeak.com/en/downloads/"],
-	"Mumble"     => ["url"=>"mumble://"           , "info"=>"https://wiki.mumble.info/wiki/Mumble_URL"                               , "download"=>"https://www.mumble.com/mumble-download.php"],
-	"Discord"    => ["url"=>"https://discord.gg/" , "info"=>"https://support.discordapp.com/hc/en-us/articles/208866998-Invites-101" , "download"=>"https://discordapp.com/download"],
-	"Steam"      => ["url"=>"https://s.team/chat/", "info"=>"https://steamcommunity.com/updates/chatupdate"                          , "download"=>"https://store.steampowered.com/about/"]
+	"TeamSpeak3" => [
+		"url"      => "ts3server://", 
+		"info"     => "https://support.teamspeak.com/hc/en-us/articles/360002712818-How-can-I-link-to-my-TeamSpeak-3-server-on-my-webpage", 
+		"download" => "https://teamspeak.com/en/downloads/#ts3client"
+	],
+	"Mumble" => [
+		"url"      => "mumble://", 
+		"info"     => "https://www.mumble.info/documentation/user/mumble-url/",
+		"download" => "https://www.mumble.com/mumble-download.php"
+	],
+	"Discord" => [
+		"url"      => "https://discord.gg/", 
+		"info"     => "https://support.discordapp.com/hc/en-us/articles/208866998-Invites-101",
+		"download" => "https://discordapp.com/download"
+	],
+	"Steam" => [
+		"url"      => "https://s.team/chat/", 
+		"info"     => "https://steamcommunity.com/updates/chatupdate", 
+		"download" => "https://store.steampowered.com/about/"
+	]
 ]);
 
 // Maximal input length
@@ -1617,12 +1633,13 @@ function GS_list_mods($mods_id_list, $mods_uniqueid_list, $user_mods_version, $p
 							$output["info"][$id]["createdby"]   = $row["createdby"];
 							$output["info"][$id]["created"]     = $row["created"];
 							$output["info"][$id]["forcename"]   = $row["forcename"] ? "true" : "false";
-							$output["info"][$id]["is_mp"]       = $row["is_mp"] ? "true" : "false";
+							$output["info"][$id]["is_mp"]       = $row["is_mp"];
 							$output["info"][$id]["website"]     = $row["website"];
 							$output["info"][$id]["logo"]        = $row["logo"];
 							$output["info"][$id]["logohash"]    = $row["logohash"];
 							$output["info"][$id]["uniqueid"]    = $row["uniqueid"];
 							$output["info"][$id]["req_version"] = $row["req_version"];
+							$output["info"][$id]["access"]      = $row["access"];
 							
 							if (!in_array($row["createdby"], $output["userlist"]))
 								$output["userlist"][] = $row["createdby"];
@@ -3575,6 +3592,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                     else
                                         $command_description .= "\nto the " . substr($file_name,0,-4);
 
+								$command_description .= "\\";
                                 $last_unpbo = substr($last_unpbo, 0, -4);
                             }
                         } break;
@@ -3602,8 +3620,10 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
 								$command_description .= "\nand set its last modification date to " . $date->format("Y-m-d H:i:s") . " GMT";
 							}
 
+							$command_description .= "\nfrom the folder $source_dir\\";
+							
                             if (!in_array("/keep_source", $switches_for_this_command))
-                                $command_description .= "\nand then delete folder $source_dir";
+								$command_description .= "\nand then delete that folder";
                         } break;
 
                         case 'edit' : {

@@ -202,7 +202,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 		$form->add_select("sizetype", ""                             , "", GS_SIZE_TYPES, "MB");
 	}
 	
-	$form->add_select("is_mp"  , lang("GS_STR_MOD_MPCOMP") , lang("GS_STR_MOD_MPCOMP_HINT") , [[lang("GS_STR_MOD_MPCOMP_YES"),"1"], [lang("GS_STR_MOD_MPCOMP_NO"),"0"]], "1", "radio");
+	$form->add_select("is_mp"  , lang("GS_STR_MOD_MPCOMP") , lang("GS_STR_MOD_MPCOMP_HINT") , [[lang("GS_STR_MOD_MPCOMP_YES"),"2"], [lang("GS_STR_MOD_MPCOMP_UNKNOWN"),"1"], [lang("GS_STR_MOD_MPCOMP_NO"),"0"]], "1", "radio");
 	$form->add_imagefile("logo", lang("GS_STR_SERVER_LOGO"), lang("GS_STR_SERVER_LOGO_HINT"), GS_LOGO_FOLDER, 10240*2.5);
 	
 	if ($form->hidden["display_form"] == "Add New") {

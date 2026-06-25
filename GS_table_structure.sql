@@ -150,13 +150,13 @@ INSERT INTO `groups_menus` (`id`, `group_id`, `menu_id`) VALUES
 -- --------------------------------------------------------
 
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Oct 23, 2023 at 11:32 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 7.4.33
+-- Host: localhost:3306
+-- Generation Time: Jun 25, 2026 at 10:32 PM
+-- Server version: 11.4.9-MariaDB
+-- PHP Version: 8.3.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -183,7 +183,7 @@ CREATE TABLE `gs_announce` (
   `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `createdby` int(11) NOT NULL DEFAULT 0,
   `text` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -221,13 +221,13 @@ CREATE TABLE `gs_mods` (
   `forcename` tinyint(4) NOT NULL DEFAULT 0,
   `type` int(11) NOT NULL,
   `alias` varchar(255) NOT NULL,
-  `is_mp` tinyint(1) NOT NULL DEFAULT 1,
+  `is_mp` smallint(1) NOT NULL DEFAULT 1,
   `dls_new` int(11) NOT NULL DEFAULT 0,
   `dls_upd` int(11) NOT NULL DEFAULT 0,
   `website` text NOT NULL,
   `logo` text NOT NULL,
   `logohash` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -246,7 +246,7 @@ CREATE TABLE `gs_mods_admins` (
   `createdby` int(11) NOT NULL DEFAULT 0,
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modifiedby` int(11) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -266,7 +266,7 @@ CREATE TABLE `gs_mods_links` (
   `modifiedby` int(11) NOT NULL DEFAULT 0,
   `removed` tinyint(4) NOT NULL DEFAULT 0,
   `alwaysnewest` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -283,7 +283,7 @@ CREATE TABLE `gs_mods_scripts` (
   `createdby` int(11) NOT NULL DEFAULT 0,
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modifiedby` int(11) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -301,7 +301,7 @@ CREATE TABLE `gs_mods_updates` (
   `createdby` int(11) NOT NULL DEFAULT 0,
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modifiedby` int(11) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -334,7 +334,7 @@ CREATE TABLE `gs_serv` (
   `persistent` tinyint(1) NOT NULL DEFAULT 0,
   `status` text NOT NULL,
   `status_expires` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -354,7 +354,7 @@ CREATE TABLE `gs_serv_admins` (
   `createdby` int(11) NOT NULL DEFAULT 0,
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modifiedby` int(11) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -372,7 +372,7 @@ CREATE TABLE `gs_serv_mods` (
   `modifiedby` int(11) NOT NULL DEFAULT 0,
   `removed` tinyint(4) NOT NULL DEFAULT 0,
   `loadorder` int(11) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -396,7 +396,7 @@ CREATE TABLE `gs_serv_times` (
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modifiedby` int(11) NOT NULL DEFAULT 0,
   `removed` tinyint(4) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Indexes for dumped tables

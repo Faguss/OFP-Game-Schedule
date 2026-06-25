@@ -302,7 +302,7 @@ switch($input_mode) {
 			foreach($db->results(true) as $row)
 				$user_list[$row["id"]] = $row["username"];
 
-		// Count duplicates
+		// Count duplicates so that we know whether to add a subtitle or not
 		$all_names = [];
 		foreach($mods["info"] as $mod) {
 			if (array_key_exists($mod["name"], $all_names))
@@ -315,6 +315,7 @@ switch($input_mode) {
 		$mods_simple_array          = "";
 		$mods_that_user_can_update  = "";
 		$mods_that_user_doesnt_have = "";
+		$mods_that_are_private      = "";
 		$mods_update_count          = 0;
 		
 		uasort($mods["info"], 'GS_compare_names_with_trim');
@@ -328,10 +329,18 @@ switch($input_mode) {
 			$mods_simple_array .= "]+[[\"{$mod["uniqueid"]}\",\"$formatted_name\",{$mod["forcename"]}]";
 			
 			if ($mod["userver"] == 0) {
-				if (empty($mods_that_user_doesnt_have))
-					$mods_that_user_doesnt_have = "]+[[\"missing\"]";
+				$ptr_to_string = &$mods_that_user_doesnt_have;
+				$label_name    = "missing";
 				
-				$mods_that_user_doesnt_have .= "]+[[\"$formatted_name\",\"{$mod["uniqueid"]}\",{$mod["type"]}]";
+				if (array_search($mod["access"],$input["password_mods"]) !== FALSE) {
+					$ptr_to_string = &$mods_that_are_private;
+					$label_name    = "private";					
+				}
+				
+				if (empty($ptr_to_string))
+					$ptr_to_string = "]+[[\"$label_name\"]";
+				
+				$ptr_to_string .= "]+[[\"$formatted_name\",\"{$mod["uniqueid"]}\",{$mod["type"]}]";
 			} else
 				if ($mod["userver"] != $mod["version"]) {
 					if (empty($mods_that_user_can_update))
@@ -357,6 +366,16 @@ switch($input_mode) {
 					case "logo"    : $property_name="logo"; $property_value="\"".(empty($property_value) ? "" : GS_get_current_url(false).GS_LOGO_FOLDER."/$property_value")."\""; break;
 					
 					case "description" : $property_value=GS_convert_utf8_to_windows($property_value, $input["language"]); break;
+					
+					case "is_mp" : 
+						$str_key = "GS_STR_MOD_MPCOMP_NO";
+						if ($property_value == "2")
+							$str_key = "GS_STR_MOD_MPCOMP_YES";
+						else 
+							if ($property_value == "1")
+								$str_key = "GS_STR_MOD_MPCOMP_UNKNOWN";
+						$property_value = GS_convert_utf8_to_windows(strtolower("\"".lang("GS_STR_MOD_MPCOMP")." - ".lang($str_key)."\""), $input["language"]);
+						break;
 				}
 				
 				$mod_info .= "_mod_$property_name=$property_value;";
@@ -365,7 +384,7 @@ switch($input_mode) {
 			$database->add($mod["uniqueid"], $mod_info);
 		}
 		
-		$database->add("listbox", "GS_MODS=[$mods_that_user_can_update$mods_that_user_doesnt_have];");
+		$database->add("listbox", "GS_MODS=[$mods_that_user_can_update$mods_that_are_private$mods_that_user_doesnt_have];");
 		$database->add("modupdatecount", "_mod_update_count=$mods_update_count;");
 		$output .= $database->generate($mods["lastmodified"], $mods_simple_array);
 		break;
@@ -458,7 +477,7 @@ switch($input_mode) {
 		$event  = null;
 		foreach($server["events"] as $key=>$current_event) {
 			if ($current_event["eventid"] == $_GET["eventid"]) {
-				$event = $current_event;
+				$event = $current_event;
 				break;
 			}
 		}

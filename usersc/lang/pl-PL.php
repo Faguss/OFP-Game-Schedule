@@ -234,6 +234,7 @@ $lang = array_merge($lang,array(
 	"GS_STR_MOD_MPCOMP_HINT" => "Mody tylko do gry jednoosobowej nie bedą pokazywane na liście dodawania modów do serwera",
 	"GS_STR_MOD_MPCOMP_YES" => "Tak",
 	"GS_STR_MOD_MPCOMP_NO" => "Nie",
+	"GS_STR_MOD_MPCOMP_UNKNOWN" => "Nie wiadomo",
 	"GS_STR_MOD_SUBMIT" => "Zmień szczegóły",
 	"GS_STR_MOD_REQ_VERSION" => "Wymagana wersja gry",
 	"GS_STR_MOD_WARNING_LINK" => "Adres do %m1% musi zostać skonwertowany. Użyj opcji \"Skonwertuj link do pliku\" poniżej",
