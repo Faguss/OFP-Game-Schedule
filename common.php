@@ -1,8 +1,8 @@
 <?php
 require_once "common_min.php";
 
-define("GS_FWATCH_LAST_UPDATE","[2026,5,16,6,23,6,29,754,120,FALSE]");
-define("GS_VERSION", 0.61);
+define("GS_FWATCH_LAST_UPDATE","[2026,9,7,1,19,10,45,126,120,FALSE]");
+define("GS_VERSION", 0.62);
 define("GS_ENCRYPT_KEY", 0);
 define("GS_MODULUS_KEY", 0);
 define("GS_DECRYPT_KEY", 0);
@@ -62,7 +62,7 @@ define("GS_VOICE", [
 define("GS_MAX_TXT_INPUT_LENGTH"   , 100);
 define("GS_MAX_MSG_INPUT_LENGTH"   , 255);
 define("GS_MAX_CODE_INPUT_LENGTH"  , 10);
-define("GS_MAX_SCRIPT_INPUT_LENGTH", 10000);
+define("GS_MAX_SCRIPT_INPUT_LENGTH", 15000);
 
 // Log codes
 define("GS_LOG_UNKNOWN"              , 0);
@@ -3220,6 +3220,7 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
         "filedate" => ["names"=>["filedate"], "url"=>"filedate"],
         "install_version" => ["names"=>["install_version"], "url"=>""],
         "exit" => ["names"=>["exit","quit"], "url"=>"exit"],
+		"stop" => ["names"=>["stop"], "url"=>"stop"],
     ];
 
     $command_switches_names = [
@@ -3639,16 +3640,18 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                                 if (strlen($input_text) > 15)
                                     $input_text = substr($input_text,0,15) . "...";
 
+								$input_text = "\"" . $input_text . "\"";
+
                                 if (in_array("/newfile", $switches_for_this_command))
                                     $command_description = "Create new file $modname\\$file_name with $input_text";
                                 else
                                     if (in_array("/insert", $switches_for_this_command))
-                                        $command_description = "Insert new line $input_text as the line $line_number in the $modname\\$file_name";
+										$command_description = "Insert new line $input_text as the line $line_number in the file $modname\\$file_name";
                                     else
                                         if (in_array("/append", $switches_for_this_command))
                                             $command_description .= "Add $input_text to the line $line_number in the $modname\\$file_name";
                                         else
-                                            $command_description .= "Replace line $line_number with $input_text in the $modname\\$file_name";
+											$command_description .= "Replace text in the line $line_number with $input_text in the file $modname\\$file_name";
                             } else {
                                 $command_description = "Not enough arguments";
                             }
@@ -3811,6 +3814,10 @@ function GS_scripting_highlighting($code, $modname="modfolder") {
                         case 'exit' : {
                             $command_description = "Terminate installation";
                         } break;
+						
+						case 'stop' : {
+							$command_description = "In test mode it pauses the installer. In normal mode this command is ignored";
+						} break;
                     }
 
                     $cut = -1;

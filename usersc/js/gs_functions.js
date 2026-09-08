@@ -1317,7 +1317,7 @@ function GS_substr_replace(str, replace, start, length) {
 	}
 	return [
 		str.slice(0, start),
-		replace.substr(0, length),
+		replace.substring(0, length),
 		replace.slice(length),
 		str.slice(start + length)
 	].join('');
@@ -1350,7 +1350,7 @@ function GS_parse_jump_rule(string, from_version, to_version) {
 		
 			// Handle parentheses ------------------------------
 			if (letter == ")") 
-				return "parenthesis closed without being opened at "+i+": <SPAN STYLE=\"font-family:monospace;\">" + string.substr(0,i+1) + "</SPAN>";
+				return "parenthesis closed without being opened at "+i+": <SPAN STYLE=\"font-family:monospace;\">" + string.substring(0,i+1) + "</SPAN>";
 
 			if (letter == "(") {
 				level = 0;
@@ -1385,7 +1385,7 @@ function GS_parse_jump_rule(string, from_version, to_version) {
 					triadStart = 0;
 					continue;
 				} else
-					return "parenthesis opened without being closed at " + i + ": <SPAN STYLE=\"font-family:monospace;\">" + string.substr(i) + "</SPAN>";
+					return "parenthesis opened without being closed at " + i + ": <SPAN STYLE=\"font-family:monospace;\">" + string.substring(i) + "</SPAN>";
 			}
 			// -------------------------------------------------
 		
@@ -1659,10 +1659,10 @@ function GS_prepare_installation_data(input_version) {
 // Trim beginning of a string
 function GS_begins_with(sequence, string) {
 	let length = sequence.length;
-	let match  = string.substr(0,length) == sequence;
+	let match  = string.substring(0,length) == sequence;
 
 	if (match)
-		string = string.substr(length);
+		string = string.substring(length);
 
 	return {match:match, string:string};
 };
@@ -1670,13 +1670,13 @@ function GS_begins_with(sequence, string) {
 // Trim beginning of a path
 function GS_path_last_item(path) {
 	last_slash = path.lastIndexOf("\\");
-	return last_slash>=0 ? path.substr(last_slash+1) : path;
+	return last_slash>=0 ? path.substring(last_slash+1) : path;
 }
 
 // Trim ending of a path
 function GS_path_only(path) {
 	last_slash = path.lastIndexOf("\\");
-	return last_slash>=0 ? path.substr(0, last_slash) : "";
+	return last_slash>=0 ? path.substring(0, last_slash) : "";
 }
 
 function GS_trim(str, ch) {
@@ -1721,6 +1721,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 		filedate: {names:["filedate"], url:"filedate"},
 		install_version: {names:["install_version"], url:""},
 		exit: {names:["exit","quit"], url:"exit"},
+		stop: {names:["stop"], url:"stop"},
 	};
 	var command_switches_names = [
 		"/password:",
@@ -1750,7 +1751,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 	var switch_list           = {};
 	var output                = "";
 	var output_temp           = "";
-	var is_url                = function (text) {return text.substr(0,7)=="http://" || text.substr(0,8)=="https://" || text.substr(0,6)=="ftp://" || text.substr(0,4)=="www.";};
+	var is_url                = function (text) {return text.substring(0,7)=="http://" || text.substring(0,8)=="https://" || text.substring(0,6)=="ftp://" || text.substring(0,4)=="www.";};
 	var last_unpbo            = "";
 	var mod_alias             = [];
 	const whitespace          = /\s/;
@@ -1857,7 +1858,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 				// Check if it's a valid command switch
 				is_switch   = false;
 				colon       = word.indexOf(":");
-				switch_name = colon>=0 ? word.substr(0,colon+1) : word;
+				switch_name = colon>=0 ? word.substring(0,colon+1) : word;
 				
 				for (var j=0; j<command_switches_names.length && !is_switch; j++)
 					is_switch = switch_name.toLowerCase() == command_switches_names[j].toLowerCase();
@@ -1921,7 +1922,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 							let last_slash = url.lastIndexOf("/");
 							
 							if (last_slash >= 0)
-								file_name = url.substr(last_slash+1);
+								file_name = url.substring(last_slash+1);
 							else
 								file_name = url;
 							
@@ -1963,7 +1964,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 						case 'auto_install' : {
 							last_dot = command_description.lastIndexOf(".");
 							if (last_dot >= 0)
-								command_description = command_description.substr(0, last_dot);
+								command_description = command_description.substring(0, last_dot);
 
 							if (!GS_empty(archive_password))
 								command_description += ", open it with "+archive_password+" password";
@@ -2047,7 +2048,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 										} else {
 											const only_extension = /^\*\.[A-Za-z0-9]+$/g;
 											if (only_extension.test(file_name_without_path)) {
-												pattern   = "all " + file_name_without_path.substr(2) + " " +file_type+" from the ";
+												pattern   = "all " + file_name_without_path.substring(2) + " " +file_type+" from the ";
 												file_name = file_name_path_only;
 											}
 										}
@@ -2144,24 +2145,26 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 								let line_number = args_for_this_command[1];
 								let input_text  = args_for_this_command[2];
 
-								if (input_text.substr(0,2)==">>")
-									input_text = input_text.substr(3,-1);
+								if (input_text.substring(0,2)==">>")
+									input_text = input_text.substring(3,input_text.length-1);
 								else
 									input_text = GS_trim(input_text, "\"");
 
 								if (input_text.length > 15)
-									input_text = input_text.substr(0,15) + "...";
+									input_text = input_text.substring(0,15) + "...";
+								
+								input_text = "\"" + input_text + "\"";
 
 								if (switches_for_this_command.includes("/newfile"))
-									command_description = "Create new file "+modname+"\\"+file_name+" with "+input_text;
+									command_description = "Create new file "+modname+"\\"+file_name+" with "+input_text+"";
 								else
 									if (switches_for_this_command.includes("/insert"))
-										command_description = "Insert new line "+input_text+" as the line "+line_number+" in the "+modname+"\\"+file_name;
+										command_description = "Insert new line "+input_text+" as the line "+line_number+" in the file "+modname+"\\"+file_name;
 									else
 										if (switches_for_this_command.includes("/append"))
-											command_description += "Add "+input_text+" to the line "+line_number+" in the "+modname+"\\"+file_name;
+											command_description += "Add "+input_text+" to the line "+line_number+" in the file "+modname+"\\"+file_name;
 										else
-											command_description += "Replace line "+line_number+" with "+input_text+" in the "+modname+"\\"+file_name;
+											command_description += "Replace text in the line "+line_number+" with "+input_text+" in the file "+modname+"\\"+file_name;
 							} else {
 								command_description = "Not enough arguments";
 							}
@@ -2266,7 +2269,7 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 									} else {
 										const only_extension = /^\*\.[A-Za-z0-9]+$/g;
 										if (only_extension.test(file_name_without_path)) {
-											pattern   = "all " + file_name_without_path.substr(2) + " "+file_type+" from the ";
+											pattern   = "all " + file_name_without_path.substring(2) + " "+file_type+" from the ";
 											file_name = file_name_path_only;
 										}
 									}
@@ -2333,6 +2336,10 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 						case 'exit' : {
 							command_description = "Terminate installation";
 						} break;
+						
+						case 'stop' : {
+							command_description = "In test mode it pauses the installer. In normal mode this command is ignored";
+						} break;
 					}
 
 					let cut = -1;
@@ -2342,8 +2349,8 @@ function GS_scripting_highlighting(code, modname="modfolder") {
 							cut = j;
 
 					if (cut >= 0) {
-						output     += output_temp.substr(0, cut);
-						output_temp = output_temp.substr(cut);
+						output     += output_temp.substring(0, cut);
+						output_temp = output_temp.substring(cut);
 					}
 
 					output += '<span class="installation_script_tooltip" data-toggle="tooltip" data-placement="bottom" title="'+GS_encode_entities(command_description)+'">' + output_temp + '</span>';

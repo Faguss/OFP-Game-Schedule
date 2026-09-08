@@ -422,6 +422,8 @@ switch($input_mode) {
 			if (isset($_SERVER['HTTP_OFPGSINSTALL'])) {
 				$column_name = $mod["userver"] ? "dls_upd" : "dls_new";
 				$db->query("UPDATE gs_mods SET $column_name=$column_name+1 WHERE id=$id");
+				$log = date("Y.m.d H:i")." ".$_SERVER['REMOTE_ADDR']." ".$mod["name"]." ".($mod["userver"] ? $mod["userver"] : "NEW")."\r\n";
+				file_put_contents("dl_log.txt", $log, FILE_APPEND | LOCK_EX);
 			}
 		}
 		

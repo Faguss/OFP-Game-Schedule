@@ -39,7 +39,7 @@ $lang = array_merge($lang,array(
 	
     #Home page
 	"GS_STR_INDEX_WELCOME" => "Welcome to the OFP Game Schedule!",
-	"GS_STR_INDEX_DESCRIPTION" => "Multiplayer organizer for Operation Flashpoint / ARMA: Cold War Assault",
+	"GS_STR_INDEX_DESCRIPTION" => "Multiplayer organizer for Operation Flashpoint / ARMA: Cold War Assault (Legacy)",
 	"GS_STR_INDEX_QUICKSTART" => "Get started",
 	"GS_STR_INDEX_LEARN_MORE" => "Learn more",
 	"GS_STR_INDEX_UPCOMING" => "Upcoming Games",

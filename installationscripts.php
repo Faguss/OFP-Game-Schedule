@@ -73,7 +73,7 @@ if ($lang["THIS_CODE"] == "en-US") {
 	"GS_IS_MANUAL_PAR5" => "Commands may also use switches which are optional arguments that may be written anywhere in the argument order. They begin with a forward slash.",
 	"GS_IS_MANUAL_PAR6" => "I recommend to capitalize commands for readability.",
 	"GS_IS_MANUAL_PAR7" => "Invalid command names will be ignored.",
-	"GS_IS_MANUAL_PAR8" => "Leading and trailing spaces will be ignored.",
+	"GS_IS_MANUAL_PAR8" => "Leading and trailing spaces will be ignored. Lines beginning with semi-colon are ignored",
 	"GS_IS_MANUAL_PAR9" => "Script can consist of both automatic installation and commands.",
 
 	"GS_IS_COMMAND" => "command",
@@ -187,6 +187,9 @@ if ($lang["THIS_CODE"] == "en-US") {
 
 	#Exit command
 	"GS_IS_EXIT_PAR1" => "Causes the installer to skip all remaining commands in the current script.",
+
+	#Stop command
+	"GS_IS_STOP_PAR1" => "In test mode it pauses the installer. In normal mode this command is ignored.",
 
 	#Mission files
 	"GS_IS_MISSION_PAR1" => "Original game only makes use of the <code>modfolder\\Campaigns</code> but with Fwatch 1.16 you can now conveniently store any kind of mission in the modfolder.",
@@ -358,7 +361,7 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 "GS_IS_MANUAL_PAR5" => "Команды также могут использовать переключатели, являющиеся необязательными аргументами, которые могут быть записаны в любом месте в порядке следования аргументов. Они начинаются с косой черты.",
 "GS_IS_MANUAL_PAR6" => "Я рекомендую использовать команды с большой буквы для удобства чтения.",
 "GS_IS_MANUAL_PAR7" => "Недопустимые имена команд будут игнорироваться.",
-"GS_IS_MANUAL_PAR8" => "Начальные и конечные пробелы будут игнорироваться.",
+"GS_IS_MANUAL_PAR8" => "Начальные и конечные пробелы будут игнорироваться. Строчки кода, которые начинаются с точки с запятой (;), не учитываются",
 "GS_IS_MANUAL_PAR9" => "Скрипт может состоять как из автоматической установки, так и из команд.",
 
 "GS_IS_COMMAND" => "команда",
@@ -473,6 +476,9 @@ if ($lang["THIS_CODE"] == "ru-RU") {
 	#Exit command
 "GS_IS_EXIT_PAR1" => "Заставляет установщик пропустить все оставшиеся команды в текущем скрипте.",
 
+	#Stop command
+	"GS_IS_STOP_PAR1" => "В тестовом режиме команда приостанавливает установщик. В нормальном режиме эта команда не учитывается.",
+	
 	#Mission files
 "GS_IS_MISSION_PAR1" => "Оригинальная игра использует только папку <code>modfolder\\Campaigns</code>, но с Fwatch 1.16 теперь вы можете удобно хранить любые миссии в папке модов.",
 "GS_IS_MISSION_PAR2" => "Когда вы запускаете игру с модом, содержимое подпапок мода перемещается в папки в каталоге игры.",
@@ -643,7 +649,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	"GS_IS_MANUAL_PAR5" => "Komendy mogą używać także przełączników. Są to opcjonalne argumenty, które można umieścić gdziekolwiek w szeregu argumentów. Zaczynają się od prawego ukośnika.",
 	"GS_IS_MANUAL_PAR6" => "Pisz nazwy komend dużymi literami dla zwiększenia czytelności.",
 	"GS_IS_MANUAL_PAR7" => "Nieprawidłowe komendy zostaną zignorowane.",
-	"GS_IS_MANUAL_PAR8" => "Odstępy na początku i końcu linii zostaną zignorowane.",
+	"GS_IS_MANUAL_PAR8" => "Odstępy na początku i końcu linii zostaną zignorowane. Linie zaczynające się od średnika są ignorowane",
 	"GS_IS_MANUAL_PAR9" => "Skrypt może mieć zarówno automatyczną instalację jak i komendy.",
 
 	"GS_IS_COMMAND" => "komenda",
@@ -758,6 +764,9 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	#Exit command
 	"GS_IS_EXIT_PAR1" => "Instalator pominie wszystkie pozostałe komendy w obecnym skrypcie.",
 
+	#Stop command
+	"GS_IS_STOP_PAR1" => "W trybie testowym zatrzymuje instalator. W normalnym trybie ta komenda jest ignorowana.",
+	
 	#Mission files
 	"GS_IS_MISSION_PAR1" => "Domyślnie gra obsługuje wyłącznie <code>modfolder\\Campaigns</code> ale z Fwatchem 1.16 możesz przechowywać dowolny rodzaj misji w katalogu z modem.",
 	"GS_IS_MISSION_PAR2" => "Kiedy włączasz grę z danym modem to treść jego podfolderów zostanie przeniesiona do odpowiednich folderów w katalogu z grą.",
@@ -1007,6 +1016,7 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<li><a href="#ask_get">Ask_get, Ask_download</a></li>
 	<li><a href="#ask_run">Ask_run, Ask_execute</a></li>
 	<li><a href="#exit">Exit, Quit</a></li>
+	<li><a href="#stop">Stop</a></li>
 	</ul>
 	<br>		
 		
@@ -1385,6 +1395,13 @@ if ($lang["THIS_CODE"] == "pl-PL") {
 	<h3 class="commandtitle">Exit, Quit</h3>
 	<pre><code><span class="scripting_command">EXIT</span></code></pre>
 	<p><?=lang("GS_IS_EXIT_PAR1")?></p>
+	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
+	
+	<a name="stop"></a>
+	<hr class="betweencommands">
+	<h3 class="commandtitle">Stop</h3>
+	<pre><code><span class="scripting_command">STOP</span></code></pre>
+	<p><?=lang("GS_IS_STOP_PAR1")?></p>
 	<a style="float:right;" href="#manual_installation"><?=lang("GEN_BACK")?></a>
 	</div>
 </div>
@@ -1805,7 +1822,16 @@ MOVE    Files\\WGL\\Anims.pbo  dta");
 <div class="panel panel-default betweencommands">
 	<div class="panel-heading"><strong><?=lang("GS_IS_CHANGELOG")?></strong></div>
 	<div class="panel-body">
+<a name="changelog0.62"></a>
+<strong>0.62</strong> (29.07.2026)<br>
+<ul>
+<li>added <code>Stop</code> command</li>
+<li>lines beginning with semi-colon are ignored</li>
+</ul>	
+
 <a name="changelog0.61"></a>
+<br>
+<br>
 <strong>0.61</strong> (13.06.2023)<br>
 <ul>
 <li><code>Ask_run</code> - opens directory in Windows Explorer</li>

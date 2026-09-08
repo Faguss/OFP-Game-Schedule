@@ -2,7 +2,7 @@
 require_once "header.php";
 
 // Code for modal for converting download links; displayed when installation script input is displayed
-$js_modal = "
+$convert_link_modal = "
 <div id=\"convertlink_modal\" class=\"schedule_modal\">
 	<div class=\"schedule_modal-content\">
 		<span id=\"convertlink_modal_close\" class=\"schedule_modal_close\">&times;</span>
@@ -207,7 +207,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	
 	if ($form->hidden["display_form"] == "Add New") {
 		$form->include_file("usersc/js/gs_functions.js");
-		$form->add_html($js_modal);
+		$form->add_html($convert_link_modal);
 		$form->add_html($js_verify_installation_script);
 	}
 
@@ -422,7 +422,7 @@ if ($form->hidden["display_form"] == "Update")
 	$form->add_text("size", lang("GS_STR_MOD_DOWNLOADSIZE"), "", "128");
 	$form->add_select("sizetype", "", "", GS_SIZE_TYPES, "MB");
 	$form->change_control(["size", "sizetype"], ["Inline"=>3]);
-	$form->add_html($js_modal);
+	$form->add_html($convert_link_modal);
 	$form->add_html($js_verify_installation_script);
 		
 	// Preview button

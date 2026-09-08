@@ -153,11 +153,9 @@
 	color: #008000;
 	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
 	display: inline-block;
-	margin-top: 1em;
-	margin-bottom: 0.5em;
-	margin-left: 2em;
 	word-break: keep-all;
 	font-size: smaller;
+	background-color: #eaecea;
 }
 
 .btn-overflow {

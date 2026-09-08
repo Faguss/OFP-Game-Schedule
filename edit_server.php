@@ -43,7 +43,7 @@ if (in_array($form->hidden["display_form"], ["Add New","Edit"]))
 	else
 		$form->title=lang("GS_STR_INDEX_ADDNEW_SERVER");
 		
-	$master_list = '<a data-toggle="modal" data-target="#server_list_modal" onclick="GS_get_server_list(master_server, \'server_list_content\');">'.lang("GS_STR_SERVER_PICK_IP").'</a>';
+	$master_list = '<a style="cursor:pointer;" data-toggle="modal" data-target="#server_list_modal" onclick="GS_get_server_list(master_server, \'server_list_content\');">'.lang("GS_STR_SERVER_PICK_IP").'</a>';
 	$form->add_text("ip", lang("GS_STR_SERVER_ADDRESS"), lang("GS_STR_SERVER_ADDRESS_HINT")."<p>$master_list</p>", "192.168.1.101:2302");
 	
 	// Auto configuration
